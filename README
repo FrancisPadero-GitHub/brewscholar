@@ -1,0 +1,15 @@
+To recover last git commit you have done use this command
+
+1. git reflog (it will show the latest commits)
+
+sample:
+26e4dc2 (HEAD -> main) HEAD@{0}: commit: Changed Tracking
+eba45a3 HEAD@{1}: commit (initial): Dashboard (Home Done)
+
+2. git reset --hard eba45a3 (this ill recover what commit has did you put on this argument)
+
+
+
+Things to do in the future
+* Hide the supabase Anonkey on my program
+* 
