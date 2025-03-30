@@ -10,7 +10,7 @@ const ResetPassword = () => {
 
   // we actually need to get the data from the forgot password event to pass it through here so that the this one can determine
   // what user is being reset
-  
+
   useEffect(() => {
     // Set up the auth state change listener
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
