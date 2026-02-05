@@ -1,6 +1,17 @@
 # BrewScholar
 
-A Next.js project for managing and sharing brewing recipes and notes.
+Your comprehensive platform for scholarships, entertainment, and student productivity tools.
+
+## 📋 Overview
+
+BrewScholar is a modern web application designed specifically for Filipino students, providing:
+
+- 🎓 Scholarship Discovery: Find and apply for scholarships in the Philippines
+- 🎬 Entertainment Hub: Browse movies and entertainment content
+- 💰 Budget Tracker: Manage your finances as a student
+- 📁 File Hosting: Upload and share files easily
+- 💬 Live Chat: Real-time communication with other students
+- 🤖 AI Assistant: Get help with your studies (coming soon)
 
 ## Features
 
