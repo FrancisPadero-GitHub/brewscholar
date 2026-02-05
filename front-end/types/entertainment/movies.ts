@@ -1,6 +1,6 @@
 export interface MoviePlayerProps {
   id: string;
-  type: 'movie' | 'tv';
+  type: "movie" | "tv";
   season?: number;
   episode?: number;
   color?: string; // Hex code without the '#'
