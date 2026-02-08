@@ -7,8 +7,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Coffee, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { features } from "@/data/landing_page/data";
+import brew_scholar from "../public/brew_scholar_dark.png";
+import Image from "next/image";
 
 const LandingPage = () => {
   return (
@@ -18,13 +20,20 @@ const LandingPage = () => {
         <div className="absolute inset-0 from-[#2A2A2A] to-transparent h-96" />
         <div className="relative max-w-7xl mx-auto px-6 py-16">
           <div className="text-center mb-12">
-            <div className="flex items-center justify-center mb-6">
-              <Coffee className="h-16 w-16 text-[#FFD700]" />
+            <div className="mx-auto mb-6 relative w-40 h-40">
+              <Image
+                src={brew_scholar}
+                alt="BrewScholar Logo"
+                fill
+                className="object-contain filter invert brightness-0"
+                sizes="160"
+              />
             </div>
-            <h1 className="text-5xl font-bold mb-4">
+
+            {/* <h1 className="text-5xl font-bold mb-4">
               <span className="text-white">Brew</span>
               <span className="text-[#FFD700]">Scholar</span>
-            </h1>
+            </h1> */}
             <p className="text-xl text-gray-400 max-w-2xl mx-auto">
               Pour over opportunities and brew up your brightest future with
               BrewScholar

@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,11 +11,14 @@ import {
 } from "@/components/ui/card";
 
 // components
-import MoviePlayer from "../../../features/entertainment/player/page";
+import MoviePlayer from "../../../features/entertainment/player/player";
 
 const Watch = () => {
-  const [movieId, setMovieId] = useState("1368166"); // Sample: The Shawshank Redemption
-  const [inputValue, setInputValue] = useState("1368166");
+  const [api, setAPI] = useState<"www.vidking.net" | "vidsrc.to">("vidsrc.to"); // Default API
+
+  const [movieId, setMovieId] = useState("");
+  const [inputValue, setInputValue] = useState("");
+
   const [contentType, setContentType] = useState<"movie" | "tv">("movie");
   const [season, setSeason] = useState(1);
   const [episode, setEpisode] = useState(1);
@@ -30,9 +32,8 @@ const Watch = () => {
   return (
     <main className="container mx-auto p-4 space-y-6">
       <h1 className="text-3xl font-bold mb-6">Movie & TV Player</h1>
-
       <Card>
-        <CardHeader>
+        {/* <CardHeader>
           <CardTitle>Enter Content Details</CardTitle>
           <CardDescription>
             Enter an IMDB ID (e.g., 8871 for Dr.Seuss How the Grinch Stole
@@ -40,8 +41,22 @@ const Watch = () => {
             Select the type and for TV series, specify the season and episode.
             Click &lsquo;Load&rsquo; to start watching.
           </CardDescription>
-        </CardHeader>
+        </CardHeader> */}
         <CardContent className="space-y-4">
+          <div className="flex gap-2">
+            <Button
+              variant={api === "www.vidking.net" ? "default" : "outline"}
+              onClick={() => setAPI("www.vidking.net")}
+            >
+              Vid King
+            </Button>
+            <Button
+              variant={api === "vidsrc.to" ? "default" : "outline"}
+              onClick={() => setAPI("vidsrc.to")}
+            >
+              Vid SRC
+            </Button>
+          </div>
           <div className="flex gap-2">
             <Button
               variant={contentType === "movie" ? "default" : "outline"}
@@ -59,12 +74,18 @@ const Watch = () => {
 
           <div className="space-y-2">
             <label className="text-sm font-medium">
-              Content ID (IMDB or TMDB)
+              {api === "vidsrc.to"
+                ? "TMDB ID (numeric only)"
+                : "Content ID (IMDB or TMDB)"}
             </label>
             <div className="flex gap-2">
               <Input
                 type="text"
-                placeholder="e.g., tt0111161"
+                placeholder={
+                  api === "vidsrc.to"
+                    ? "e.g., 8871 (TMDB)"
+                    : "e.g., tt0111161 or 278"
+                }
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 className="flex-1"
@@ -95,14 +116,6 @@ const Watch = () => {
               </div>
             </div>
           )}
-
-          <div className="text-sm text-muted-foreground">
-            <p className="font-medium mb-1">Sample IDs to try:</p>
-            <ul className="list-disc list-inside space-y-1">
-              <li>8871 - Dr.Seuss How the Grinch Stole Christmas</li>
-              <li>1408 - House MD - TV</li>
-            </ul>
-          </div>
         </CardContent>
       </Card>
 
@@ -112,6 +125,7 @@ const Watch = () => {
           <p className="text-muted-foreground">Content ID: {movieId}</p>
           <MoviePlayer
             id={movieId}
+            api={api}
             type={contentType}
             season={contentType === "tv" ? season : undefined}
             episode={contentType === "tv" ? episode : undefined}

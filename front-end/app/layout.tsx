@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "BrewScholar",
-  description: "Pour over opportunities and brew up your brightest future with BrewScholar",
-  
+  description:
+    "Pour over opportunities and brew up your brightest future with BrewScholar",
 };
 
 export default function RootLayout({
