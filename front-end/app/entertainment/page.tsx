@@ -8,7 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Film, Star, TrendingUp, Clock, Search } from "lucide-react";
-
+import Link from "next/link";
 import { movies, categories } from "@/data/entertaiment/data";
 
 const MovieHub = () => {
@@ -27,7 +27,7 @@ const MovieHub = () => {
           </div>
           <Button className="bg-[#FFD700] text-[#1E1E1E] hover:bg-[#FFD700]/90 font-semibold">
             <Film className="mr-2 h-4 w-4" />
-            Browse All
+            <Link href="/entertainment/watch">Browse All</Link>
           </Button>
         </div>
 
