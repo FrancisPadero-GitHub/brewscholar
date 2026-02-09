@@ -1,64 +1,64 @@
-"use client";
+import PaginationControls from "@/components/custom/entertainment/movies/PaginationControls";
+import { ApiResponse } from "@/types/entertainment/movies/movie";
 
-import { useEffect, useState } from "react";
+async function getMovies(page: string) {
+  const res = await fetch(
+    `https://vidsrc-embed.ru/movies/latest/page-${page}.json`,
+    {
+      next: { revalidate: 3600 }, // Cache data for 1 hour
+    },
+  );
 
-interface ApiResponse {
-  result?: any[];
+  if (!res.ok) return null;
+  return res.json() as Promise<ApiResponse>;
 }
 
-const SimpleMovieList = () => {
-  const [movies, setMovies] = useState<any[]>([]);
+export default async function MoviesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  // Await searchParams as it's now a Promise in Next.js
+  const params = await searchParams;
 
-  useEffect(() => {
-    const fetchMovies = async () => {
-      try {
-        const res = await fetch(
-          "https://vidsrc-embed.ru/movies/latest/page-1.json",
-        );
-        const data: ApiResponse = await res.json();
-        setMovies(data.result || []);
-      } catch (err) {
-        console.error("Error fetching movies:", err);
-      }
-    };
+  // Default to page 1 if no param is provided
+  const currentPage = typeof params.page === "string" ? params.page : "1";
+  const data = await getMovies(currentPage);
 
-    fetchMovies();
-  }, []);
-
-  console.log(movies);
+  if (!data || !data.result) {
+    return <div className="p-10 text-center">Failed to load movies.</div>;
+  }
 
   return (
-    <div className="p-4 space-y-4">
-      <h1 className="text-2xl font-bold">Latest Movies</h1>
-      {movies.length === 0 && <p>No movies found.</p>}
+    <main className="max-w-6xl mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-6 text-white">
+        Latest Movies - Page {currentPage}
+      </h1>
 
-      <ul className="space-y-2">
-        {movies.map((movie, idx) => (
-          <li key={movie.id || idx} className="border p-2 rounded">
-            <p>
-              <strong>Title:</strong> {movie.title}
-            </p>
-            {movie.year && (
-              <p>
-                <strong>Year:</strong> {movie.year}
-              </p>
-            )}
-            {movie.description && <p>{movie.description}</p>}
-            {movie.imdb_id && (
-              <a
-                href={`https://www.imdb.com/title/${movie.imdb_id}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 underline"
-              >
-                IMDB Link
-              </a>
-            )}
-          </li>
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        {data.result.map((movie) => (
+          <div
+            key={movie.imdb_id}
+            className="bg-gray-800 p-4 rounded-lg border border-gray-700"
+          >
+            <h3 className="text-sm font-semibold truncate text-white">
+              {movie.title}
+            </h3>
+            <span className="text-xs text-blue-400 uppercase">
+              {movie.quality}
+            </span>
+            <h4 className="text-xs text-gray-400 uppercase">{movie.tmdb_id}</h4>
+            <a
+              href={movie.embed_url}
+              target="_blank"
+              className="block mt-2 text-center bg-blue-600 text-xs py-1 rounded hover:bg-blue-500 transition"
+            >
+              Watch Now
+            </a>
+          </div>
         ))}
-      </ul>
-    </div>
+      </div>
+      <PaginationControls currentPage={Number(currentPage)} />
+    </main>
   );
-};
-
-export default SimpleMovieList;
+}

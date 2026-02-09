@@ -1,4 +1,4 @@
-import { MoviePlayerProps } from "@/types/entertainment/movies";
+import { MoviePlayerProps } from "@/types/entertainment/types";
 
 const VidPlayer = ({
   id,

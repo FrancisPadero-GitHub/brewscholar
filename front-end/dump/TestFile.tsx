@@ -26,11 +26,15 @@ interface UsersData {
   };
 }
 
-const fetchData = async (): Promise<UsersData[] | null> => {
+interface ApiResponse {
+  result: UsersData[];
+}
+
+const fetchData = async (): Promise<ApiResponse[] | null> => {
   try {
     const res = await fetch("https://jsonplaceholder.typicode.com/users/");
     if (!res.ok) throw new Error(res.statusText);
-    return (await res.json()) as UsersData[];
+    return (await res.json()) as ApiResponse[];
   } catch (err) {
     console.error("Error fetching data:", err);
     return null;
@@ -38,7 +42,7 @@ const fetchData = async (): Promise<UsersData[] | null> => {
 };
 
 const TestFile = () => {
-  const [users, setUsers] = useState<UsersData[] | null>([]);
+  const [users, setUsers] = useState<ApiResponse[] | null>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -57,6 +61,8 @@ const TestFile = () => {
     }
   }, []);
 
+  console.log("Users state:", users);
+
   return (
     <div>
       <h1>Testing Page</h1>
@@ -68,7 +74,7 @@ const TestFile = () => {
           <h2>User Data:</h2>
           {loading && <p>Loading...</p>}
           {error && <p style={{ color: "red" }}>{error}</p>}
-          {users?.map((user) => (
+          {/* {users?.map((user) => (
             <div key={user.id} style={{ marginBottom: "20px" }}>
               <h3>{user.name}</h3>
               <p>Username: {user.username}</p>
@@ -83,7 +89,7 @@ const TestFile = () => {
               <p>Catch Phrase: {user.company.catchPhrase}</p>
               <p>BS: {user.company.bs}</p>
             </div>
-          ))}
+          ))} */}
         </div>
       )}
     </div>
