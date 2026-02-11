@@ -30,28 +30,28 @@ export default async function MoviesPage({
   }
 
   return (
-    <main className="max-w-6xl mx-auto p-6">
+    <main className="max-w-7xl mx-auto px-6 py-16">
       <h1 className="text-3xl font-bold mb-6 text-white">
         Latest Movies - Page {currentPage}
       </h1>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
         {data.result.map((movie) => (
           <div
             key={movie.imdb_id}
-            className="bg-gray-800 p-4 rounded-lg border border-gray-700"
+            className="bg-[#2A2A2A] p-4 rounded-lg border border-[#3A3A3A] hover:border-[#FFD700] hover:scale-105 transition-all duration-300 group cursor-pointer"
           >
-            <h3 className="text-sm font-semibold truncate text-white">
+            <h3 className="text-sm font-semibold truncate text-white group-hover:text-[#FFD700] transition-colors">
               {movie.title}
             </h3>
-            <span className="text-xs text-blue-400 uppercase">
+            <span className="text-xs text-[#FFD700] uppercase font-medium">
               {movie.quality}
             </span>
             <h4 className="text-xs text-gray-400 uppercase">{movie.tmdb_id}</h4>
             <a
               href={movie.embed_url}
               target="_blank"
-              className="block mt-2 text-center bg-blue-600 text-xs py-1 rounded hover:bg-blue-500 transition"
+              className="block mt-2 text-center bg-[#FFD700] text-[#1E1E1E] text-xs py-2 rounded font-semibold hover:bg-[#E6C200] transition-all duration-300"
             >
               Watch Now
             </a>
