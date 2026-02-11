@@ -5,6 +5,15 @@ async function getStatus() {
   // If the API returns an error, handle it
   if (!res.ok) {
     return { status: "error", message: "Failed to fetch status" };
+  }
+  return res.json();
+}
+
+export default async function StatusPage() {
+  const data = await getStatus();
+
+  return (
+    <main className="p-8">
       <h1 className="text-2xl font-bold mb-4">Service Status</h1>
       <pre className="bg-gray-900 text-white p-4 rounded">
         {JSON.stringify(data, null, 2)}
