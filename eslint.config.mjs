@@ -35,7 +35,6 @@ const eslintConfig = defineConfig([
     files: ["**/*.{ts,tsx}"],
     plugins: {
       "unused-imports": unusedImports,
-      "@typescript-eslint": tseslint,
     },
     languageOptions: {
       parser: tsParser,
