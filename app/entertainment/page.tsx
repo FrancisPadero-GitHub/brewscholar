@@ -1,66 +1,67 @@
+
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Film, Star, TrendingUp, Clock, Search } from "lucide-react";
-import Link from "next/link";
-import { categories } from "@/data/entertaiment/data";
-import PaginationControls from "@/components/custom/entertainment/movies/PaginationControls";
-import { ApiResponse } from "@/types/entertainment/movies/movie";
+} from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Film, Star, TrendingUp, Clock, Search } from "lucide-react"
+import Link from "next/link"
+import { categories } from "@/data/entertaiment/data"
+import PaginationControls from "@/components/custom/entertainment/movies/PaginationControls"
+import type { ApiResponse } from "@/types/entertainment/movies/movie"
 
 async function getMovies(page: string) {
   const res = await fetch(
-    `https://vidsrc-embed.ru/movies/latest/page-${page}.json`,
+    `https://vidsrc-embed.su/movies/latest/page-${page}.json`,
     {
       next: { revalidate: 3600 }, // Cache data for 1 hour
-    },
-  );
+    }
+  )
 
-  if (!res.ok) return null;
-  return res.json() as Promise<ApiResponse>;
+  if (!res.ok) return null
+  return res.json() as Promise<ApiResponse>
 }
 
 export default async function MovieHub({
   searchParams,
 }: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
-  const params = await searchParams;
-  const currentPage = typeof params.page === "string" ? params.page : "1";
-  const data = await getMovies(currentPage);
+  const params = await searchParams
+  const currentPage = typeof params.page === "string" ? params.page : "1"
+  const data = await getMovies(currentPage)
 
   if (!data || !data.result) {
     return (
-      <div className="min-h-screen bg-[#1E1E1E] text-white flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-background text-foreground">
         <div className="text-center">
-          <p className="text-xl text-gray-400">Failed to load movies.</p>
-          <p className="text-sm text-gray-500 mt-2">Please try again later.</p>
+          <p className="text-xl text-muted-foreground">Failed to load movies.</p>
+          <p className="mt-2 text-sm text-muted-foreground">Please try again later.</p>
         </div>
       </div>
-    );
+    )
   }
 
   return (
-    <div className="min-h-screen bg-[#1E1E1E] text-white">
-      <div className="max-w-7xl mx-auto px-6 py-16">
+    <div className="min-h-screen bg-background text-foreground">
+      <div className="mx-auto max-w-7xl px-6 py-16">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
+          <div className="mb-6 flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-[#FFD700] mb-2">
+              <h1 className="mb-2 text-3xl font-bold text-primary">
                 Movie Hub
               </h1>
-              <p className="text-gray-400">
+              <p className="text-muted-foreground">
                 Your Gateway to Entertainment - Page {currentPage}
               </p>
             </div>
             <Link href="/entertainment/watch">
-              <Button className="bg-[#FFD700] text-[#1E1E1E] hover:bg-[#E6C200] font-semibold transition-all duration-300">
+              <Button className="bg-primary font-semibold text-primary-foreground transition-all duration-300 hover:bg-primary/90">
                 <Film className="mr-2 h-4 w-4" />
                 Browse All
               </Button>
@@ -69,24 +70,24 @@ export default async function MovieHub({
 
           {/* Search Bar */}
           <div className="relative max-w-2xl">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Search className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 transform text-muted-foreground" />
             <Input
               placeholder="Search for movies, shows, or genres..."
-              className="pl-10 bg-[#2A2A2A] border-[#3A3A3A] text-white placeholder:text-gray-500"
+              className="border-border bg-card pl-10 text-foreground placeholder:text-muted-foreground"
             />
           </div>
         </div>
 
         {/* Category Tabs */}
-        <div className="flex gap-4 mb-8 overflow-x-auto pb-2">
+        <div className="mb-8 flex gap-4 overflow-x-auto pb-2">
           {categories.map((category, index) => (
             <Button
               key={index}
               variant={index === 0 ? "default" : "outline"}
               className={
                 index === 0
-                  ? "bg-[#FFD700] text-[#1E1E1E] hover:bg-[#E6C200] font-semibold whitespace-nowrap transition-all duration-300"
-                  : "border-[#3A3A3A] text-white hover:bg-[#2A2A2A] hover:border-[#FFD700] whitespace-nowrap transition-all duration-300"
+                  ? "bg-primary font-semibold whitespace-nowrap text-primary-foreground transition-all duration-300 hover:bg-primary/90"
+                  : "border-border whitespace-nowrap text-foreground transition-all duration-300 hover:border-primary hover:bg-card"
               }
             >
               {category}
@@ -95,85 +96,85 @@ export default async function MovieHub({
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="bg-[#2A2A2A] border-[#3A3A3A] hover:border-[#FFD700] transition-all duration-300">
+        <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
+          <Card className="border-border bg-card transition-all duration-300 hover:border-primary">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-gray-400">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
                 Total Movies
               </CardTitle>
-              <Film className="h-4 w-4 text-[#FFD700]" />
+              <Film className="h-4 w-4 text-primary" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-white">
+              <div className="text-2xl font-bold text-foreground">
                 {data.result.length}
               </div>
-              <p className="text-xs text-gray-500 mt-1">On this page</p>
+              <p className="mt-1 text-xs text-muted-foreground">On this page</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-[#2A2A2A] border-[#3A3A3A] hover:border-[#FFD700] transition-all duration-300">
+          <Card className="border-border bg-card transition-all duration-300 hover:border-primary">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-gray-400">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
                 Trending Now
               </CardTitle>
-              <TrendingUp className="h-4 w-4 text-[#FFD700]" />
+              <TrendingUp className="h-4 w-4 text-primary" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-white">567</div>
-              <p className="text-xs text-gray-500 mt-1">+23% this week</p>
+              <div className="text-2xl font-bold text-foreground">567</div>
+              <p className="mt-1 text-xs text-muted-foreground">+23% this week</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-[#2A2A2A] border-[#3A3A3A] hover:border-[#FFD700] transition-all duration-300">
+          <Card className="border-border bg-card transition-all duration-300 hover:border-primary">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-gray-400">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
                 Watch Time
               </CardTitle>
-              <Clock className="h-4 w-4 text-[#FFD700]" />
+              <Clock className="h-4 w-4 text-primary" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-white">89h</div>
-              <p className="text-xs text-gray-500 mt-1">This month</p>
+              <div className="text-2xl font-bold text-foreground">89h</div>
+              <p className="mt-1 text-xs text-muted-foreground">This month</p>
             </CardContent>
           </Card>
         </div>
 
         {/* Movie Grid */}
         <div>
-          <h2 className="text-2xl font-bold mb-6 text-white">
+          <h2 className="mb-6 text-2xl font-bold text-foreground">
             Featured Content
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
             {data.result.map((movie) => (
               <Card
                 key={movie.imdb_id}
-                className="bg-[#2A2A2A] border-[#3A3A3A] hover:border-[#FFD700] hover:scale-105 transition-all duration-300 cursor-pointer group"
+                className="group cursor-pointer border-border bg-card transition-all duration-300 hover:scale-105 hover:border-primary"
               >
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <CardTitle className="text-white group-hover:text-[#FFD700] transition-colors text-base line-clamp-2">
+                      <CardTitle className="line-clamp-2 text-base text-foreground transition-colors group-hover:text-primary">
                         {movie.title}
                       </CardTitle>
-                      <CardDescription className="text-gray-400 text-sm mt-1">
-                        <span className="text-xs text-[#FFD700] uppercase font-medium">
+                      <CardDescription className="mt-1 text-sm text-muted-foreground">
+                        <span className="text-xs font-medium text-primary uppercase">
                           {movie.quality}
                         </span>
                       </CardDescription>
                     </div>
-                    <div className="bg-[#FFD700] p-2 rounded-lg group-hover:scale-110 transition-transform duration-300">
-                      <Film className="h-5 w-5 text-[#1E1E1E]" />
+                    <div className="rounded-lg bg-primary p-2 transition-transform duration-300 group-hover:scale-110">
+                      <Film className="h-5 w-5 text-primary-foreground" />
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-xs text-gray-400">
+                  <div className="mb-4 flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">
                       ID: {movie.tmdb_id}
                     </span>
                     <div className="flex items-center gap-1">
-                      <Star className="h-4 w-4 text-[#FFD700] fill-[#FFD700]" />
-                      <span className="text-sm text-white">4.5</span>
+                      <Star className="h-4 w-4 fill-primary text-primary" />
+                      <span className="text-sm text-foreground">4.5</span>
                     </div>
                   </div>
                   <a
@@ -181,7 +182,7 @@ export default async function MovieHub({
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <Button className="w-full bg-[#FFD700] text-[#1E1E1E] hover:bg-[#E6C200] font-semibold transition-all duration-300">
+                    <Button className="w-full bg-primary font-semibold text-primary-foreground transition-all duration-300 hover:bg-primary/90">
                       Watch Now
                     </Button>
                   </a>
@@ -200,5 +201,5 @@ export default async function MovieHub({
         </div>
       </div>
     </div>
-  );
+  )
 }

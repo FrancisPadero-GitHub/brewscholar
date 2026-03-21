@@ -1,4 +1,4 @@
-import { Film, GraduationCap, FolderOpen, Wallet } from "lucide-react";
+import { Film, GraduationCap, FolderOpen, Wallet } from "lucide-react"
 
 export const features = [
   {
@@ -7,7 +7,6 @@ export const features = [
     description: "Browse and discover your favorite movies and shows",
     icon: Film,
     href: "/entertainment",
-    color: "#FFD700",
   },
   {
     id: 2,
@@ -15,7 +14,6 @@ export const features = [
     description: "Find and apply for educational opportunities",
     icon: GraduationCap,
     href: "/scholarship",
-    color: "#FFD700",
   },
   {
     id: 3,
@@ -23,7 +21,6 @@ export const features = [
     description: "Securely store and manage your files",
     icon: FolderOpen,
     href: "/files-hosting",
-    color: "#FFD700",
   },
   {
     id: 4,
@@ -31,6 +28,5 @@ export const features = [
     description: "Track expenses and manage your finances",
     icon: Wallet,
     href: "/budget",
-    color: "#FFD700",
   },
-];
+]

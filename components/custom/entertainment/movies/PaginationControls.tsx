@@ -1,42 +1,42 @@
 // components/PaginationControls.tsx
-"use client";
+"use client"
 
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation"
 
 interface PaginationProps {
-  currentPage: number;
-  route?: string;
+  currentPage: number
+  route?: string
 }
 
 export default function PaginationControls({
   currentPage,
   route = "/entertainment/movies",
 }: PaginationProps) {
-  const router = useRouter();
+  const router = useRouter()
 
   const handlePageChange = (newPage: number) => {
     // Navigate to the new URL with the page query param
-    router.push(`${route}?page=${newPage}`);
-  };
+    router.push(`${route}?page=${newPage}`)
+  }
 
   return (
-    <div className="flex justify-center items-center gap-4 mt-10">
+    <div className="mt-10 flex items-center justify-center gap-4">
       <button
         disabled={currentPage <= 1}
         onClick={() => handlePageChange(currentPage - 1)}
-        className="px-4 py-2 bg-[#2A2A2A] border border-[#3A3A3A] rounded hover:border-[#FFD700] disabled:opacity-50 disabled:hover:border-[#3A3A3A] text-white font-medium transition-all duration-300"
+        className="rounded border border-border bg-card px-4 py-2 font-medium text-foreground transition-all duration-300 hover:border-primary disabled:opacity-50 disabled:hover:border-border"
       >
         Previous
       </button>
 
-      <span className="text-white font-medium">Page {currentPage}</span>
+      <span className="font-medium text-foreground">Page {currentPage}</span>
 
       <button
         onClick={() => handlePageChange(currentPage + 1)}
-        className="px-4 py-2 bg-[#FFD700] text-[#1E1E1E] rounded hover:bg-[#E6C200] font-semibold transition-all duration-300"
+        className="rounded bg-primary px-4 py-2 font-semibold text-primary-foreground transition-all duration-300 hover:bg-primary/90"
       >
         Next
       </button>
     </div>
-  );
+  )
 }

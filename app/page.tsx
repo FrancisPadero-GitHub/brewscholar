@@ -9,7 +9,6 @@ import {
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
 import { features } from "@/data/landing_page/data"
-import brew_scholar from "../public/brew_scholar_dark.png"
 import Image from "next/image"
 
 const LandingPage = () => {
@@ -21,19 +20,23 @@ const LandingPage = () => {
         <div className="relative mx-auto max-w-7xl px-6 py-16">
           <div className="mb-12 text-center">
             <div className="relative mx-auto mb-6 h-40 w-40">
+              {/* Show the logo with the foreground color in both light and dark modes */}
               <Image
-                src={brew_scholar}
-                alt="BrewScholar Logo"
+                src="/brew_scholar_dark.png"
+                alt="BrewScholar Logo Light"
                 fill
-                className="object-contain brightness-0 invert filter"
+                className="block object-contain text-foreground filter dark:hidden"
+                sizes="160"
+              />
+              <Image
+                src="/brew_scholar_light.png"
+                alt="BrewScholar Logo Dark"
+                fill
+                className="hidden object-contain text-foreground filter dark:block"
                 sizes="160"
               />
             </div>
 
-            {/* <h1 className="text-5xl font-bold mb-4">
-              <span className="text-foreground">Brew</span>
-              <span className="text-primary">Scholar</span>
-            </h1> */}
             <p className="mx-auto max-w-2xl text-xl text-muted-foreground">
               Pour over opportunities and brew up your brightest future with
               BrewScholar
