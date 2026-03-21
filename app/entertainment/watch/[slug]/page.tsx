@@ -1,37 +1,37 @@
-"use client";
-import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+"use client"
+import { useState } from "react"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/components/ui/card"
 
 // components
-import MoviePlayer from "../../../features/entertainment/player/player";
+import MoviePlayer from "../../../../features/entertainment/player/player"
 
 const Watch = () => {
-  const [api, setAPI] = useState<"www.vidking.net" | "vidsrc.to">("vidsrc.to"); // Default API
+  const [api, setAPI] = useState<"www.vidking.net" | "vidsrc.to">("vidsrc.to") // Default API
 
-  const [movieId, setMovieId] = useState("");
-  const [inputValue, setInputValue] = useState("");
+  const [movieId, setMovieId] = useState("")
+  const [inputValue, setInputValue] = useState("")
 
-  const [contentType, setContentType] = useState<"movie" | "tv">("movie");
-  const [season, setSeason] = useState(1);
-  const [episode, setEpisode] = useState(1);
-  const [showPlayer, setShowPlayer] = useState(true);
+  const [contentType, setContentType] = useState<"movie" | "tv">("movie")
+  const [season, setSeason] = useState(1)
+  const [episode, setEpisode] = useState(1)
+  const [showPlayer, setShowPlayer] = useState(true)
 
   const handleLoadMovie = () => {
-    setMovieId(inputValue);
-    setShowPlayer(true);
-  };
+    setMovieId(inputValue)
+    setShowPlayer(true)
+  }
 
   return (
-    <main className="container mx-auto p-4 space-y-6">
-      <h1 className="text-3xl font-bold mb-6">Movie & TV Player</h1>
+    <main className="container mx-auto space-y-6 p-4">
+      <h1 className="mb-6 text-3xl font-bold">Movie & TV Player</h1>
       <Card>
         {/* <CardHeader>
           <CardTitle>Enter Content Details</CardTitle>
@@ -134,7 +134,7 @@ const Watch = () => {
         </div>
       )}
     </main>
-  );
-};
+  )
+}
 
-export default Watch;
+export default Watch
