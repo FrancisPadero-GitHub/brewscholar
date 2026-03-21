@@ -1,40 +1,40 @@
-import Link from "next/link";
+import Link from "next/link"
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
-import { features } from "@/data/landing_page/data";
-import brew_scholar from "../public/brew_scholar_dark.png";
-import Image from "next/image";
+} from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { ArrowRight } from "lucide-react"
+import { features } from "@/data/landing_page/data"
+import brew_scholar from "../public/brew_scholar_dark.png"
+import Image from "next/image"
 
 const LandingPage = () => {
   return (
-    <div className="min-h-screen bg-[#1E1E1E] text-white">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Header Section */}
       <div className="relative overflow-hidden">
-        <div className="absolute inset-0 from-[#2A2A2A] to-transparent h-96" />
-        <div className="relative max-w-7xl mx-auto px-6 py-16">
-          <div className="text-center mb-12">
-            <div className="mx-auto mb-6 relative w-40 h-40">
+        <div className="absolute inset-0 h-96 bg-linear-to-b from-card to-transparent" />
+        <div className="relative mx-auto max-w-7xl px-6 py-16">
+          <div className="mb-12 text-center">
+            <div className="relative mx-auto mb-6 h-40 w-40">
               <Image
                 src={brew_scholar}
                 alt="BrewScholar Logo"
                 fill
-                className="object-contain filter invert brightness-0"
+                className="object-contain brightness-0 invert filter"
                 sizes="160"
               />
             </div>
 
             {/* <h1 className="text-5xl font-bold mb-4">
-              <span className="text-white">Brew</span>
-              <span className="text-[#FFD700]">Scholar</span>
+              <span className="text-foreground">Brew</span>
+              <span className="text-primary">Scholar</span>
             </h1> */}
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+            <p className="mx-auto max-w-2xl text-xl text-muted-foreground">
               Pour over opportunities and brew up your brightest future with
               BrewScholar
             </p>
@@ -43,73 +43,73 @@ const LandingPage = () => {
       </div>
 
       {/* Features Grid */}
-      <div className="max-w-7xl mx-auto px-6 pb-20">
+      <div className="mx-auto max-w-7xl px-6 pb-20">
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-white mb-2">
+          <h2 className="mb-2 text-3xl font-bold text-foreground">
             Explore Features
           </h2>
-          <p className="text-gray-400">Choose a service to get started</p>
+          <p className="text-muted-foreground">
+            Choose a service to get started
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           {features.map((feature) => {
-            const Icon = feature.icon;
+            const Icon = feature.icon
             return (
               <Link href={feature.href} key={feature.id}>
-                <Card className="bg-[#2A2A2A] border-[#3A3A3A] hover:border-[#FFD700] transition-all cursor-pointer group h-full hover:scale-105 duration-300">
+                <Card className="group h-full cursor-pointer border-border bg-card transition-all duration-300 hover:scale-105 hover:border-primary">
                   <CardHeader>
-                    <div className="flex items-center justify-center mb-4">
-                      <div className="bg-[#FFD700] p-4 rounded-xl group-hover:scale-110 transition-transform duration-300">
-                        <Icon className="h-8 w-8 text-[#1E1E1E]" />
+                    <div className="mb-4 flex items-center justify-center">
+                      <div className="rounded-xl bg-primary p-4 transition-transform duration-300 group-hover:scale-110">
+                        <Icon className="h-8 w-8 text-card" />
                       </div>
                     </div>
-                    <CardTitle className="text-white text-center group-hover:text-[#FFD700] transition-colors">
+                    <CardTitle className="text-center text-foreground transition-colors group-hover:text-primary">
                       {feature.title}
                     </CardTitle>
-                    <CardDescription className="text-gray-400 text-center text-sm">
+                    <CardDescription className="text-center text-sm text-muted-foreground">
                       {feature.description}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <Button className="w-full bg-[#FFD700] text-[#1E1E1E] hover:bg-[#FFD700]/90 font-semibold group-hover:gap-2 transition-all">
+                    <Button className="w-full bg-primary font-semibold text-card transition-all group-hover:gap-2 hover:bg-primary/90">
                       Get Started
-                      <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity -ml-4 group-hover:ml-0" />
+                      <ArrowRight className="-ml-4 h-4 w-4 opacity-0 transition-opacity group-hover:ml-0 group-hover:opacity-100" />
                     </Button>
                   </CardContent>
                 </Card>
               </Link>
-            );
+            )
           })}
         </div>
 
         {/* Stats Section */}
-        <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="bg-[#2A2A2A] border-[#3A3A3A] text-center">
+        <div className="mt-20 grid grid-cols-1 gap-6 md:grid-cols-3">
+          <Card className="border-border bg-card text-center">
             <CardContent className="pt-6">
-              <div className="text-4xl font-bold text-[#FFD700] mb-2">
-                1,234+
-              </div>
-              <p className="text-gray-400">Active Users</p>
+              <div className="mb-2 text-4xl font-bold text-primary">1,234+</div>
+              <p className="text-muted-foreground">Active Users</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-[#2A2A2A] border-[#3A3A3A] text-center">
+          <Card className="border-border bg-card text-center">
             <CardContent className="pt-6">
-              <div className="text-4xl font-bold text-[#FFD700] mb-2">567+</div>
-              <p className="text-gray-400">Opportunities</p>
+              <div className="mb-2 text-4xl font-bold text-primary">567+</div>
+              <p className="text-muted-foreground">Opportunities</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-[#2A2A2A] border-[#3A3A3A] text-center">
+          <Card className="border-border bg-card text-center">
             <CardContent className="pt-6">
-              <div className="text-4xl font-bold text-[#FFD700] mb-2">89%</div>
-              <p className="text-gray-400">Success Rate</p>
+              <div className="mb-2 text-4xl font-bold text-primary">89%</div>
+              <p className="text-muted-foreground">Success Rate</p>
             </CardContent>
           </Card>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default LandingPage;
+export default LandingPage
