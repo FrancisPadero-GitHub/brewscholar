@@ -6,6 +6,13 @@ import { useParams } from "next/navigation"
 import Link from "next/link"
 import { motion } from "motion/react"
 import { ArrowLeft } from "lucide-react"
+import Image from "next/image"
+
+// helpers
+import { BACKDROP_BASE_URL } from "@/constants/image-size"
+
+// types
+import { useFetchMovieDetails } from "@/hooks/entertainment/fetch/useFetchMovieDetails"
 
 // components
 import VidKingPlayer from "@/components/custom/entertainment/player/VidKingNet"
@@ -16,6 +23,7 @@ import RelatedMoviesSection from "@/components/custom/entertainment/watch/relate
 const Watch = () => {
   const params = useParams()
   const movieId = params.id as string
+  const { data: movie } = useFetchMovieDetails(movieId)
 
   if (!movieId)
     return (
@@ -26,8 +34,28 @@ const Watch = () => {
     )
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      <div className="mx-auto max-w-6xl space-y-6 px-4 pt-8 pb-20">
+    <main className="relative min-h-screen bg-background text-foreground">
+      {/* ── Backdrop image behind player ── */}
+      {movie?.backdrop_path && (
+        // FIX 1: Removed -z-10 and replaced with z-0 so it isn't hidden behind bg-background
+        <div className="pointer-events-none absolute top-0 left-0 z-0 h-[50vh] w-full overflow-hidden">
+          <Image
+            src={`${BACKDROP_BASE_URL}${movie.backdrop_path}`}
+            alt={movie.title || "Backdrop"}
+            fill
+            sizes="100vw"
+            className="object-cover object-top"
+            priority
+          />
+          {/* Gradient overlays for readability */}
+          <div className="absolute inset-0 bg-linear-to-t from-background via-background/60 to-background/10" />
+          <div className="absolute inset-0 bg-linear-to-r from-background via-transparent to-transparent" />
+        </div>
+      )}
+
+      {/* ── Main Content ── */}
+      {/* FIX 2: Added `relative z-10` here so this entire block stacks ON TOP of the absolute backdrop */}
+      <div className="relative z-10 mx-auto max-w-6xl space-y-6 px-4 pt-8 pb-20">
         {/* ── Top nav row */}
         <div className="flex items-center gap-4">
           <Link href="/entertainment">
