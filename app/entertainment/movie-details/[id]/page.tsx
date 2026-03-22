@@ -252,8 +252,8 @@ export default function MovieDetails() {
               </span>
             </div>
 
-            {/* Play now */}
             <div className="flex items-center gap-5">
+              {/* Official Site */}
               {movie.homepage && (
                 <Link
                   href={movie.homepage}
@@ -269,6 +269,8 @@ export default function MovieDetails() {
                   </Button>
                 </Link>
               )}
+
+              {/* Play now */}
               <motion.div
                 animate={{ y: [0, -5, 0] }}
                 transition={{
