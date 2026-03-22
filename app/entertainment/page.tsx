@@ -138,7 +138,7 @@ export default function MovieHub() {
         </div>
 
         {/* ── Movie Grid ── */}
-        <div>
+        <main> 
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Flame className="h-4 w-4 text-primary" />
@@ -184,7 +184,9 @@ export default function MovieHub() {
                       className={`absolute top-2 right-2 flex items-center gap-1 rounded-full bg-background/80 px-2 py-0.5 text-xs font-bold backdrop-blur-sm ${getRatingColor(movie.vote_average)}`}
                     >
                       <Star className="h-2.5 w-2.5 fill-current" />
-                      {movie.vote_average ? movie.vote_average.toFixed(1) : "NR"}
+                      {movie.vote_average
+                        ? movie.vote_average.toFixed(1)
+                        : "NR"}
                     </div>
 
                     {/* Language tag */}
@@ -217,7 +219,7 @@ export default function MovieHub() {
               </Link>
             ))}
           </div>
-        </div>
+        </main>
 
         {/* Pagination */}
         {popularMovies.total_pages > 1 && (
