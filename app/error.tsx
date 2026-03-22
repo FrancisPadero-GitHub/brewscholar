@@ -27,7 +27,7 @@ export default function ErrorBoundary({
           We hit an unexpected error while loading this page. You can retry or
           head back to the landing page.
         </p>
-        {error?.digest && (
+        {error.digest && (
           <p className="text-xs text-gray-500">Error digest: {error.digest}</p>
         )}
         <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">

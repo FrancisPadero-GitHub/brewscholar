@@ -29,7 +29,7 @@ export default function GlobalError({
             A fatal error occurred. Try reloading the app or come back in a
             moment.
           </p>
-          {error?.digest && (
+          {error.digest && (
             <p className="text-xs text-gray-500">
               Error digest: {error.digest}
             </p>

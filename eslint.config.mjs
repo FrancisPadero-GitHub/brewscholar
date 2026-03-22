@@ -1,12 +1,11 @@
 // ESLint configuration for Next.js 16, React 19, TypeScript, and shadcn/ui
 // Enforces best practices, code quality, and project conventions
 // See: https://nextjs.org/docs/pages/building-your-application/configuring/eslint
-import { defineConfig, globalIgnores } from "eslint/config";
-import nextVitals from "eslint-config-next/core-web-vitals"; // Next.js recommended rules for web vitals
-import nextTs from "eslint-config-next/typescript"; // Next.js TypeScript rules
-import unusedImports from "eslint-plugin-unused-imports"; // Plugin to catch unused imports/vars
-import tseslint from "@typescript-eslint/eslint-plugin"; // TypeScript-specific linting rules
-import tsParser from "@typescript-eslint/parser"; // TypeScript parser for ESLint
+import { defineConfig, globalIgnores } from "eslint/config"
+import nextVitals from "eslint-config-next/core-web-vitals" // Next.js recommended rules for web vitals
+import nextTs from "eslint-config-next/typescript" // Next.js TypeScript rules
+import unusedImports from "eslint-plugin-unused-imports" // Plugin to catch unused imports/vars
+import tsParser from "@typescript-eslint/parser" // TypeScript parser for ESLint
 
 // Compose ESLint config using Next.js presets and custom rules
 const eslintConfig = defineConfig([
@@ -93,7 +92,7 @@ const eslintConfig = defineConfig([
       eqeqeq: ["error", "always", { null: "ignore" }], // Require === except for null comparisons
     },
   },
-]);
+])
 
 // Export the composed ESLint config
-export default eslintConfig;
+export default eslintConfig

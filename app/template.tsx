@@ -1,9 +1,9 @@
-import type { ReactNode } from "react";
+import type { ReactNode } from "react"
 
 export default function Template({
   children,
 }: Readonly<{
-  children: ReactNode;
+  children: ReactNode
 }>) {
-  return <>{children}</>;
+  return <div className="animate-in duration-300 fade-in">{children}</div>
 }
