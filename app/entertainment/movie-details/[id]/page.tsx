@@ -129,6 +129,7 @@ export default function MovieDetails() {
             src={`${BACKDROP_BASE_URL}${movie.backdrop_path}`}
             alt={movie.title}
             fill
+            sizes="100vw"
             className="object-cover object-top"
             priority
           />
@@ -166,6 +167,7 @@ export default function MovieDetails() {
                 src={`${IMAGE_BASE_URL}${movie.poster_path}`}
                 alt={movie.title}
                 fill
+                sizes="(max-width: 768px) 176px, 224px"
                 className="object-cover"
                 priority
               />
@@ -278,7 +280,7 @@ export default function MovieDetails() {
                 <Link href={`/entertainment/watch/${movie.id}`}>
                   <Button
                     size="sm"
-                    className="mt-1 gap-2 border border-primary/50 bg-primary font-bold text-primary-foreground shadow-[0_0_20px_calc(var(--spacing)*1)_var(--primary)] transition-all duration-300 hover:bg-primary/90 hover:shadow-[0_0_30px_calc(var(--spacing)*1.5)_var(--primary)]"
+                    className="shadow-[0_0_20px_--spacing(1)_var(--primary)]transition-all mt-1 gap-2 border border-primary/50 bg-primary font-bold text-primary-foreground duration-300 hover:bg-primary/90 hover:shadow-[0_0_30px_--spacing(1.5)_var(--primary)]"
                   >
                     <Play className="h-4 w-4 fill-current" />
                     Play Now
@@ -365,6 +367,7 @@ export default function MovieDetails() {
                             src={`${IMAGE_BASE_URL}${company.logo_path}`}
                             alt={company.name}
                             fill
+                            sizes="64px"
                             className="object-contain"
                           />
                         </div>

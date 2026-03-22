@@ -74,6 +74,7 @@ export default function MovieHub() {
             src={`https://image.tmdb.org/t/p/w1280${featuredMovie.backdrop_path}`}
             alt={featuredMovie.title}
             fill
+            sizes="100vw"
             className="object-cover object-top opacity-30"
             priority
           />
@@ -163,6 +164,7 @@ export default function MovieHub() {
                         src={`${IMAGE_BASE_URL}${movie.poster_path}`}
                         alt={movie.title}
                         fill
+                        sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
                         loading="lazy"
                       />
