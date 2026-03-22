@@ -13,17 +13,26 @@ import {
 interface PaginationProps {
   currentPage: number
   totalPages?: number // Required for the advanced ellipsis layout
-  route?: string
+  route?: string // Default route if none is provided
+  onPageChange?: (page: number) => void
 }
 
 export default function PaginationControls({
   currentPage,
   totalPages,
   route = "/entertainment/movies", // Default route if none is provided
+  onPageChange,
 }: PaginationProps) {
   // Helper to construct the URL string
   const createPageUrl = (pageNumber: number) => {
     return `${route}?page=${pageNumber}`
+  }
+
+  const handlePageChange = (e: React.MouseEvent, pageNumber: number) => {
+    if (onPageChange) {
+      e.preventDefault()
+      onPageChange(pageNumber)
+    }
   }
 
   // Disable 'Next' if we hit the total pages, or default to false if totalPages is unknown
@@ -63,11 +72,15 @@ export default function PaginationControls({
         <PaginationItem>
           <PaginationPrevious
             href={isPrevDisabled ? "#" : createPageUrl(currentPage - 1)}
+            onClick={(e) => {
+              if (isPrevDisabled) e.preventDefault()
+              else handlePageChange(e, currentPage - 1)
+            }}
             aria-disabled={isPrevDisabled}
             className={
               isPrevDisabled
                 ? "pointer-events-none opacity-50"
-                : "transition-all hover:text-primary"
+                : "transition-all hover:text-primary cursor-pointer"
             }
           />
         </PaginationItem>
@@ -81,8 +94,9 @@ export default function PaginationControls({
               ) : (
                 <PaginationLink
                   href={createPageUrl(page as number)}
+                  onClick={(e) => handlePageChange(e, page as number)}
                   isActive={currentPage === page}
-                  className={currentPage === page ? "pointer-events-none" : "transition-all hover:text-primary"}
+                  className={currentPage === page ? "pointer-events-none" : "transition-all hover:text-primary cursor-pointer"}
                 >
                   {page}
                 </PaginationLink>
@@ -102,11 +116,15 @@ export default function PaginationControls({
         <PaginationItem>
           <PaginationNext
             href={isNextDisabled ? "#" : createPageUrl(currentPage + 1)}
+            onClick={(e) => {
+              if (isNextDisabled) e.preventDefault()
+              else handlePageChange(e, currentPage + 1)
+            }}
             aria-disabled={isNextDisabled}
             className={
               isNextDisabled
                 ? "pointer-events-none opacity-50"
-                : "transition-all hover:text-primary"
+                : "transition-all hover:text-primary cursor-pointer"
             }
           />
         </PaginationItem>

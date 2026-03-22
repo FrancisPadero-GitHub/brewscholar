@@ -20,8 +20,8 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { useSearchParams } from "next/navigation"
-import { useCallback, useRef, useState } from "react"
+import { useSearchParams, useRouter, usePathname } from "next/navigation"
+import { useCallback, useRef, useState, useEffect } from "react"
 
 // types
 import type { MoviesApiResponse } from "@/types/entertainment/movies/popular-movies"
@@ -62,7 +62,8 @@ import {
 export default function MovieHub() {
   // Pagination stuff
   const searchParams = useSearchParams()
-  const currentPage = Number(searchParams.get("page")) || 1
+  const router = useRouter()
+  const pathname = usePathname()
 
   // search variable container
   const [searchQuery, setSearchQuery] = useState<string>("")
@@ -81,7 +82,16 @@ export default function MovieHub() {
   }, [])
 
   // Tab filters Store
-  const { activeFilter, setActiveFilter } = useFilterStore()
+  const { activeFilter, setActiveFilter, pages, setPage } = useFilterStore()
+  const currentPage = pages[activeFilter] || 1
+
+  // Sync URL page with store if a user shares a link directly
+  useEffect(() => {
+    const pageFromUrl = Number(searchParams.get("page"))
+    if (pageFromUrl && pageFromUrl !== pages[activeFilter]) {
+      setPage(activeFilter, pageFromUrl)
+    }
+  }, [searchParams, activeFilter, pages, setPage])
 
   // Search movies
   const {
@@ -264,7 +274,10 @@ export default function MovieHub() {
                   <Button
                     key={category}
                     size="sm"
-                    onClick={() => setActiveFilter(category)}
+                    onClick={() => {
+                      setActiveFilter(category)
+                      router.push(`${pathname}?page=${pages[category] || 1}`)
+                    }}
                     variant={isActive ? "default" : "outline"}
                     className={
                       isActive
@@ -382,6 +395,10 @@ export default function MovieHub() {
               // Even though it says a lot of pages, TMDB only returns 500 movies in popular section
               totalPages={Math.min(movies.total_pages, 500)}
               route="/entertainment"
+              onPageChange={(page) => {
+                setPage(activeFilter, page)
+                router.push(`${pathname}?page=${page}`)
+              }}
             />
           </div>
         )}
