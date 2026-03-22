@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { Spinner } from "@/components/ui/spinner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Film, Star, Search, Calendar, ChevronRight, Flame } from "lucide-react"
@@ -21,17 +22,18 @@ import type { MoviesApiResponse } from "@/types/entertainment/movies/popular-mov
 import { useFetchPopularMovies } from "@/hooks/entertainment/fetch/useFetchPopularMovies"
 
 // components
-import { Spinner } from "@/components/ui/spinner"
-import PaginationControls from "@/components/custom/entertainment/movies/PaginationControls"
+import PaginationControls from "@/components/custom/entertainment/PaginationControls"
 
-// for the preview images
-const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500"
+// helper
+import { IMAGE_BASE_URL } from "@/constants/image-size"
+import { getRatingColor } from "@/helpers/entertainment/movie-details/movie-details"
 
-function getRatingColor(rating: number) {
-  if (rating >= 8) return "text-emerald-400"
-  if (rating >= 6.5) return "text-amber-400"
-  return "text-rose-400"
-}
+/** TODO:
+ * - Add search
+ * - Add more movie sections
+ * - Add favorites
+ * - Add watchlists
+ */
 
 export default function MovieHub() {
   // pagination stuff

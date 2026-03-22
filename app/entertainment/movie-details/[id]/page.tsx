@@ -19,14 +19,10 @@ import {
   Award,
 } from "lucide-react"
 
-import { useFetchMovieDetails } from "@/hooks/entertainment/fetch/useFetchMovieDetails"
-import type { MovieDetailsApiResponse } from "@/types/entertainment/movies/movie-details"
-
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { Skeleton } from "@/components/ui/skeleton"
 
 // helpers
 import {
@@ -34,58 +30,17 @@ import {
   formatRuntime,
   formatCurrency,
 } from "@/helpers/entertainment/movie-details/movie-details"
+import { IMAGE_BASE_URL, BACKDROP_BASE_URL } from "@/constants/image-size"
 
-// ─── Constants ────────────────────────────────────────────────────────────────
-const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500"
-const BACKDROP_BASE_URL = "https://image.tmdb.org/t/p/w1280"
+// hooks
+import { useFetchMovieDetails } from "@/hooks/entertainment/fetch/useFetchMovieDetails"
 
-// ─── Skeleton loader ──────────────────────────────────────────────────────────
-function MovieDetailsSkeleton() {
-  return (
-    <div className="min-h-screen bg-background">
-      {/* Backdrop skeleton */}
-      <Skeleton className="h-[55vh] w-full" />
+// types
+import type { MovieDetailsApiResponse } from "@/types/entertainment/movies/movie-details"
 
-      <div className="mx-auto max-w-6xl px-6 pb-20">
-        <div className="-mt-40 flex flex-col gap-8 md:flex-row md:items-end">
-          <Skeleton className="h-72 w-48 shrink-0 rounded-xl" />
-          <div className="flex-1 space-y-4 pb-4">
-            <Skeleton className="h-8 w-3/4" />
-            <Skeleton className="h-4 w-1/2" />
-            <div className="flex gap-2">
-              <Skeleton className="h-6 w-16 rounded-full" />
-              <Skeleton className="h-6 w-20 rounded-full" />
-              <Skeleton className="h-6 w-14 rounded-full" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-// ─── Stat pill ────────────────────────────────────────────────────────────────
-function StatPill({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon: React.ElementType
-  label: string
-  value: string | number
-}) {
-  return (
-    <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm">
-      <Icon className="h-4 w-4 text-primary" />
-      <div>
-        <p className="text-[10px] font-semibold tracking-widest text-muted-foreground uppercase">
-          {label}
-        </p>
-        <p className="font-semibold text-foreground">{value}</p>
-      </div>
-    </div>
-  )
-}
+// components
+import { MovieDetailsSkeleton } from "@/components/custom/entertainment/movie-details/skeleton"
+import { StatPill } from "@/components/custom/entertainment/movie-details/stat-pill"
 
 // ─── Main page
 export default function MovieDetails() {
@@ -468,7 +423,7 @@ export default function MovieDetails() {
               </CardContent>
             </Card>
 
-            {/* IMDB link */}
+            {/* TMDB link */}
             {movie.imdb_id && (
               <Link
                 href={`https://www.themoviedb.org/movie/${movie.id}`}

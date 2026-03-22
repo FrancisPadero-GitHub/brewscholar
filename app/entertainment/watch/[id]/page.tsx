@@ -1,15 +1,15 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
 import { useParams } from "next/navigation"
 import Link from "next/link"
 import { motion } from "motion/react"
 import { ArrowLeft } from "lucide-react"
 
 // components
-import { Button } from "@/components/ui/button"
-import { Spinner } from "@/components/ui/spinner"
 import VidKingPlayer from "@/components/custom/entertainment/player/VidKingNet"
-import { MovieInfoPanel } from "@/components/custom/entertainment/watch/movie-info-panel"
+import MovieInfoPanel from "@/components/custom/entertainment/watch/movie-info-panel"
 import RelatedMoviesSection from "@/components/custom/entertainment/watch/related-movies"
 
 // Main Watch page

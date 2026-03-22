@@ -22,7 +22,7 @@ import { IMAGE_BASE_URL } from "@/constants/image-size"
 import { useFetchMovieDetails } from "@/hooks/entertainment/fetch/useFetchMovieDetails"
 
 // ─── Movie info panel (details beneath the player)
-export function MovieInfoPanel({ movieId }: { movieId: string }) {
+export default function MovieInfoPanel({ movieId }: { movieId: string }) {
   const { data, isFetching } = useFetchMovieDetails(movieId)
   const movie = data as MovieDetailsApiResponse | undefined
 
