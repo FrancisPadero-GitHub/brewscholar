@@ -2,10 +2,7 @@
 import { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 
 // components
 import MoviePlayer from "../../../../features/entertainment/player/player"
@@ -25,7 +22,7 @@ const Watch = () => {
     setMovieId(inputValue)
     setShowPlayer(true)
   }
-
+  // test
   return (
     <main className="container mx-auto space-y-6 p-4">
       <h1 className="mb-6 text-3xl font-bold">Movie & TV Player</h1>
