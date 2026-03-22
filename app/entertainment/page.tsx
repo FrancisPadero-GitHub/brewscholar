@@ -150,77 +150,67 @@ export default function MovieHub() {
 
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             {popularMovies.results.map((movie) => (
-              <Card
+              <Link
                 key={movie.id}
-                className="group flex flex-col gap-0 overflow-hidden border-border bg-muted p-0 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/60 hover:shadow-xl hover:shadow-primary/5"
+                href={`/entertainment/movie-details/${movie.id}`}
+                className="group block"
               >
-                {/* Poster */}
-                <div className="relative aspect-2/3 overflow-hidden bg-muted">
-                  {movie.poster_path ? (
-                    <Image
-                      src={`${IMAGE_BASE_URL}${movie.poster_path}`}
-                      alt={movie.title}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center">
-                      <Film className="h-10 w-10 text-muted" />
-                    </div>
-                  )}
+                <Card className="flex h-full flex-col gap-0 overflow-hidden border-border bg-muted p-0 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/60 hover:shadow-xl hover:shadow-primary/5">
+                  {/* Poster */}
+                  <div className="relative aspect-2/3 overflow-hidden bg-muted">
+                    {movie.poster_path ? (
+                      <Image
+                        src={`${IMAGE_BASE_URL}${movie.poster_path}`}
+                        alt={movie.title}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center">
+                        <Film className="h-10 w-10 text-muted" />
+                      </div>
+                    )}
 
-                  {/* linear overlay on hover */}
-                  <div className="absolute inset-0 bg-linear-to-t from-muted via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                    {/* linear overlay on hover */}
+                    <div className="absolute inset-0 bg-linear-to-t from-muted via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-                  {/* Rating badge */}
-                  <div
-                    className={`absolute top-2 right-2 flex items-center gap-1 rounded-full bg-background/80 px-2 py-0.5 text-xs font-bold backdrop-blur-sm ${getRatingColor(movie.vote_average)}`}
-                  >
-                    <Star className="h-2.5 w-2.5 fill-current" />
-                    {movie.vote_average ? movie.vote_average.toFixed(1) : "NR"}
-                  </div>
-
-                  {/* Language tag */}
-                  <div className="absolute top-2 left-2 rounded-sm bg-background/70 px-1.5 py-0.5 text-[10px] font-bold tracking-wider text-muted-foreground uppercase backdrop-blur-sm">
-                    {movie.original_language}
-                  </div>
-                </div>
-
-                {/* Info */}
-                <CardHeader className="p-3 pb-1">
-                  <CardTitle className="line-clamp-1 text-sm leading-tight font-bold text-foreground transition-colors group-hover:text-primary">
-                    {movie.title}
-                  </CardTitle>
-                  <div className="mt-1 flex items-center gap-1">
-                    <Calendar className="h-2.5 w-2.5 text-muted" />
-                    <span className="text-[11px] text-muted-foreground">
-                      {movie.release_date
-                        ? movie.release_date.split("-")[0]
-                        : "TBA"}
-                    </span>
-                  </div>
-                </CardHeader>
-
-                <CardContent className="mt-auto p-3 pt-2">
-                  <CardDescription className="mb-3 line-clamp-2 text-[11px] leading-relaxed text-muted-foreground">
-                    {movie.overview || "No description available."}
-                  </CardDescription>
-
-                  <Link
-                    // href={`/entertainment/movie/${movie.id}`}
-                    href="#"
-                    className="block w-full"
-                  >
-                    <Button
-                      size="sm"
-                      className="text-muted-background w-full bg-primary text-xs font-semibold transition-all duration-200 group-hover:bg-primary group-hover:text-background hover:text-foreground"
+                    {/* Rating badge */}
+                    <div
+                      className={`absolute top-2 right-2 flex items-center gap-1 rounded-full bg-background/80 px-2 py-0.5 text-xs font-bold backdrop-blur-sm ${getRatingColor(movie.vote_average)}`}
                     >
-                      View Details
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
+                      <Star className="h-2.5 w-2.5 fill-current" />
+                      {movie.vote_average ? movie.vote_average.toFixed(1) : "NR"}
+                    </div>
+
+                    {/* Language tag */}
+                    <div className="absolute top-2 left-2 rounded-sm bg-background/70 px-1.5 py-0.5 text-[10px] font-bold tracking-wider text-muted-foreground uppercase backdrop-blur-sm">
+                      {movie.original_language}
+                    </div>
+                  </div>
+
+                  {/* Info */}
+                  <CardHeader className="p-3 pb-1">
+                    <CardTitle className="line-clamp-1 text-sm leading-tight font-bold text-foreground transition-colors group-hover:text-primary">
+                      {movie.title}
+                    </CardTitle>
+                    <div className="mt-1 flex items-center gap-1">
+                      <Calendar className="h-2.5 w-2.5 text-muted" />
+                      <span className="text-[11px] text-muted-foreground">
+                        {movie.release_date
+                          ? movie.release_date.split("-")[0]
+                          : "TBA"}
+                      </span>
+                    </div>
+                  </CardHeader>
+
+                  <CardContent className="mt-auto p-3 pt-2">
+                    <CardDescription className="line-clamp-2 text-[11px] leading-relaxed text-muted-foreground">
+                      {movie.overview || "No description available."}
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
         </div>

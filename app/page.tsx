@@ -88,7 +88,7 @@ const LandingPage = () => {
         </div>
 
         {/* Stats Section */}
-        <div className="mt-20 grid grid-cols-1 gap-6 md:grid-cols-3">
+        {/* <div className="mt-20 grid grid-cols-1 gap-6 md:grid-cols-3">
           <Card className="border-border bg-card text-center">
             <CardContent className="pt-6">
               <div className="mb-2 text-4xl font-bold text-primary">1,234+</div>
@@ -109,7 +109,7 @@ const LandingPage = () => {
               <p className="text-muted-foreground">Success Rate</p>
             </CardContent>
           </Card>
-        </div>
+        </div> */}
       </div>
     </div>
   )
