@@ -9,24 +9,48 @@ import {
 import { Spinner } from "@/components/ui/spinner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Film, Star, Search, Calendar, ChevronRight, Flame } from "lucide-react"
+import {
+  Film,
+  Star,
+  Search,
+  Calendar,
+  // ChevronRight,
+  Flame,
+  X,
+} from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { categories } from "@/data/entertaiment/data"
 import { useSearchParams } from "next/navigation"
+import { useCallback, useRef, useState } from "react"
 
 // types
 import type { MoviesApiResponse } from "@/types/entertainment/movies/popular-movies"
+import type { NowPlayingMoviesResponse } from "@/types/entertainment/movies/now-playing-movies"
+import type { TopRatedMoviesResponse } from "@/types/entertainment/movies/top-rated-movies"
+import type { UpcomingMoviesResponse } from "@/types/entertainment/movies/upcoming-movies"
+import type { SearchMoviesResponse } from "@/types/entertainment/movies/search-movies"
 
 // hooks
 import { useFetchPopularMovies } from "@/hooks/entertainment/fetch/useFetchPopularMovies"
+import { useFetchNowPlayingMovie } from "@/hooks/entertainment/fetch/useFetchNowPlayingMovie"
+import { useFetchTopRatedMovies } from "@/hooks/entertainment/fetch/useFetchTopRatedMovies"
+import { useFetchUpcomingMovies } from "@/hooks/entertainment/fetch/useFetchUpcomingMovies"
+import { useFetchSearchedMovies } from "@/hooks/entertainment/fetch/useFetchSearchedMovies"
 
 // components
 import PaginationControls from "@/components/custom/entertainment/PaginationControls"
+import SearchResults from "@/components/custom/entertainment/SearchResults"
 
 // helper
 import { IMAGE_BASE_URL } from "@/constants/image-size"
 import { getRatingColor } from "@/helpers/entertainment/movie-details/movie-details"
+import { Separator } from "@/components/ui/separator"
+
+// state management
+import {
+  useFilterStore,
+  CATEGORY_TABS,
+} from "@/features/zustand/entertainment/filter-buttons-store"
 
 /** TODO:
  * - Add search
@@ -36,13 +60,106 @@ import { getRatingColor } from "@/helpers/entertainment/movie-details/movie-deta
  */
 
 export default function MovieHub() {
-  // pagination stuff
+  // Pagination stuff
   const searchParams = useSearchParams()
   const currentPage = Number(searchParams.get("page")) || 1
 
-  const { data, isFetching, isError, error } =
-    useFetchPopularMovies(currentPage)
-  const popularMovies = data as MoviesApiResponse | undefined
+  // search variable container
+  const [searchQuery, setSearchQuery] = useState<string>("")
+  // search bar
+  const searchInputRef = useRef<HTMLInputElement>(null)
+
+  // clear search
+  const clearFilters = useCallback(() => {
+    // 1. Clear the React state
+    setSearchQuery("")
+
+    // 2. Clear the actual visual input box
+    if (searchInputRef.current) {
+      searchInputRef.current.value = ""
+    }
+  }, [])
+
+  // Tab filters Store
+  const { activeFilter, setActiveFilter } = useFilterStore()
+
+  // Search movies
+  const {
+    data: searchedMovie,
+    isFetching: searchedMovieIsFetching,
+    isError: searchedMovieIsError,
+    error: searchedMovieError,
+  } = useFetchSearchedMovies(searchQuery)
+
+  const searchResult = searchedMovie as SearchMoviesResponse | undefined
+
+  // Category Movies Fetching
+  const isPopular = activeFilter === "Popular"
+  const isNowPlaying = activeFilter === "Now Playing"
+  const isTopRated = activeFilter === "Top Rated"
+  const isUpcoming = activeFilter === "Upcoming"
+
+  const {
+    data: popularData,
+    isFetching: popularIsFetching,
+    isError: popularIsError,
+    error: popularError,
+  } = useFetchPopularMovies(currentPage, isPopular)
+  const {
+    data: nowPlayingData,
+    isFetching: nowPlayingIsFetching,
+    isError: nowPlayingIsError,
+    error: nowPlayingError,
+  } = useFetchNowPlayingMovie(currentPage, isNowPlaying)
+  const {
+    data: topRatedData,
+    isFetching: topRatedIsFetching,
+    isError: topRatedIsError,
+    error: topRatedError,
+  } = useFetchTopRatedMovies(currentPage, isTopRated)
+  const {
+    data: upcomingData,
+    isFetching: upcomingIsFetching,
+    isError: upcomingIsError,
+    error: upcomingError,
+  } = useFetchUpcomingMovies(currentPage, isUpcoming)
+
+  // Determine which data and error states to use based on the active filter
+  const categoryData = isPopular
+    ? popularData
+    : isNowPlaying
+      ? nowPlayingData
+      : isTopRated
+        ? topRatedData
+        : upcomingData
+  const isFetching = isPopular
+    ? popularIsFetching
+    : isNowPlaying
+      ? nowPlayingIsFetching
+      : isTopRated
+        ? topRatedIsFetching
+        : upcomingIsFetching
+  const isError = isPopular
+    ? popularIsError
+    : isNowPlaying
+      ? nowPlayingIsError
+      : isTopRated
+        ? topRatedIsError
+        : upcomingIsError
+  const error = isPopular
+    ? popularError
+    : isNowPlaying
+      ? nowPlayingError
+      : isTopRated
+        ? topRatedError
+        : upcomingError
+
+  const movies = categoryData as
+    | MoviesApiResponse
+    | NowPlayingMoviesResponse
+    | TopRatedMoviesResponse
+    | UpcomingMoviesResponse
+    | undefined
 
   if (isFetching)
     return (
@@ -51,7 +168,7 @@ export default function MovieHub() {
       </div>
     )
 
-  if (!popularMovies || isError) {
+  if (!movies || isError) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background text-muted-foreground">
         <div className="space-y-2 text-center">
@@ -65,7 +182,7 @@ export default function MovieHub() {
     )
   }
 
-  const featuredMovie = popularMovies.results[0]
+  const featuredMovie = movies.results[0]
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -92,13 +209,13 @@ export default function MovieHub() {
                   Movie<span className="text-primary">Hub</span>
                 </h1>
               </div>
-              <Link href="#">
+              {/* <Link href="#">
                 <Button className="bg-primary font-bold text-background shadow-lg shadow-primary/20 transition-all hover:bg-primary/80">
                   <Film className="mr-2 h-4 w-4" />
                   Browse All
                   <ChevronRight className="ml-1 h-4 w-4" />
                 </Button>
-              </Link>
+              </Link> */}
             </div>
           </div>
         </div>
@@ -106,53 +223,89 @@ export default function MovieHub() {
 
       <div className="mx-auto max-w-7xl px-6 pb-16">
         {/* ── Search + Categories bar ── */}
-        <div className="sticky top-0 z-20 -mx-6 mb-8 border-b border-border bg-background/80 px-6 py-4 backdrop-blur-md">
+        <div className="sticky top-0 z-20 -mx-6 mb-8 space-y-5 border-border bg-background/80 px-6 backdrop-blur-md">
           <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
             {/* Search */}
             <div className="relative w-full sm:max-w-sm">
-              <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted" />
+              <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search movies, genres…"
-                className="border-border bg-muted pl-9 text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary"
+                ref={searchInputRef}
+                defaultValue={searchQuery}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    setSearchQuery(searchInputRef.current?.value ?? "")
+                  }
+                }}
+                // Added pr-28 to leave space for the button on the right
+                className="border-border bg-muted pr-28 pl-9 text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary"
               />
+
+              {/* Only show the clear button if there is actually a search query */}
+              {searchQuery && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearFilters}
+                  // Added absolute positioning to pin it to the right
+                  className="absolute top-0 right-1 h-7 gap-1 px-2 text-xs text-muted-foreground hover:bg-transparent hover:text-foreground"
+                >
+                  <X className="h-3.5 w-3.5" />
+                  Clear
+                </Button>
+              )}
             </div>
 
             {/* Category pills */}
             <div className="scrollbar-hide flex gap-2 overflow-x-auto pb-0.5">
-              {categories.map((category, index) => (
-                <Button
-                  key={index}
-                  size="sm"
-                  variant={index === 0 ? "default" : "outline"}
-                  className={
-                    index === 0
-                      ? "shrink-0 bg-primary text-xs font-semibold whitespace-nowrap text-background hover:bg-primary/80"
-                      : "shrink-0 border-border text-xs whitespace-nowrap text-muted-foreground hover:border-primary hover:bg-muted hover:text-primary"
-                  }
-                >
-                  {category}
-                </Button>
-              ))}
+              {CATEGORY_TABS.map((category) => {
+                const isActive = activeFilter === category
+                return (
+                  <Button
+                    key={category}
+                    size="sm"
+                    onClick={() => setActiveFilter(category)}
+                    variant={isActive ? "default" : "outline"}
+                    className={
+                      isActive
+                        ? "shrink-0 bg-primary text-xs font-semibold whitespace-nowrap text-background hover:bg-primary/80"
+                        : "shrink-0 border-border text-xs whitespace-nowrap text-muted-foreground hover:border-primary hover:bg-muted hover:text-primary"
+                    }
+                  >
+                    {category}
+                  </Button>
+                )
+              })}
             </div>
           </div>
+          <Separator />
         </div>
 
         {/* ── Movie Grid ── */}
-        <main> 
+        <main>
+          {/* Search results Here */}
+          <SearchResults
+            searchResult={searchResult}
+            searchQuery={searchQuery}
+            isFetching={searchedMovieIsFetching}
+            isError={searchedMovieIsError}
+            error={searchedMovieError}
+          />
+
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Flame className="h-4 w-4 text-primary" />
               <h2 className="text-xs font-semibold tracking-widest text-primary uppercase">
-                Now Trending
+                {activeFilter}
               </h2>
             </div>
             <span className="text-xs font-medium text-muted-foreground">
-              {popularMovies.results.length} results
+              {movies.results.length} results
             </span>
           </div>
 
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-            {popularMovies.results.map((movie) => (
+            {movies.results.map((movie) => (
               <Link
                 key={movie.id}
                 href={`/entertainment/movie-details/${movie.id}`}
@@ -222,12 +375,12 @@ export default function MovieHub() {
         </main>
 
         {/* Pagination */}
-        {popularMovies.total_pages > 1 && (
+        {movies.total_pages > 1 && (
           <div className="mt-14 flex justify-center">
             <PaginationControls
               currentPage={currentPage}
               // Even though it says a lot of pages, TMDB only returns 500 movies in popular section
-              totalPages={Math.min(popularMovies.total_pages, 500)}
+              totalPages={Math.min(movies.total_pages, 500)}
               route="/entertainment"
             />
           </div>
