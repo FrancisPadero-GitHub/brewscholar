@@ -7,6 +7,7 @@ import Link from "next/link"
 import { motion } from "motion/react"
 import { ArrowLeft } from "lucide-react"
 import Image from "next/image"
+import type { JSX } from "react"
 
 // helpers
 import { BACKDROP_BASE_URL } from "@/constants/image-size"
@@ -16,14 +17,30 @@ import { useFetchMovieDetails } from "@/hooks/entertainment/fetch/useFetchMovieD
 
 // components
 import VidKingPlayer from "@/components/custom/entertainment/player/VidKingNet"
+import VidSrcMe from "@/components/custom/entertainment/player/VidSrcMe"
 import MovieInfoPanel from "@/components/custom/entertainment/watch/movie-info-panel"
 import RelatedMoviesSection from "@/components/custom/entertainment/watch/related-movies"
+
+// zustand
+import { ACTIVE_PLAYER } from "@/features/zustand/entertainment/player-buttons-store"
+import { usePlayerStore } from "@/features/zustand/entertainment/player-buttons-store"
+import VidLinkPro from "@/components/custom/entertainment/player/VidLinkPro"
 
 // Main Watch page
 const Watch = () => {
   const params = useParams()
   const movieId = params.id as string
   const { data: movie } = useFetchMovieDetails(movieId)
+
+  // store for the movie players
+  const { setActivePlayer, activePlayer } = usePlayerStore()
+
+  // map of player id -> component (keeps rendering logic explicit)
+  const playerComponents: Record<string, JSX.Element> = {
+    "Player 1": <VidLinkPro id={movieId} />,
+    "Player 2": <VidKingPlayer id={movieId} />,
+    "Player 3": <VidSrcMe id={movieId} />,
+  }
 
   if (!movieId)
     return (
@@ -73,16 +90,44 @@ const Watch = () => {
           </h1>
         </div>
 
-        {/* ── Player */}
+        {/* ── Player ── */}
         <motion.div
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4 }}
           className="overflow-hidden rounded-2xl border border-border bg-card shadow-2xl shadow-primary/10"
         >
-          <VidKingPlayer id={movieId} />
+          {/* Player selection (uses explicit map above) */}
+          {playerComponents[activePlayer]}
         </motion.div>
-
+        <div className="flex items-center justify-between gap-2">
+          <span className="indent-5 text-xs text-primary">
+            Experiencing any issues? Try these alternative players
+          </span>
+          <div className="flex gap-2">
+            {ACTIVE_PLAYER.map((player) => {
+              const isActivePlayer = activePlayer === player
+              return (
+                <Button
+                  key={player}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setActivePlayer(player)
+                  }}
+                  className={[
+                    "shrink-0 text-xs font-semibold whitespace-nowrap transition-all duration-200",
+                    isActivePlayer
+                      ? "scale-105 bg-primary text-foreground shadow-md ring-2 ring-primary/70 hover:bg-primary/90 hover:ring-primary"
+                      : "border-border bg-background/80 text-muted-foreground opacity-80 hover:border-primary hover:bg-muted hover:text-primary hover:opacity-100",
+                  ].join(" ")}
+                >
+                  {player}
+                </Button>
+              )
+            })}
+          </div>
+        </div>
         {/* ── Movie info panel */}
         <MovieInfoPanel movieId={movieId} />
 

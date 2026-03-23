@@ -2,7 +2,7 @@ interface VidKingPlayerProps {
   id: string
 }
 
-/** This player is from vidking.net */
+/** This player is from https://www.vidking.net/ */
 function VidKingPlayer({ id }: VidKingPlayerProps) {
   const color = "ffa500"
   const src = `https://www.vidking.net/embed/movie/${id}?color=${color}`

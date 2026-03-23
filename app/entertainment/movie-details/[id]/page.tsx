@@ -217,7 +217,7 @@ export default function MovieDetails() {
                 >
                   <Button
                     size="sm"
-                    className="mt-1 gap-2 bg-[var(--accent)] font-semibold text-[var(--accent-foreground)] shadow-md shadow-accent/20 hover:bg-[color:var(--primary)] hover:text-[color:var(--primary-foreground)]"
+                    className="mt-1 gap-2 bg-accent font-semibold text-accent-foreground shadow-md shadow-accent/20 hover:bg-primary hover:text-primary-foreground"
                   >
                     <ExternalLink className="h-3.5 w-3.5" />
                     Official Site
