@@ -128,7 +128,7 @@ export default function RelatedMoviesSection() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3 }}
-            className="scrollbar-thin scrollbar-track-transparent scrollbar-thumb-border flex gap-3 overflow-x-auto pb-3"
+            className="scrollbar-thin scrollbar-track-transparent scrollbar-thumb-border no-scrollbar flex gap-3 overflow-x-auto pb-3"
           >
             {movies.map((movie) => (
               <RelatedMovieCard key={movie.id} movie={movie} />

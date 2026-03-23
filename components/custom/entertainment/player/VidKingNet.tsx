@@ -1,11 +1,13 @@
 interface VidKingPlayerProps {
   id: string
+  startTime?: number
 }
 
 /** This player is from https://www.vidking.net/ */
-function VidKingPlayer({ id }: VidKingPlayerProps) {
+function VidKingPlayer({ id, startTime = 0 }: VidKingPlayerProps) {
   const color = "ffa500"
-  const src = `https://www.vidking.net/embed/movie/${id}?color=${color}`
+  const timeParam = startTime > 0 ? `&t=${startTime}` : ""
+  const src = `https://www.vidking.net/embed/movie/${id}?color=${color}${timeParam}`
   return (
     <div className="aspect-video w-full">
       <iframe

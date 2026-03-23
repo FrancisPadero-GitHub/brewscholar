@@ -1,10 +1,12 @@
-interface VidSrcMe {
+interface VidSrcMeProps {
   id: string
+  startTime?: number
 }
 
 /** This player is from https://vsembed.ru/ */
-function VidSrcMe({ id }: VidSrcMe) {
-  const src = `https://vidsrc-embed.ru/embed/movie/${id}`
+function VidSrcMe({ id, startTime = 0 }: VidSrcMeProps) {
+  const timeParam = startTime > 0 ? `?t=${startTime}` : ""
+  const src = `https://vidsrc-embed.ru/embed/movie/${id}${timeParam}`
   return (
     <div className="aspect-video w-full">
       <iframe

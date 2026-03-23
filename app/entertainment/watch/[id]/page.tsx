@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
+import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import Link from "next/link"
 import { motion } from "motion/react"
@@ -24,7 +25,14 @@ import RelatedMoviesSection from "@/components/custom/entertainment/watch/relate
 // zustand
 import { ACTIVE_PLAYER } from "@/features/zustand/entertainment/player-buttons-store"
 import { usePlayerStore } from "@/features/zustand/entertainment/player-buttons-store"
+import { useWatchTracker } from "@/hooks/entertainment/progress-tracker/useWatchTracker"
+import type { WatchProgress } from "@/hooks/entertainment/progress-tracker/useWatchTracker"
 import VidLinkPro from "@/components/custom/entertainment/player/VidLinkPro"
+
+/** TODO:
+ * - [done] add more players
+ * - [done] add watch progress
+ */
 
 // Main Watch page
 const Watch = () => {
@@ -32,14 +40,43 @@ const Watch = () => {
   const movieId = params.id as string
   const { data: movie } = useFetchMovieDetails(movieId)
 
+  // start time for tracking progress resumption
+  const [startTime, setStartTime] = useState<number>(0)
+
+  // track watch progress
+  useWatchTracker(movieId, movie?.title)
+
+  useEffect(() => {
+    // Defer reading from local storage and updating state to prevent synchronous cascaded renders.
+    const timeoutId = setTimeout(() => {
+      const stored = localStorage.getItem("watchHistory")
+      if (stored) {
+        try {
+          const history: Record<string, WatchProgress | undefined> =
+            JSON.parse(stored)
+          const progress = history[movieId]
+          if (progress && progress.currentTime > 0) {
+            // VidLink uses seconds for time parameter, we pass integer seconds
+            const initialTime = Math.floor(progress.currentTime)
+            setStartTime(initialTime)
+          }
+        } catch {
+          // ignore errors
+        }
+      }
+    }, 0)
+
+    return () => clearTimeout(timeoutId)
+  }, [movieId])
+
   // store for the movie players
   const { setActivePlayer, activePlayer } = usePlayerStore()
 
   // map of player id -> component (keeps rendering logic explicit)
   const playerComponents: Record<string, JSX.Element> = {
-    "Player 1": <VidLinkPro id={movieId} />,
-    "Player 2": <VidKingPlayer id={movieId} />,
-    "Player 3": <VidSrcMe id={movieId} />,
+    "Player 1": <VidLinkPro id={movieId} startTime={startTime} />,
+    "Player 2": <VidKingPlayer id={movieId} startTime={startTime} />,
+    "Player 3": <VidSrcMe id={movieId} startTime={startTime} />,
   }
 
   if (!movieId)
@@ -88,6 +125,11 @@ const Watch = () => {
           <h1 className="text-xl font-black tracking-tight text-foreground">
             Now <span className="text-primary">Watching</span>
           </h1>
+          <Link href="/entertainment" className="ml-auto">
+            <h1 className="text-4xl font-black tracking-tight text-foreground">
+              Movie<span className="text-primary">Hub</span>
+            </h1>
+          </Link>
         </div>
 
         {/* ── Player ── */}

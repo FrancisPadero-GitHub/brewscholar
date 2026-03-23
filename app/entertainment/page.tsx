@@ -37,9 +37,9 @@ import { useFetchTopRatedMovies } from "@/hooks/entertainment/fetch/useFetchTopR
 import { useFetchUpcomingMovies } from "@/hooks/entertainment/fetch/useFetchUpcomingMovies"
 import { useFetchSearchedMovies } from "@/hooks/entertainment/fetch/useFetchSearchedMovies"
 
-// components
 import PaginationControls from "@/components/custom/entertainment/PaginationControls"
 import SearchResults from "@/components/custom/entertainment/SearchResults"
+import { ContinueWatching } from "@/components/custom/entertainment/continue-watching"
 
 // helper
 import { IMAGE_BASE_URL } from "@/constants/image-size"
@@ -53,8 +53,8 @@ import {
 } from "@/features/zustand/entertainment/filter-buttons-store"
 
 /** TODO:
- * - Add search
- * - Add more movie sections
+ * - [done] Add search
+ * - [done] Add more movie sections
  * - Add favorites
  * - Add watchlists
  */
@@ -296,6 +296,9 @@ export default function MovieHub() {
 
         {/* ── Movie Grid ── */}
         <main>
+          {/* Continue Watching Component */}
+          {!searchQuery && <ContinueWatching />}
+
           {/* Search results Here */}
           <SearchResults
             searchResult={searchResult}
