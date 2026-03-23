@@ -1,27 +1,27 @@
 import Image from "next/image"
 import Link from "next/link"
 import { motion } from "motion/react"
-import { useState } from "react"
-import { Star, Film, ChevronLeft, ChevronRight, TrendingUp } from "lucide-react"
+import { useState, useRef } from "react"
+import { Star, Film, ChevronLeft, ChevronRight, Clapperboard } from "lucide-react"
 
 // components
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 
 // types
-import type { MovieResult } from "@/types/entertainment/movies/popular-movies"
+import type { MovieResult } from "@/types/entertainment/movies/now-playing-movies"
 
 // helper
 import { IMAGE_BASE_URL } from "@/constants/image-size"
 import { getRatingColor } from "@/helpers/entertainment/movie-details/movie-details"
 
 // hooks
-import { useFetchPopularMovies } from "@/hooks/entertainment/fetch/useFetchPopularMovies"
+import { useFetchNowPlayingMovie } from "@/hooks/entertainment/fetch/useFetchNowPlayingMovie"
 
-// Related movie card
-function RelatedMovieCard({ movie }: { movie: MovieResult }) {
+// Now Playing movie card
+function NowPlayingMovieCard({ movie }: { movie: MovieResult }) {
   const ratingColor = getRatingColor(movie.vote_average)
-  const year = movie.release_date.split("-")[0] ?? "TBA"
+  const year = movie.release_date ? movie.release_date.split("-")[0] : "TBA"
 
   return (
     <Link href={`/entertainment/movie-details/${movie.id}`}>
@@ -67,10 +67,33 @@ function RelatedMovieCard({ movie }: { movie: MovieResult }) {
   )
 }
 
-//  Related movies carousel with pagination
-export default function RelatedMoviesSection() {
+// Now Playing movies carousel with pagination
+export default function NowPlayingMoviesSection() {
   const [page, setPage] = useState(1)
-  const { data, isFetching } = useFetchPopularMovies(page)
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const { data, isFetching } = useFetchNowPlayingMovie(page)
+
+  const scrollLeft = () => {
+    if (scrollRef.current) {
+      if (scrollRef.current.scrollLeft <= 0) {
+        setPage((p) => Math.max(1, p - 1))
+      } else {
+        scrollRef.current.scrollBy({ left: -300, behavior: "smooth" })
+      }
+    }
+  }
+
+  const scrollRight = () => {
+    if (scrollRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current
+      // Allow a small 5px threshold for varying sub-pixel or browser calculations
+      if (Math.ceil(scrollLeft + clientWidth) >= scrollWidth - 5) {
+        setPage((p) => Math.min(totalPagesFiltered, p + 1))
+      } else {
+        scrollRef.current.scrollBy({ left: 300, behavior: "smooth" })
+      }
+    }
+  }
 
   const totalPagesRaw = data?.total_pages ?? 0
   const totalPagesFiltered = Math.min(totalPagesRaw, 500)
@@ -81,8 +104,8 @@ export default function RelatedMoviesSection() {
       {/* Header + Pagination controls */}
       <div className="flex items-center justify-between gap-4">
         <h2 className="flex items-center gap-2 text-sm font-semibold tracking-widest text-primary uppercase">
-          <TrendingUp className="h-4 w-4" />
-          Popular Movies
+          <Clapperboard className="h-4 w-4" />
+          Now Playing Movies
         </h2>
 
         <div className="flex items-center gap-2">
@@ -111,7 +134,7 @@ export default function RelatedMoviesSection() {
       </div>
 
       {/* Horizontal scrollable catalog */}
-      <div className="relative">
+      <div className="group/scroll relative">
         {isFetching ? (
           <div className="flex gap-3 overflow-hidden pb-2">
             {Array.from({ length: 10 }).map((_, i) => (
@@ -123,17 +146,40 @@ export default function RelatedMoviesSection() {
             ))}
           </div>
         ) : (
-          <motion.div
-            key={page}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.3 }}
-            className="scrollbar-thin scrollbar-track-transparent scrollbar-thumb-border no-scrollbar flex gap-3 overflow-x-auto pb-3"
-          >
-            {movies.map((movie) => (
-              <RelatedMovieCard key={movie.id} movie={movie} />
-            ))}
-          </motion.div>
+          <>
+            {/* Scroll Left Button */}
+            <Button
+              variant="outline"
+              size="icon"
+              className="absolute top-1/2 left-2 z-10 h-10 w-10 -translate-y-1/2 rounded-full border-2 border-primary bg-background/95 text-primary shadow-xl transition-none hover:bg-primary hover:text-primary-foreground sm:h-12 sm:w-12"
+              onClick={scrollLeft}
+            >
+              <ChevronLeft className="h-6 w-6" />
+            </Button>
+
+            <motion.div
+              ref={scrollRef}
+              key={page}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3 }}
+              className="scrollbar-thin scrollbar-track-transparent scrollbar-thumb-border no-scrollbar flex gap-3 overflow-x-auto pb-3"
+            >
+              {movies.map((movie) => (
+                <NowPlayingMovieCard key={movie.id} movie={movie} />
+              ))}
+            </motion.div>
+
+            {/* Scroll Right Button */}
+            <Button
+              variant="outline"
+              size="icon"
+              className="absolute top-1/2 right-2 z-10 h-10 w-10 -translate-y-1/2 rounded-full border-2 border-primary bg-background/95 text-primary shadow-xl transition-none hover:bg-primary hover:text-primary-foreground sm:h-12 sm:w-12"
+              onClick={scrollRight}
+            >
+              <ChevronRight className="h-6 w-6" />
+            </Button>
+          </>
         )}
       </div>
     </section>

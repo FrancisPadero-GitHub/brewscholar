@@ -20,7 +20,10 @@ import { useFetchMovieDetails } from "@/hooks/entertainment/fetch/useFetchMovieD
 import VidKingPlayer from "@/components/custom/entertainment/player/VidKingNet"
 import VidSrcMe from "@/components/custom/entertainment/player/VidSrcMe"
 import MovieInfoPanel from "@/components/custom/entertainment/watch/movie-info-panel"
-import RelatedMoviesSection from "@/components/custom/entertainment/watch/related-movies"
+import PopularMovieSection from "@/components/custom/entertainment/watch/popular-movies"
+import TopRatedMoviesSection from "@/components/custom/entertainment/watch/top-rated-movies"
+import UpcomingMoviesSection from "@/components/custom/entertainment/watch/upcoming-movies"
+import NowPlayingMoviesSection from "@/components/custom/entertainment/watch/now-playing-movies"
 
 // zustand
 import { ACTIVE_PLAYER } from "@/features/zustand/entertainment/player-buttons-store"
@@ -177,7 +180,16 @@ const Watch = () => {
         <div className="h-px w-full bg-border/50" />
 
         {/* ── Related movies catalog with pagination */}
-        <RelatedMoviesSection />
+        <PopularMovieSection />
+
+        {/* ── Now Playing movies catalog with pagination */}
+        <NowPlayingMoviesSection />
+
+        {/* ── Upcoming movies catalog with pagination */}
+        <UpcomingMoviesSection />
+
+        {/* ── Top Rated movies catalog with pagination */}
+        <TopRatedMoviesSection />
       </div>
     </main>
   )
