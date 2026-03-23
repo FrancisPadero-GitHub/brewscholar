@@ -319,17 +319,19 @@ export default function MovieDetails() {
                       className="flex flex-row items-center gap-3 border-border bg-card px-4 py-2 shadow-none"
                     >
                       {company.logo_path ? (
-                        <div className="relative h-8 w-16 shrink-0">
+                        <div className="relative flex h-10 w-20 shrink-0 items-center justify-center rounded-lg bg-white p-1.5 shadow-xs transition-transform hover:scale-105">
                           <Image
                             src={`${IMAGE_BASE_URL}${company.logo_path}`}
                             alt={company.name}
                             fill
-                            sizes="64px"
+                            sizes="80px"
                             className="object-contain"
                           />
                         </div>
                       ) : (
-                        <Film className="h-6 w-6 shrink-0 text-muted-foreground" />
+                        <div className="flex h-10 w-20 shrink-0 items-center justify-center rounded-lg bg-muted/40 transition-transform hover:scale-105">
+                          <Film className="h-6 w-6 text-muted-foreground" />
+                        </div>
                       )}
                       <CardContent className="p-0">
                         <p className="text-sm font-semibold text-foreground">
