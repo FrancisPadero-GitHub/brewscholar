@@ -1,5 +1,6 @@
 "use client"
 
+import React, { useEffect, useState } from "react"
 import {
   Pagination,
   PaginationContent,
@@ -35,42 +36,76 @@ export default function PaginationControls({
     }
   }
 
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const updateIsMobile = () => setIsMobile(window.innerWidth < 640)
+    updateIsMobile()
+    window.addEventListener("resize", updateIsMobile)
+    return () => window.removeEventListener("resize", updateIsMobile)
+  }, [])
+
   // Disable 'Next' if we hit the total pages, or default to false if totalPages is unknown
   const isNextDisabled = totalPages ? currentPage >= totalPages : false
   const isPrevDisabled = currentPage <= 1
 
   // Algorithm to determine which page numbers and ellipses to show
   const getVisiblePages = () => {
-    // If we don't know the total pages, we can't build the advanced layout
     if (!totalPages) return []
 
-    // If there are 7 or fewer pages, just show all of them (e.g., 1 2 3 4 5 6 7)
+    // Use compact pagination on mobile
+    if (isMobile && totalPages > 5) {
+      if (currentPage <= 3) {
+        return [1, 2, "...", totalPages]
+      }
+      if (currentPage >= totalPages - 2) {
+        return [1, "...", totalPages - 1, totalPages]
+      }
+      return [1, "...", currentPage, "...", totalPages]
+    }
+
+    // If there are 7 or fewer pages, just show all of them
     if (totalPages <= 7) {
       return Array.from({ length: totalPages }, (_, i) => i + 1)
     }
 
-    // If we are near the beginning (e.g., 1 2 3 4 5 ... 20)
+    // Regular pagination for larger screens
     if (currentPage <= 4) {
       return [1, 2, 3, 4, 5, "...", totalPages]
     }
 
-    // If we are near the end (e.g., 1 ... 16 17 18 19 20)
     if (currentPage >= totalPages - 3) {
-      return [1, "...", totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages]
+      return [
+        1,
+        "...",
+        totalPages - 4,
+        totalPages - 3,
+        totalPages - 2,
+        totalPages - 1,
+        totalPages,
+      ]
     }
 
-    // If we are in the middle (e.g., 1 ... 8 9 10 ... 20)
-    return [1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages]
+    return [
+      1,
+      "...",
+      currentPage - 1,
+      currentPage,
+      currentPage + 1,
+      "...",
+      totalPages,
+    ]
   }
 
   const visiblePages = getVisiblePages()
 
   return (
-    <Pagination className="mt-10">
-      <PaginationContent>
+    <Pagination className="mt-10 text-xs sm:text-sm">
+      <PaginationContent className="flex-wrap justify-center gap-1 sm:gap-1">
         {/* Previous Button */}
         <PaginationItem>
           <PaginationPrevious
+            size={isMobile ? "icon-xs" : "default"}
             href={isPrevDisabled ? "#" : createPageUrl(currentPage - 1)}
             onClick={(e) => {
               if (isPrevDisabled) e.preventDefault()
@@ -80,7 +115,7 @@ export default function PaginationControls({
             className={
               isPrevDisabled
                 ? "pointer-events-none opacity-50"
-                : "transition-all hover:text-primary cursor-pointer"
+                : "cursor-pointer transition-all hover:text-primary"
             }
           />
         </PaginationItem>
@@ -96,7 +131,12 @@ export default function PaginationControls({
                   href={createPageUrl(page as number)}
                   onClick={(e) => handlePageChange(e, page as number)}
                   isActive={currentPage === page}
-                  className={currentPage === page ? "pointer-events-none" : "transition-all hover:text-primary cursor-pointer"}
+                  size={isMobile ? "icon-xs" : "sm"}
+                  className={
+                    currentPage === page
+                      ? "pointer-events-none"
+                      : "cursor-pointer transition-all hover:text-primary"
+                  }
                 >
                   {page}
                 </PaginationLink>
@@ -115,6 +155,7 @@ export default function PaginationControls({
         {/* Next Button */}
         <PaginationItem>
           <PaginationNext
+            size={isMobile ? "icon-xs" : "default"}
             href={isNextDisabled ? "#" : createPageUrl(currentPage + 1)}
             onClick={(e) => {
               if (isNextDisabled) e.preventDefault()
@@ -124,7 +165,7 @@ export default function PaginationControls({
             className={
               isNextDisabled
                 ? "pointer-events-none opacity-50"
-                : "transition-all hover:text-primary cursor-pointer"
+                : "cursor-pointer transition-all hover:text-primary"
             }
           />
         </PaginationItem>

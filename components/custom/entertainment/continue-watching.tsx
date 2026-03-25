@@ -124,11 +124,11 @@ export function ContinueWatching() {
 
   return (
     <div className="mb-8 space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         {/* Left: Continue Watching */}
-        <div className="flex items-center gap-2">
-          <Play className="h-4 w-4 fill-current text-primary" />
-          <h2 className="text-sm font-semibold tracking-widest text-primary uppercase">
+        <div className="flex items-center gap-1 sm:gap-2">
+          <Play className="h-3.5 w-3.5 fill-current text-primary sm:h-4 sm:w-4" />
+          <h2 className="text-xs font-semibold tracking-widest text-primary uppercase sm:text-sm">
             Continue Watching
           </h2>
         </div>
@@ -137,14 +137,14 @@ export function ContinueWatching() {
         <Button
           variant="ghost"
           size="xs"
-          className="group flex items-center gap-2 rounded-full border border-destructive/30 px-3 py-1.5 text-destructive/70 transition-all duration-200 hover:border-destructive hover:bg-destructive/10 hover:text-destructive"
+          className="group xs:justify-end flex items-center gap-1 rounded-full border border-destructive/30 px-2.5 py-1 text-[10px] text-destructive/70 transition-all duration-200 hover:border-destructive hover:bg-destructive/10 hover:text-destructive sm:gap-2 sm:text-xs"
           onClick={() => {
             localStorage.removeItem("watchHistory")
             setHistory([])
           }}
         >
           <Trash className="h-3.5 w-3.5 transition-transform duration-200 group-hover:scale-110" />
-          <span className="text-xs font-medium tracking-wide">
+          <span className="hidden text-xs font-medium tracking-wide sm:inline">
             Clear History
           </span>
         </Button>

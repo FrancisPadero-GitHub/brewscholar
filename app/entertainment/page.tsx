@@ -67,6 +67,7 @@ export default function MovieHub() {
 
   // search variable container
   const [searchQuery, setSearchQuery] = useState<string>("")
+  const [showCategoryPills, setShowCategoryPills] = useState(false)
   // search bar
   const searchInputRef = useRef<HTMLInputElement>(null)
 
@@ -280,8 +281,22 @@ export default function MovieHub() {
               )}
             </div>
 
+            {/* Category pills toggle (mobile only) */}
+            <div className="flex w-full items-center justify-end md:hidden">
+              <Button
+                variant="outline"
+                size="xs"
+                onClick={() => setShowCategoryPills((prev) => !prev)}
+                className="px-2 py-1 text-[11px]"
+              >
+                {showCategoryPills ? "Hide categories" : "Show categories"}
+              </Button>
+            </div>
+
             {/* Category pills */}
-            <div className="scrollbar-hide flex gap-2 overflow-x-auto pb-0.5">
+            <div
+              className={`${showCategoryPills ? "grid grid-cols-2" : "hidden md:flex md:flex-row"} w-full justify-center gap-2 p-1 pb-0.5 align-middle md:w-auto md:justify-start md:p-0`}
+            >
               {CATEGORY_TABS.map((category) => {
                 const isActive = activeFilter === category
                 return (
@@ -295,8 +310,8 @@ export default function MovieHub() {
                     variant={isActive ? "default" : "outline"}
                     className={
                       isActive
-                        ? "shrink-0 bg-primary text-xs font-semibold whitespace-nowrap text-background hover:bg-primary/80"
-                        : "shrink-0 border-border text-xs whitespace-nowrap text-muted-foreground hover:border-primary hover:bg-muted hover:text-primary"
+                        ? "shrink-0 rounded-full bg-primary px-2 py-1 text-[10px] font-semibold whitespace-nowrap text-background hover:bg-primary/80 sm:text-xs"
+                        : "shrink-0 rounded-full border-border px-2 py-1 text-[10px] whitespace-nowrap text-muted-foreground hover:border-primary hover:bg-muted hover:text-primary sm:text-xs"
                     }
                   >
                     {category}
