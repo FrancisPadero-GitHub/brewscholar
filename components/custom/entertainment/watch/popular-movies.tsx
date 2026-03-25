@@ -102,20 +102,20 @@ export default function PopularMovieSection() {
   return (
     <section className="space-y-4">
       {/* Header + Pagination controls */}
-      <div className="flex items-center justify-between gap-4">
-        <h2 className="flex items-center gap-2 text-sm font-semibold tracking-widest text-primary uppercase">
-          <TrendingUp className="h-4 w-4" />
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 className="flex items-center gap-1 text-xs font-semibold tracking-widest text-primary uppercase sm:gap-2 sm:text-sm">
+          <TrendingUp className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           Popular Movies
         </h2>
 
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-muted-foreground tabular-nums">
+        <div className="flex items-center gap-1 sm:gap-2">
+          <span className="text-[10px] text-muted-foreground tabular-nums sm:text-xs">
             Page {page} / {totalPagesFiltered}
           </span>
           <Button
             variant="outline"
             size="icon"
-            className="h-7 w-7 border-border/60 hover:border-primary hover:text-primary"
+            className="h-6 w-6 border-border/60 hover:border-primary hover:text-primary sm:h-7 sm:w-7"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page <= 1 || isFetching}
           >
@@ -151,10 +151,10 @@ export default function PopularMovieSection() {
             <Button
               variant="outline"
               size="icon"
-              className="absolute top-1/2 left-2 z-10 h-10 w-10 -translate-y-1/2 rounded-full border-2 border-primary bg-background/95 text-primary shadow-xl transition-none hover:bg-primary hover:text-primary-foreground sm:h-12 sm:w-12"
+              className="absolute top-1/2 left-2 z-10 h-8 w-8 -translate-y-1/2 rounded-full border-2 border-primary bg-background/95 text-primary shadow-xl transition-none hover:bg-primary hover:text-primary-foreground sm:h-10 sm:w-10"
               onClick={scrollLeft}
             >
-              <ChevronLeft className="h-6 w-6" />
+              <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
             </Button>
 
             <motion.div
@@ -174,10 +174,10 @@ export default function PopularMovieSection() {
             <Button
               variant="outline"
               size="icon"
-              className="absolute top-1/2 right-2 z-10 h-10 w-10 -translate-y-1/2 rounded-full border-2 border-primary bg-background/95 text-primary shadow-xl transition-none hover:bg-primary hover:text-primary-foreground sm:h-12 sm:w-12"
+              className="absolute top-1/2 right-2 z-10 h-8 w-8 -translate-y-1/2 rounded-full border-2 border-primary bg-background/95 text-primary shadow-xl transition-none hover:bg-primary hover:text-primary-foreground sm:h-10 sm:w-10"
               onClick={scrollRight}
             >
-              <ChevronRight className="h-6 w-6" />
+              <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
             </Button>
           </>
         )}
