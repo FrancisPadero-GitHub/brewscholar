@@ -213,19 +213,33 @@ export default function MovieHub() {
 
           {/* Floating header text inside hero */}
           <div className="absolute bottom-8 left-1/2 w-full max-w-7xl -translate-x-1/2 px-6">
-            <div className="flex items-end justify-between">
-              <div>
-                <h1 className="text-4xl font-black tracking-tight text-foreground">
-                  Movie<span className="text-primary">Hub</span>
-                </h1>
+            <div className="flex flex-col justify-center gap-3">
+              {/* Top: Logo */}
+              <div className="flex items-center gap-3">
+                <div className="relative block h-15 w-25 sm:h-20 sm:w-25 lg:h-20 lg:w-30 dark:hidden">
+                  <Image
+                    src="/brewscholar_light_mode.png"
+                    alt="BrewScholar Logo Light"
+                    fill
+                    sizes="120"
+                    className="object-contain"
+                  />
+                </div>
+                <div className="relative hidden h-15 w-25 sm:h-20 sm:w-25 lg:h-20 lg:w-30 dark:block">
+                  <Image
+                    src="/brewscholar_dark_mode.png"
+                    alt="brewscholar dark mode"
+                    fill
+                    sizes="120"
+                    className="object-contain"
+                  />
+                </div>
               </div>
-              {/* <Link href="#">
-                <Button className="bg-primary font-bold text-background shadow-lg shadow-primary/20 transition-all hover:bg-primary/80">
-                  <Film className="mr-2 h-4 w-4" />
-                  Browse All
-                  <ChevronRight className="ml-1 h-4 w-4" />
-                </Button>
-              </Link> */}
+
+              {/* Bottom: MovieHub title */}
+              <h1 className="text-3xl font-black tracking-tight text-foreground sm:text-4xl">
+                Movie<span className="text-primary">Hub</span>
+              </h1>
             </div>
           </div>
         </div>

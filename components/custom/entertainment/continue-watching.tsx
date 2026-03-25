@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react"
-import type { WatchProgress } from "@/hooks/entertainment/progress-tracker/useWatchTracker"
-import { useFetchMovieDetails } from "@/hooks/entertainment/fetch/useFetchMovieDetails"
-import { IMAGE_BASE_URL } from "@/constants/image-size"
 import Image from "next/image"
 import Link from "next/link"
-import { Play, Film, Clock } from "lucide-react"
-
+import { Play, Film, Clock, Trash } from "lucide-react"
 import { Card, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+
+// helper
+import { IMAGE_BASE_URL } from "@/constants/image-size"
+
+// hooks
+import type { WatchProgress } from "@/hooks/entertainment/progress-tracker/useWatchTracker"
+import { useFetchMovieDetails } from "@/hooks/entertainment/fetch/useFetchMovieDetails"
 
 function ContinueWatchingCard({ item }: { item: WatchProgress }) {
   const { data: movie } = useFetchMovieDetails(item.mediaId)
@@ -89,27 +93,31 @@ export function ContinueWatching() {
   const [history, setHistory] = useState<WatchProgress[]>([])
 
   useEffect(() => {
-    // Defer reading from local storage and updating state to prevent synchronous cascaded renders.
-    const timeoutId = setTimeout(() => {
+    const readHistory = () => {
       const stored = localStorage.getItem("watchHistory")
-      if (stored) {
-        try {
-          const parsed: Record<string, WatchProgress> = JSON.parse(stored)
-
-          // Convert dictionary to array and sort by most recently watched
-          const sortedHistory = Object.values(parsed).sort(
-            (a, b) => b.updatedAt - a.updatedAt
-          )
-
-          // We limit to 5 to keep layout constrained to one row on large screens
-          setHistory(sortedHistory.slice(0, 5))
-        } catch {
-          // ignore parse errors
-        }
+      if (!stored) {
+        setHistory([])
+        return
       }
-    }, 0)
+      try {
+        const parsed: Record<string, WatchProgress> = JSON.parse(stored)
+        const sorted = Object.values(parsed).sort(
+          (a, b) => b.updatedAt - a.updatedAt
+        )
+        setHistory(sorted.slice(0, 5))
+      } catch {
+        setHistory([])
+      }
+    }
 
-    return () => clearTimeout(timeoutId)
+    // initial read (replace existing inline logic with this)
+    readHistory()
+
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === "watchHistory") readHistory()
+    }
+    window.addEventListener("storage", onStorage)
+    return () => window.removeEventListener("storage", onStorage)
   }, [])
 
   if (history.length === 0) return null
@@ -117,12 +125,29 @@ export function ContinueWatching() {
   return (
     <div className="mb-8 space-y-4">
       <div className="flex items-center justify-between">
+        {/* Left: Continue Watching */}
         <div className="flex items-center gap-2">
           <Play className="h-4 w-4 fill-current text-primary" />
           <h2 className="text-sm font-semibold tracking-widest text-primary uppercase">
             Continue Watching
           </h2>
         </div>
+
+        {/* Right: Clear Watch History */}
+        <Button
+          variant="ghost"
+          size="xs"
+          className="group flex items-center gap-2 rounded-full border border-destructive/30 px-3 py-1.5 text-destructive/70 transition-all duration-200 hover:border-destructive hover:bg-destructive/10 hover:text-destructive"
+          onClick={() => {
+            localStorage.removeItem("watchHistory")
+            setHistory([])
+          }}
+        >
+          <Trash className="h-3.5 w-3.5 transition-transform duration-200 group-hover:scale-110" />
+          <span className="text-xs font-medium tracking-wide">
+            Clear History
+          </span>
+        </Button>
       </div>
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         {history.map((item) => (
