@@ -22,14 +22,14 @@ const LandingPage = () => {
             <div className="relative mx-auto mb-6 h-40 w-40">
               {/* Show the logo with the foreground color in both light and dark modes */}
               <Image
-                src="/brew_scholar_dark.png"
+                src="/brewscholar_light_mode.png"
                 alt="BrewScholar Logo Light"
                 fill
                 className="block object-contain text-foreground filter dark:hidden"
                 sizes="160"
               />
               <Image
-                src="/brew_scholar_light.png"
+                src="/brewscholar_dark_mode.png"
                 alt="BrewScholar Logo Dark"
                 fill
                 className="hidden object-contain text-foreground filter dark:block"
