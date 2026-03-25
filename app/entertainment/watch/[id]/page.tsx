@@ -112,9 +112,9 @@ const Watch = () => {
 
       {/* ── Main Content ── */}
       {/* FIX 2: Added `relative z-10` here so this entire block stacks ON TOP of the absolute backdrop */}
-      <div className="relative z-10 mx-auto max-w-6xl space-y-6 px-4 pt-8 pb-20">
+      <div className="relative z-10 mx-auto max-w-6xl space-y-4 px-3 pt-4 pb-16 sm:space-y-6 sm:px-4 sm:pt-8 sm:pb-20">
         {/* ── Top nav row */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <Link href="/entertainment">
             <Button
               variant="outline"
@@ -125,11 +125,11 @@ const Watch = () => {
               Back
             </Button>
           </Link>
-          <h1 className="text-xl font-black tracking-tight text-foreground">
+          <h1 className="hidden text-base font-black tracking-tight text-foreground sm:block sm:text-xl">
             Now <span className="text-primary">Watching</span>
           </h1>
           <Link href="/entertainment" className="ml-auto">
-            <h1 className="text-4xl font-black tracking-tight text-foreground">
+            <h1 className="text-2xl font-black tracking-tight text-foreground sm:text-4xl">
               Movie<span className="text-primary">Hub</span>
             </h1>
           </Link>
@@ -145,11 +145,11 @@ const Watch = () => {
           {/* Player selection (uses explicit map above) */}
           {playerComponents[activePlayer]}
         </motion.div>
-        <div className="flex items-center justify-between gap-2">
-          <span className="indent-5 text-xs text-primary">
+        <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <span className="text-xs text-primary sm:indent-5">
             Experiencing any issues? Try these alternative players
           </span>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {ACTIVE_PLAYER.map((player) => {
               const isActivePlayer = activePlayer === player
               return (
@@ -173,6 +173,7 @@ const Watch = () => {
             })}
           </div>
         </div>
+
         {/* ── Movie info panel */}
         <MovieInfoPanel movieId={movieId} />
 
