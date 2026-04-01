@@ -1,130 +1,87 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { FolderOpen, Upload, File, Download, Search } from "lucide-react";
+"use client"
 
-const FilesPage = () => {
-  const files = [
-    {
-      id: 1,
-      name: "Research Paper.pdf",
-      size: "2.4 MB",
-      modified: "Feb 3, 2026",
-      type: "PDF",
-    },
-    {
-      id: 2,
-      name: "Project Proposal.docx",
-      size: "1.8 MB",
-      modified: "Feb 2, 2026",
-      type: "Document",
-    },
-    {
-      id: 3,
-      name: "Presentation Slides.pptx",
-      size: "5.2 MB",
-      modified: "Feb 1, 2026",
-      type: "Presentation",
-    },
-  ];
+import { useRouter } from "next/navigation"
+import { ArrowLeft } from "lucide-react"
+import Image from "next/image"
+
+export default function FilesPage() {
+  const router = useRouter()
 
   return (
-    <div className="min-h-screen bg-[#1E1E1E] text-white p-6">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-3xl font-bold text-[#FFD700] mb-2">File Hosting</h1>
-            <p className="text-gray-400">Manage and share your files securely</p>
+    <div className="min-h-screen bg-background text-foreground">
+      <style>{`
+        .uc-card{
+          position:relative;
+          width:100%;
+          max-width:880px;
+          margin: 0 auto;
+          padding:3rem 2.5rem;
+          border-radius:1rem;
+          text-align:center;
+          color:var(--color-foreground);
+          background: linear-gradient(270deg, var(--color-card), var(--color-primary), var(--color-accent));
+          background-size:600% 600%;
+          animation:gradientShift 8s linear infinite;
+          box-shadow:var(--shadow-lg);
+        }
+        @keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+        .uc-title{font-size:clamp(2rem,4vw,3rem);font-weight:700;margin-bottom:0.5rem}
+        .uc-sub{opacity:0.92;margin-bottom:1rem}
+        .bounce{display:inline-block;animation:bounce 2s infinite}
+        @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+        .uc-back{position:absolute;left:1rem;top:1rem}
+      `}</style>
+      
+      {/* Header Section */}
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 h-96 bg-linear-to-b from-card to-transparent" />
+        <div className="relative mx-auto max-w-7xl px-6 py-16">
+          <div className="mb-12 text-center">
+            <div className="relative mx-auto mb-6 h-40 w-40">
+              {/* Show the logo with the foreground color in both light and dark modes */}
+              <Image
+                src="/brewscholar_light_mode.png"
+                alt="BrewScholar Logo Light"
+                fill
+                className="block object-contain text-foreground filter dark:hidden"
+                sizes="160"
+              />
+              <Image
+                src="/brewscholar_dark_mode.png"
+                alt="BrewScholar Logo Dark"
+                fill
+                className="hidden object-contain text-foreground filter dark:block"
+                sizes="160"
+              />
+            </div>
+
+            <p className="mx-auto max-w-2xl text-xl text-muted-foreground">
+              Pour over opportunities and brew up your brightest future with
+              BrewScholar
+            </p>
           </div>
-          <Button className="bg-[#FFD700] text-[#1E1E1E] hover:bg-[#FFD700]/90 font-semibold">
-            <Upload className="mr-2 h-4 w-4" />
-            Upload Files
-          </Button>
-        </div>
-
-        {/* Search Bar */}
-        <div className="relative max-w-2xl">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-          <Input 
-            placeholder="Search files by name or type..." 
-            className="pl-10 bg-[#2A2A2A] border-[#3A3A3A] text-white placeholder:text-gray-500"
-          />
         </div>
       </div>
 
-      {/* Storage Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <Card className="bg-[#2A2A2A] border-[#3A3A3A]">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-gray-400">Total Storage</CardTitle>
-            <FolderOpen className="h-4 w-4 text-[#FFD700]" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">50 GB</div>
-            <p className="text-xs text-gray-500 mt-1">Available space</p>
-          </CardContent>
-        </Card>
-        
-        <Card className="bg-[#2A2A2A] border-[#3A3A3A]">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-gray-400">Files Uploaded</CardTitle>
-            <File className="h-4 w-4 text-[#FFD700]" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">234</div>
-            <p className="text-xs text-gray-500 mt-1">Total files</p>
-          </CardContent>
-        </Card>
-        
-        <Card className="bg-[#2A2A2A] border-[#3A3A3A]">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-gray-400">Shared Files</CardTitle>
-            <Download className="h-4 w-4 text-[#FFD700]" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">45</div>
-            <p className="text-xs text-gray-500 mt-1">Public files</p>
-          </CardContent>
-        </Card>
-      </div>
+      <div className="px-6 pb-20">
+        <div className="uc-card">
+          <div className="uc-back">
+            <button
+              onClick={() => router.back()}
+              aria-label="Go back"
+              className="inline-flex items-center justify-center rounded-full bg-white/10 p-2 hover:bg-white/20"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </button>
+          </div>
 
-      {/* File List */}
-      <div>
-        <h2 className="text-2xl font-bold mb-4">Recent Files</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {files.map((file) => (
-            <Card key={file.id} className="bg-[#2A2A2A] border-[#3A3A3A] hover:border-[#FFD700] transition-all cursor-pointer group">
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <CardTitle className="text-white group-hover:text-[#FFD700] transition-colors text-base">
-                      {file.name}
-                    </CardTitle>
-                    <CardDescription className="text-gray-400 text-sm mt-1">
-                      {file.type} • {file.size}
-                    </CardDescription>
-                  </div>
-                  <div className="bg-[#FFD700] p-2 rounded-lg">
-                    <File className="h-5 w-5 text-[#1E1E1E]" />
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="text-sm text-gray-400 mb-4">
-                  Modified: {file.modified}
-                </div>
-                <Button className="w-full bg-[#FFD700] text-[#1E1E1E] hover:bg-[#FFD700]/90 font-semibold">
-                  <Download className="mr-2 h-4 w-4" />
-                  Download
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
+          <div className="uc-title">Coming Soon</div>
+          <div className="uc-sub">This area is being prepared — stay tuned.</div>
+          <div className="bounce text-sm text-white/90">
+            We&apos;ll be live shortly 🚀
+          </div>
         </div>
       </div>
     </div>
-  );
-};
-
-export default FilesPage;
+  )
+}

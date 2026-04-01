@@ -86,30 +86,6 @@ const LandingPage = () => {
             )
           })}
         </div>
-
-        {/* Stats Section */}
-        {/* <div className="mt-20 grid grid-cols-1 gap-6 md:grid-cols-3">
-          <Card className="border-border bg-card text-center">
-            <CardContent className="pt-6">
-              <div className="mb-2 text-4xl font-bold text-primary">1,234+</div>
-              <p className="text-muted-foreground">Active Users</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-border bg-card text-center">
-            <CardContent className="pt-6">
-              <div className="mb-2 text-4xl font-bold text-primary">567+</div>
-              <p className="text-muted-foreground">Opportunities</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-border bg-card text-center">
-            <CardContent className="pt-6">
-              <div className="mb-2 text-4xl font-bold text-primary">89%</div>
-              <p className="text-muted-foreground">Success Rate</p>
-            </CardContent>
-          </Card>
-        </div> */}
       </div>
     </div>
   )
