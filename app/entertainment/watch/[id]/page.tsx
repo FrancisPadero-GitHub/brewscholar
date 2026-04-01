@@ -9,6 +9,17 @@ import { motion } from "motion/react"
 import { ArrowLeft } from "lucide-react"
 import Image from "next/image"
 import type { JSX } from "react"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { AlertTriangle, ExternalLink } from "lucide-react"
 
 // helpers
 import { BACKDROP_BASE_URL } from "@/constants/image-size"
@@ -78,9 +89,22 @@ const Watch = () => {
   // map of player id -> component (keeps rendering logic explicit)
   const playerComponents: Record<string, JSX.Element> = {
     "Player 1": <VidLinkPro id={movieId} startTime={startTime} />,
-    "Player 2": <VidKingPlayer id={movieId} startTime={startTime} />,
-    "Player 3": <VidSrcMe id={movieId} startTime={startTime} />,
+    "Player 2": <VidSrcMe id={movieId} startTime={startTime} />,
+    "Player 3": <VidKingPlayer id={movieId} startTime={startTime} />,
   }
+
+  /**
+   * Used to warn about the popup redirect ads on player 3
+   */
+  const [isMobile, setIsMobile] = useState(false)
+  const [showPlayer3Warning, setShowPlayer3Warning] = useState(false)
+
+  useEffect(() => {
+    const updateIsMobile = () => setIsMobile(window.innerWidth < 500)
+    updateIsMobile()
+    window.addEventListener("resize", updateIsMobile)
+    return () => window.removeEventListener("resize", updateIsMobile)
+  }, [])
 
   if (!movieId)
     return (
@@ -158,7 +182,11 @@ const Watch = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => {
-                    setActivePlayer(player)
+                    if (player === "Player 3" && isMobile) {
+                      setShowPlayer3Warning(true)
+                    } else {
+                      setActivePlayer(player)
+                    }
                   }}
                   className={[
                     "shrink-0 text-xs font-semibold whitespace-nowrap transition-all duration-200",
@@ -192,6 +220,91 @@ const Watch = () => {
         {/* ── Top Rated movies catalog with pagination */}
         <TopRatedMoviesSection />
       </div>
+
+      {/* ── Player 3 Warning Dialog for Mobile ── */}
+      <AlertDialog
+        open={showPlayer3Warning}
+        onOpenChange={setShowPlayer3Warning}
+      >
+        <AlertDialogContent className="w-[95vw] max-w-[360px] gap-0 rounded-3xl border border-primary/20 bg-background/95 p-0 shadow-2xl shadow-primary/10 backdrop-blur-xl">
+          {/* Header band */}
+          <div className="flex items-center gap-3.5 rounded-t-3xl bg-primary/10 px-5 py-4">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/20 shadow-inner shadow-primary/10">
+              <AlertTriangle className="h-5 w-5 text-primary drop-shadow-sm" />
+            </div>
+            <div>
+              <AlertDialogHeader className="gap-0 p-0 text-left">
+                <AlertDialogTitle className="text-base font-black tracking-tight leading-none">
+                  Ad <span className="text-primary">Warning</span>
+                </AlertDialogTitle>
+                <p className="mt-0.5 text-[11px] text-muted-foreground">
+                  Player 3 · Third-party server
+                </p>
+              </AlertDialogHeader>
+            </div>
+          </div>
+
+          {/* Body */}
+          <div className="px-5 pt-4 pb-2 space-y-3">
+            <AlertDialogDescription className="text-[13px] leading-relaxed text-muted-foreground">
+              <span className="font-semibold text-foreground">Player 3</span>{" "}
+              may show intrusive pop-ups and redirect you to external apps or
+              sites - especially on mobile.
+            </AlertDialogDescription>
+
+            {/* Safe alternatives */}
+            <div className="space-y-1.5">
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground/60">
+                Safer alternatives
+              </p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    setActivePlayer("Player 1")
+                    setShowPlayer3Warning(false)
+                  }}
+                  className="flex-1 rounded-xl border border-border/60 bg-muted/40 py-2.5 text-xs font-bold text-foreground transition-all duration-200 hover:border-primary/50 hover:bg-primary/10 hover:text-primary active:scale-95"
+                >
+                  ▶ Player 1
+                </button>
+                <button
+                  onClick={() => {
+                    setActivePlayer("Player 2")
+                    setShowPlayer3Warning(false)
+                  }}
+                  className="flex-1 rounded-xl border border-border/60 bg-muted/40 py-2.5 text-xs font-bold text-foreground transition-all duration-200 hover:border-primary/50 hover:bg-primary/10 hover:text-primary active:scale-95"
+                >
+                  ▶ Player 2
+                </button>
+              </div>
+            </div>
+
+            {/* Tip banner */}
+            <div className="flex items-start gap-2 rounded-xl bg-muted/30 px-3 py-2.5">
+              <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 opacity-40" />
+              <span className="text-[11px] italic leading-relaxed text-muted-foreground">
+                An ad-blocker is strongly recommended if you proceed.
+              </span>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <AlertDialogFooter className="flex-row gap-2 px-5 pb-5 pt-3">
+            <AlertDialogCancel className="mt-0 flex-1 rounded-xl border-border/50 bg-background/50 text-xs font-semibold hover:bg-muted">
+              Go Back
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                setActivePlayer("Player 3")
+                setShowPlayer3Warning(false)
+              }}
+              className="flex-1 rounded-xl bg-primary text-xs font-bold text-foreground shadow-lg shadow-primary/20 hover:bg-primary/90"
+            >
+              Continue Anyway
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </main>
   )
 }

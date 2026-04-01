@@ -248,7 +248,7 @@ export default function MovieHub() {
 
       <div className="mx-auto max-w-7xl px-6 pb-16">
         {/* ── Search + Categories bar ── */}
-        <div className="sticky top-0 z-20 -mx-6 mb-8 space-y-5 border-border bg-background/80 px-6 backdrop-blur-md">
+        <div className="sticky top-0 z-20 -mx-6 mb-8 space-y-5 border-border bg-background/80 px-6 pt-5 backdrop-blur-md">
           <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
             {/* Search */}
             <div className="relative w-full sm:max-w-sm">

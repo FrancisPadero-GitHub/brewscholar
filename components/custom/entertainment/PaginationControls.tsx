@@ -39,7 +39,7 @@ export default function PaginationControls({
   const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
-    const updateIsMobile = () => setIsMobile(window.innerWidth < 640)
+    const updateIsMobile = () => setIsMobile(window.innerWidth < 425)
     updateIsMobile()
     window.addEventListener("resize", updateIsMobile)
     return () => window.removeEventListener("resize", updateIsMobile)
@@ -56,12 +56,21 @@ export default function PaginationControls({
     // Use compact pagination on mobile
     if (isMobile && totalPages > 5) {
       if (currentPage <= 3) {
-        return [1, 2, "...", totalPages]
+        return [1, 2, 3, 4, "...", totalPages]
       }
       if (currentPage >= totalPages - 2) {
         return [1, "...", totalPages - 1, totalPages]
       }
-      return [1, "...", currentPage, "...", totalPages]
+      return [
+        1,
+        "...",
+        currentPage - 1,
+        currentPage,
+        currentPage + 1,
+        ,
+        "...",
+        totalPages,
+      ]
     }
 
     // If there are 7 or fewer pages, just show all of them
@@ -105,7 +114,7 @@ export default function PaginationControls({
         {/* Previous Button */}
         <PaginationItem>
           <PaginationPrevious
-            size={isMobile ? "icon-xs" : "default"}
+            size="default"
             href={isPrevDisabled ? "#" : createPageUrl(currentPage - 1)}
             onClick={(e) => {
               if (isPrevDisabled) e.preventDefault()
@@ -155,7 +164,7 @@ export default function PaginationControls({
         {/* Next Button */}
         <PaginationItem>
           <PaginationNext
-            size={isMobile ? "icon-xs" : "default"}
+            size="default"
             href={isNextDisabled ? "#" : createPageUrl(currentPage + 1)}
             onClick={(e) => {
               if (isNextDisabled) e.preventDefault()
