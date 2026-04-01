@@ -2,7 +2,8 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { AlertTriangle, RotateCcw } from "lucide-react";
+import { AlertTriangle, RotateCcw, Home } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function ErrorBoundary({
   error,
@@ -17,34 +18,44 @@ export default function ErrorBoundary({
   }, [error]);
 
   return (
-    <main className="min-h-screen bg-[#1E1E1E] text-white">
-      <div className="mx-auto flex max-w-3xl flex-col gap-6 px-6 py-20 text-center">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#2A2A2A] text-[#FFD700]">
-          <AlertTriangle className="h-8 w-8" />
+    <main className="min-h-screen bg-background text-foreground flex items-center justify-center">
+      <div className="mx-auto flex max-w-lg flex-col items-center gap-6 px-6 py-20 text-center">
+        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-destructive/10 text-destructive mb-4">
+          <AlertTriangle className="h-10 w-10" />
         </div>
-        <h1 className="text-3xl font-semibold">Something went wrong</h1>
-        <p className="text-gray-300">
-          We hit an unexpected error while loading this page. You can retry or
-          head back to the landing page.
-        </p>
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight">Something went wrong</h1>
+          <p className="text-muted-foreground">
+            We hit an unexpected error while loading this page. You can retry or head back to the landing page.
+          </p>
+        </div>
+        
         {error.digest && (
-          <p className="text-xs text-gray-500">Error digest: {error.digest}</p>
+          <p className="text-xs text-muted-foreground bg-muted px-3 py-2 rounded-md font-mono break-all text-left">
+            Error digest: {error.digest}
+          </p>
         )}
-        <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-          <button
-            type="button"
+
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full mt-6">
+          <Button
             onClick={reset}
-            className="inline-flex items-center gap-2 rounded-lg bg-[#FFD700] px-4 py-3 font-semibold text-[#1E1E1E] transition hover:bg-[#E6C200]"
+            size="lg"
+            className="w-full sm:w-auto gap-2"
           >
             <RotateCcw className="h-4 w-4" />
             Try Again
-          </button>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 rounded-lg border border-[#3A3A3A] px-4 py-3 font-semibold text-white transition hover:border-[#FFD700]"
+          </Button>
+          <Button
+            asChild
+            variant="outline"
+            size="lg"
+            className="w-full sm:w-auto gap-2"
           >
-            Back Home
-          </Link>
+            <Link href="/">
+              <Home className="h-4 w-4" />
+              Back Home
+            </Link>
+          </Button>
         </div>
       </div>
     </main>
