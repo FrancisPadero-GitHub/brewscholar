@@ -22,6 +22,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { useSearchParams, useRouter, usePathname } from "next/navigation"
 import { useCallback, useRef, useState, useEffect } from "react"
+import type { ComponentType, SVGProps } from "react"
 
 // types
 import type { MoviesApiResponse } from "@/types/entertainment/movies/popular-movies"
@@ -171,6 +172,17 @@ export default function MovieHub() {
     | TopRatedMoviesResponse
     | UpcomingMoviesResponse
     | undefined
+
+  // Map each category to an icon component (typed so TS accepts JSX usage)
+  const filterIcons: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
+    Popular: Flame,
+    "Now Playing": Film,
+    "Top Rated": Star,
+    Upcoming: Calendar,
+  }
+
+  const ActiveFilterIcon: ComponentType<SVGProps<SVGSVGElement>> =
+    filterIcons[activeFilter] ?? Film
 
   if (isFetching)
     return (
@@ -339,7 +351,7 @@ export default function MovieHub() {
 
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Flame className="h-4 w-4 text-primary" />
+              <ActiveFilterIcon className="h-4 w-4 text-primary" />
               <h2 className="text-xs font-semibold tracking-widest text-primary uppercase">
                 {activeFilter}
               </h2>
