@@ -10,11 +10,10 @@ import { Spinner } from "@/components/ui/spinner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
-  Film,
+  Clapperboard,
   Star,
   Search,
-  Calendar,
-  // ChevronRight,
+  CalendarClock,
   Flame,
   X,
 } from "lucide-react"
@@ -176,26 +175,19 @@ export default function MovieHub() {
   // Map each category to an icon component (typed so TS accepts JSX usage)
   const filterIcons: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
     Popular: Flame,
-    "Now Playing": Film,
+    "Now Playing": Clapperboard,
     "Top Rated": Star,
-    Upcoming: Calendar,
+    Upcoming: CalendarClock,
   }
 
   const ActiveFilterIcon: ComponentType<SVGProps<SVGSVGElement>> =
-    filterIcons[activeFilter] ?? Film
+    filterIcons[activeFilter] ?? Clapperboard
 
-  if (isFetching)
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <Spinner className="h-6 w-6 text-primary" />
-      </div>
-    )
-
-  if (!movies || isError) {
+  if (isError) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background text-muted-foreground">
         <div className="space-y-2 text-center">
-          <Film className="mx-auto h-10 w-10 text-muted" />
+          <Clapperboard className="mx-auto h-10 w-10 text-muted" />
           <p className="text-lg font-medium">
             {error?.message || "Failed to load movies."}
           </p>
@@ -205,58 +197,61 @@ export default function MovieHub() {
     )
   }
 
-  const featuredMovie = movies.results[0]
+  const featuredMovie = movies?.results[0]
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* ── Hero Banner (first movie as backdrop) ── */}
-      {featuredMovie.backdrop_path && (
-        <div className="relative h-72 w-full overflow-hidden">
-          <Image
-            src={`https://image.tmdb.org/t/p/w1280${featuredMovie.backdrop_path}`}
-            alt={featuredMovie.title}
-            fill
-            sizes="100vw"
-            className="object-cover object-top opacity-30"
-            priority
-          />
-          {/* layered linear: top dark → transparent → strong bottom */}
-          <div className="absolute inset-0 bg-linear-to-b from-background via-transparent to-background" />
-          <div className="absolute inset-0 bg-linear-to-r from-background via-transparent to-transparent" />
+      {/* ── Hero Banner ── */}
+      <div className="relative h-72 w-full overflow-hidden bg-muted dark:bg-zinc-900">
+        {/* Conditionally render the image and gradients ONLY if the path exists */}
+        {featuredMovie?.backdrop_path && (
+          <>
+            <Image
+              src={`https://image.tmdb.org/t/p/w1280${featuredMovie.backdrop_path}`}
+              alt={featuredMovie.title || "Featured Movie"}
+              fill
+              sizes="100vw"
+              className="object-cover object-top opacity-30"
+              priority
+            />
+            {/* layered linear: top dark → transparent → strong bottom */}
+            <div className="absolute inset-0 bg-linear-to-b from-background via-transparent to-background" />
+            <div className="absolute inset-0 bg-linear-to-r from-background via-transparent to-transparent" />
+          </>
+        )}
 
-          {/* Floating header text inside hero */}
-          <div className="absolute bottom-8 left-1/2 w-full max-w-7xl -translate-x-1/2 px-6">
-            <div className="flex flex-col justify-center gap-3">
-              {/* Top: Logo */}
-              <div className="flex items-center gap-3">
-                <div className="relative block h-15 w-25 sm:h-20 sm:w-25 lg:h-20 lg:w-30 dark:hidden">
-                  <Image
-                    src="/brewscholar_light_mode.png"
-                    alt="BrewScholar Logo Light"
-                    fill
-                    sizes="120"
-                    className="object-contain"
-                  />
-                </div>
-                <div className="relative hidden h-15 w-25 sm:h-20 sm:w-25 lg:h-20 lg:w-30 dark:block">
-                  <Image
-                    src="/brewscholar_dark_mode.png"
-                    alt="brewscholar dark mode"
-                    fill
-                    sizes="120"
-                    className="object-contain"
-                  />
-                </div>
+        {/* Floating header text inside hero (Always renders to keep layout consistent) */}
+        <div className="absolute bottom-8 left-1/2 w-full max-w-7xl -translate-x-1/2 px-6">
+          <div className="flex flex-col justify-center gap-3">
+            {/* Top: Logo */}
+            <div className="flex items-center gap-3">
+              <div className="relative block h-15 w-25 sm:h-20 sm:w-25 lg:h-20 lg:w-30 dark:hidden">
+                <Image
+                  src="/brewscholar_light_mode.png"
+                  alt="BrewScholar Logo Light"
+                  fill
+                  sizes="120"
+                  className="object-contain"
+                />
               </div>
-
-              {/* Bottom: MovieHub title */}
-              <h1 className="text-3xl font-black tracking-tight text-foreground sm:text-4xl">
-                Movie<span className="text-primary">Hub</span>
-              </h1>
+              <div className="relative hidden h-15 w-25 sm:h-20 sm:w-25 lg:h-20 lg:w-30 dark:block">
+                <Image
+                  src="/brewscholar_dark_mode.png"
+                  alt="brewscholar dark mode"
+                  fill
+                  sizes="120"
+                  className="object-contain"
+                />
+              </div>
             </div>
+
+            {/* Bottom: MovieHub title */}
+            <h1 className="text-3xl font-black tracking-tight text-foreground sm:text-4xl">
+              Movie<span className="text-primary">Hub</span>
+            </h1>
           </div>
         </div>
-      )}
+      </div>
 
       <div className="mx-auto max-w-7xl px-6 pb-16">
         {/* ── Search + Categories bar ── */}
@@ -357,87 +352,95 @@ export default function MovieHub() {
               </h2>
             </div>
             <span className="text-xs font-medium text-muted-foreground">
-              {movies.results.length} results
+              {movies?.results.length} results
             </span>
           </div>
 
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-            {movies.results.map((movie) => (
-              <Link
-                key={movie.id}
-                href={`/entertainment/movie-details/${movie.id}`}
-                className="group block"
-              >
-                <Card className="flex h-full flex-col gap-0 overflow-hidden border-border bg-muted p-0 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/60 hover:shadow-xl hover:shadow-primary/5">
-                  {/* Poster */}
-                  <div className="relative aspect-2/3 overflow-hidden bg-muted">
-                    {movie.poster_path ? (
-                      <Image
-                        src={`${IMAGE_BASE_URL}${movie.poster_path}`}
-                        alt={movie.title}
-                        fill
-                        sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center">
-                        <Film className="h-10 w-10 text-muted" />
+            {isFetching ? (
+              <div className="col-span-full flex h-[60vh] items-center justify-center bg-background">
+                <Spinner className="h-10 w-10 text-primary" />
+              </div>
+            ) : (
+              movies?.results.map((movie) => {
+                return (
+                  <Link
+                    key={movie.id}
+                    href={`/entertainment/movie-details/${movie.id}`}
+                    className="group block"
+                  >
+                    <Card className="flex h-full flex-col gap-0 overflow-hidden border-border bg-muted p-0 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/60 hover:shadow-xl hover:shadow-primary/5">
+                      {/* Poster */}
+                      <div className="relative aspect-2/3 overflow-hidden bg-muted">
+                        {movie.poster_path ? (
+                          <Image
+                            src={`${IMAGE_BASE_URL}${movie.poster_path}`}
+                            alt={movie.title}
+                            fill
+                            sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center">
+                            <Clapperboard className="h-10 w-10 text-muted" />
+                          </div>
+                        )}
+
+                        {/* linear overlay on hover */}
+                        <div className="absolute inset-0 bg-linear-to-t from-muted via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
+                        {/* Rating badge */}
+                        <div
+                          className={`absolute top-2 right-2 flex items-center gap-1 rounded-full bg-background/80 px-2 py-0.5 text-xs font-bold backdrop-blur-sm ${getRatingColor(movie.vote_average)}`}
+                        >
+                          <Star className="h-2.5 w-2.5 fill-current" />
+                          {movie.vote_average
+                            ? movie.vote_average.toFixed(1)
+                            : "NR"}
+                        </div>
+
+                        {/* Language tag */}
+                        <div className="absolute top-2 left-2 rounded-sm bg-background/70 px-1.5 py-0.5 text-[10px] font-bold tracking-wider text-muted-foreground uppercase backdrop-blur-sm">
+                          {movie.original_language}
+                        </div>
                       </div>
-                    )}
 
-                    {/* linear overlay on hover */}
-                    <div className="absolute inset-0 bg-linear-to-t from-muted via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                      {/* Info */}
+                      <CardHeader className="p-3 pb-1">
+                        <CardTitle className="line-clamp-1 text-sm leading-tight font-bold text-foreground transition-colors group-hover:text-primary">
+                          {movie.title}
+                        </CardTitle>
+                        <div className="mt-1 flex items-center gap-1">
+                          <CalendarClock className="h-2.5 w-2.5 text-muted" />
+                          <span className="text-[11px] text-muted-foreground">
+                            {movie.release_date
+                              ? movie.release_date.split("-")[0]
+                              : "TBA"}
+                          </span>
+                        </div>
+                      </CardHeader>
 
-                    {/* Rating badge */}
-                    <div
-                      className={`absolute top-2 right-2 flex items-center gap-1 rounded-full bg-background/80 px-2 py-0.5 text-xs font-bold backdrop-blur-sm ${getRatingColor(movie.vote_average)}`}
-                    >
-                      <Star className="h-2.5 w-2.5 fill-current" />
-                      {movie.vote_average
-                        ? movie.vote_average.toFixed(1)
-                        : "NR"}
-                    </div>
-
-                    {/* Language tag */}
-                    <div className="absolute top-2 left-2 rounded-sm bg-background/70 px-1.5 py-0.5 text-[10px] font-bold tracking-wider text-muted-foreground uppercase backdrop-blur-sm">
-                      {movie.original_language}
-                    </div>
-                  </div>
-
-                  {/* Info */}
-                  <CardHeader className="p-3 pb-1">
-                    <CardTitle className="line-clamp-1 text-sm leading-tight font-bold text-foreground transition-colors group-hover:text-primary">
-                      {movie.title}
-                    </CardTitle>
-                    <div className="mt-1 flex items-center gap-1">
-                      <Calendar className="h-2.5 w-2.5 text-muted" />
-                      <span className="text-[11px] text-muted-foreground">
-                        {movie.release_date
-                          ? movie.release_date.split("-")[0]
-                          : "TBA"}
-                      </span>
-                    </div>
-                  </CardHeader>
-
-                  <CardContent className="mt-auto p-3 pt-2">
-                    <CardDescription className="line-clamp-2 text-[11px] leading-relaxed text-muted-foreground">
-                      {movie.overview || "No description available."}
-                    </CardDescription>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
+                      <CardContent className="mt-auto p-3 pt-2">
+                        <CardDescription className="line-clamp-2 text-[11px] leading-relaxed text-muted-foreground">
+                          {movie.overview || "No description available."}
+                        </CardDescription>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                )
+              })
+            )}
           </div>
         </main>
 
         {/* Pagination */}
-        {movies.total_pages > 1 && (
+        {Number(movies?.total_pages) > 1 && (
           <div className="mt-14 flex justify-center">
             <PaginationControls
               currentPage={currentPage}
               // Even though it says a lot of pages, TMDB only returns 500 movies in popular section
-              totalPages={Math.min(movies.total_pages, 500)}
+              totalPages={Math.min(Number(movies?.total_pages), 500)}
               route="/entertainment"
               onPageChange={(page) => {
                 setPage(activeFilter, page)

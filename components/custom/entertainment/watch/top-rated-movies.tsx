@@ -2,7 +2,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { motion } from "motion/react"
 import { useState, useRef } from "react"
-import { Star, Film, ChevronLeft, ChevronRight, Award } from "lucide-react"
+import { Star, Film, ChevronLeft, ChevronRight } from "lucide-react"
 
 // components
 import { Button } from "@/components/ui/button"
@@ -104,7 +104,7 @@ export default function TopRatedMoviesSection() {
       {/* Header + Pagination controls */}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="flex items-center gap-1 text-xs font-semibold tracking-widest text-primary uppercase sm:gap-2 sm:text-sm">
-          <Award className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+          <Star className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           Top Rated Movies
         </h2>
 

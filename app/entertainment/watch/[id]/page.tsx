@@ -89,7 +89,7 @@ const Watch = () => {
   // map of player id -> component (keeps rendering logic explicit)
   const playerComponents: Record<string, JSX.Element> = {
     "Player 1": <VidLinkPro id={movieId} startTime={startTime} />,
-    "Player 2": <VidSrcMe id={movieId} startTime={startTime} />,
+    "Player 2": <VidSrcMe id={movieId} />, // This one doesn't have a support for progress tracking
     "Player 3": <VidKingPlayer id={movieId} startTime={startTime} />,
   }
 
