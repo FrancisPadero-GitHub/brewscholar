@@ -6,7 +6,7 @@ import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import Link from "next/link"
 import { motion } from "motion/react"
-import { ArrowLeft, Minus, Plus } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import Image from "next/image"
 import type { JSX } from "react"
 import {
@@ -34,6 +34,7 @@ import VidLinkPro from "@/components/custom/entertainment/player/VidLinkPro"
 
 import TvInfoPanel from "@/components/custom/entertainment/watch/tv-info-panel"
 import TvEpisodeInfoPanel from "@/components/custom/entertainment/watch/tv-episode-info-panel"
+import TvEpisodeNavigator from "@/components/custom/entertainment/watch/tv-episode-navigator"
 import PopularTvSection from "@/components/custom/entertainment/watch/popular-tv"
 import TopRatedTvSection from "@/components/custom/entertainment/watch/top-rated-tv"
 import AiringTodayTvSection from "@/components/custom/entertainment/watch/airing-today-tv"
@@ -44,6 +45,7 @@ import {
   ACTIVE_PLAYER,
   usePlayerStore,
 } from "@/features/zustand/entertainment/player-buttons-store"
+import { useTvEpisodeStore } from "@/features/zustand/entertainment/tv-episode-store"
 import { useWatchTracker } from "@/hooks/entertainment/progress-tracker/useWatchTracker"
 import type { WatchProgress } from "@/hooks/entertainment/progress-tracker/useWatchTracker"
 
@@ -58,8 +60,8 @@ const WatchTv = () => {
 
   // start time for tracking progress resumption
   const [startTime, setStartTime] = useState<number>(0)
-  const [season, setSeason] = useState<number>(1)
-  const [episode, setEpisode] = useState<number>(1)
+  const { season, episode, setSeason, setEpisode, setSeasonAndEpisode } =
+    useTvEpisodeStore()
 
   // track watch progress
   useWatchTracker(tvId, mediaTitle, "TV series", season, episode)
@@ -77,8 +79,7 @@ const WatchTv = () => {
               setStartTime(Math.floor(progress.currentTime))
             }
             if (progress.mode === "TV series") {
-              if (progress.season) setSeason(progress.season)
-              if (progress.episode) setEpisode(progress.episode)
+              setSeasonAndEpisode(progress.season || 1, progress.episode || 1)
             }
           }
         } catch {
@@ -88,7 +89,7 @@ const WatchTv = () => {
     }, 0)
 
     return () => clearTimeout(timeoutId)
-  }, [tvId])
+  }, [tvId, setSeasonAndEpisode])
 
   // store for the players
   const { setActivePlayer, activePlayer } = usePlayerStore()
@@ -162,7 +163,7 @@ const WatchTv = () => {
           </h1>
           <Link href="/entertainment" className="ml-auto">
             <h1 className="text-2xl font-black tracking-tight text-foreground sm:text-4xl">
-              TV<span className="text-primary">Hub</span>
+              Movie<span className="text-primary">Hub</span>
             </h1>
           </Link>
         </div>
@@ -176,67 +177,6 @@ const WatchTv = () => {
         >
           {playerComponents[activePlayer]}
         </motion.div>
-
-        {/* ── TV Series specific UI ── */}
-        <div className="flex flex-wrap items-center gap-4 rounded-xl border border-border bg-card/50 p-3 sm:p-4">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-semibold text-muted-foreground">
-              Season
-            </span>
-            <div className="flex items-center rounded-md border border-border bg-background">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 rounded-none rounded-l-md hover:bg-muted"
-                onClick={() => setSeason((s) => Math.max(1, s - 1))}
-              >
-                <Minus className="h-3 w-3" />
-              </Button>
-              <span className="flex w-10 items-center justify-center text-sm font-medium">
-                {season}
-              </span>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 rounded-none rounded-r-md hover:bg-muted"
-                onClick={() => setSeason((s) => s + 1)}
-              >
-                <Plus className="h-3 w-3" />
-              </Button>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-semibold text-muted-foreground">
-              Episode
-            </span>
-            <div className="flex items-center rounded-md border border-border bg-background">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 rounded-none rounded-l-md hover:bg-muted"
-                onClick={() => setEpisode((e) => Math.max(1, e - 1))}
-              >
-                <Minus className="h-3 w-3" />
-              </Button>
-              <span className="flex w-10 items-center justify-center text-sm font-medium">
-                {episode}
-              </span>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 rounded-none rounded-r-md hover:bg-muted"
-                onClick={() => setEpisode((e) => e + 1)}
-              >
-                <Plus className="h-3 w-3" />
-              </Button>
-            </div>
-          </div>
-          {tvShow?.seasons && (
-            <span className="text-xs text-muted-foreground">
-              Max Seasons: {tvShow.seasons.length}
-            </span>
-          )}
-        </div>
 
         <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
           <span className="text-xs text-primary sm:indent-5">
@@ -270,6 +210,18 @@ const WatchTv = () => {
             })}
           </div>
         </div>
+
+        {/* ── Episode Navigator ── */}
+        {tvShow?.seasons && (
+          <TvEpisodeNavigator
+            seriesId={tvId}
+            seasons={tvShow.seasons}
+            currentSeason={season}
+            currentEpisode={episode}
+            onSeasonChange={setSeason}
+            onEpisodeChange={setEpisode}
+          />
+        )}
 
         {/* ── TV Episode info panel */}
         <TvEpisodeInfoPanel

@@ -13,11 +13,13 @@ import type { WatchProgress } from "@/hooks/entertainment/progress-tracker/useWa
 import { useFetchMovieDetails } from "@/hooks/entertainment/fetch/movies/useFetchMovieDetails"
 import { useFetchTvDetails } from "@/hooks/entertainment/fetch/tv-series/useFetchTvDetails"
 import { useEntertainmentMode } from "@/features/zustand/entertainment/entertaiment-mode"
+import { useTvEpisodeStore } from "@/features/zustand/entertainment/tv-episode-store"
 
 function ContinueWatchingCard({ item }: { item: WatchProgress }) {
   const isTv = item.mode === "TV series"
   const { data: movie } = useFetchMovieDetails(isTv ? "" : item.mediaId)
   const { data: tvShow } = useFetchTvDetails(isTv ? item.mediaId : "")
+  const { setSeasonAndEpisode } = useTvEpisodeStore()
 
   const mediaName = isTv ? tvShow?.name : movie?.title
   const displayTitle = mediaName || item.title || `Media ${item.mediaId}`
@@ -27,10 +29,17 @@ function ContinueWatchingCard({ item }: { item: WatchProgress }) {
     ? tvShow?.poster_path || tvShow?.backdrop_path
     : movie?.poster_path || movie?.backdrop_path
 
+  const handleClick = () => {
+    if (isTv && item.season && item.episode) {
+      setSeasonAndEpisode(item.season, item.episode)
+    }
+  }
+
   return (
     <Link
       href={`/entertainment/${isTv ? "watch-tv" : "watch-movie"}/${item.mediaId}`}
       className="group block"
+      onClick={handleClick}
     >
       <Card className="flex h-full flex-col gap-0 overflow-hidden border-border bg-muted p-0 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/60 hover:shadow-xl hover:shadow-primary/5">
         <div className="relative aspect-2/3 overflow-hidden bg-muted">
