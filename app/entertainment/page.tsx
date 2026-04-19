@@ -25,6 +25,7 @@ import type { ComponentType, SVGProps } from "react"
 
 // types
 import type { SearchMoviesResponse } from "@/types/entertainment/movies/search-movies"
+import type { SearchTvSeriesResponse } from "@/types/entertainment/tv-series/search-tv-series"
 
 // hooks
 import { useFetchPopularMovies } from "@/hooks/entertainment/fetch/movies/useFetchPopularMovies"
@@ -32,6 +33,7 @@ import { useFetchNowPlayingMovie } from "@/hooks/entertainment/fetch/movies/useF
 import { useFetchTopRatedMovies } from "@/hooks/entertainment/fetch/movies/useFetchTopRatedMovies"
 import { useFetchUpcomingMovies } from "@/hooks/entertainment/fetch/movies/useFetchUpcomingMovies"
 import { useFetchSearchedMovies } from "@/hooks/entertainment/fetch/movies/useFetchSearchedMovies"
+import { useFetchSearchedTvSeries } from "@/hooks/entertainment/fetch/tv-series/useFetchSearchedTvSeries"
 
 // tv hooks
 import { useFetchPopularTvSeries } from "@/hooks/entertainment/fetch/tv-series/useFetchPopular"
@@ -141,9 +143,26 @@ export default function MovieHub() {
     isFetching: searchedMovieIsFetching,
     isError: searchedMovieIsError,
     error: searchedMovieError,
-  } = useFetchSearchedMovies(searchQuery)
+  } = useFetchSearchedMovies(isMovie ? searchQuery : "")
 
-  const searchResult = searchedMovie as SearchMoviesResponse | undefined
+  // Search TV series
+  const {
+    data: searchedTv,
+    isFetching: searchedTvIsFetching,
+    isError: searchedTvIsError,
+    error: searchedTvError,
+  } = useFetchSearchedTvSeries(!isMovie ? searchQuery : "")
+
+  const searchResult:
+    | SearchMoviesResponse
+    | SearchTvSeriesResponse
+    | undefined = isMovie ? searchedMovie : searchedTv
+
+  const searchIsFetching = isMovie
+    ? searchedMovieIsFetching
+    : searchedTvIsFetching
+  const searchIsError = isMovie ? searchedMovieIsError : searchedTvIsError
+  const searchError = isMovie ? searchedMovieError : searchedTvError
 
   // Category Movies Fetching
   const isPopular = activeFilter === "Popular"
@@ -374,11 +393,13 @@ export default function MovieHub() {
       <div className="mx-auto max-w-7xl px-6 pb-16">
         {/* ── Search + Categories bar ── */}
         <div className="sticky top-0 z-20 -mx-6 mb-8 space-y-5 border-border bg-background/80 px-6 pt-5 backdrop-blur-md">
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             <Button
               variant={mode === "Movie" ? "default" : "outline"}
               size="xs"
-              onClick={() => setMode("Movie")}
+              onClick={() => {
+                setMode("Movie")
+              }}
               className="px-2 py-1 text-[11px]"
             >
               Movie
@@ -386,18 +407,28 @@ export default function MovieHub() {
             <Button
               variant={mode === "TV series" ? "default" : "outline"}
               size="xs"
-              onClick={() => setMode("TV series")}
+              onClick={() => {
+                setMode("TV series")
+              }}
               className="px-2 py-1 text-[11px]"
             >
               TV series
             </Button>
+            {/* Search warning */}
+            {searchQuery && (
+              <span className="hidden text-xs text-muted-foreground sm:block">
+                {isMovie
+                  ? "Looking for a TV show? Try switching modes."
+                  : "Looking for a movie? Try switching modes."}
+              </span>
+            )}
           </div>
           <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
             {/* Search */}
             <div className="relative w-full sm:max-w-sm">
               <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="Search movies, genres…"
+                placeholder={`Search ${isMovie ? "movies" : "tv series"}`}
                 ref={searchInputRef}
                 defaultValue={searchQuery}
                 onKeyDown={(e) => {
@@ -486,9 +517,9 @@ export default function MovieHub() {
           <SearchResults
             searchResult={searchResult}
             searchQuery={searchQuery}
-            isFetching={searchedMovieIsFetching}
-            isError={searchedMovieIsError}
-            error={searchedMovieError}
+            isFetching={searchIsFetching}
+            isError={searchIsError}
+            error={searchError}
           />
 
           <div className="mb-6 flex items-center justify-between">

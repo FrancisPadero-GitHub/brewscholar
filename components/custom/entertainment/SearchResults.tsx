@@ -10,11 +10,16 @@ import { Film, Star, Calendar, Search } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import type { SearchMoviesResponse } from "@/types/entertainment/movies/search-movies"
+import type { SearchTvSeriesResponse } from "@/types/entertainment/tv-series/search-tv-series"
 import { IMAGE_BASE_URL } from "@/constants/image-size"
 import { getRatingColor } from "@/helpers/entertainment/movie-details/movie-details"
+import { Button } from "@/components/ui/button"
+import { useEntertainmentMode } from "@/features/zustand/entertainment/entertaiment-mode"
+
+type SearchResponse = SearchMoviesResponse | SearchTvSeriesResponse
 
 interface SearchResultsProps {
-  searchResult: SearchMoviesResponse | undefined
+  searchResult: SearchResponse | undefined
   searchQuery: string
   isFetching: boolean
   isError: boolean
@@ -28,6 +33,9 @@ export default function SearchResults({
   isError,
   error,
 }: SearchResultsProps) {
+  const { mode, setMode } = useEntertainmentMode()
+  const isMovie = mode === "Movie"
+
   if (!searchQuery) return null
 
   if (isFetching) {
@@ -75,7 +83,7 @@ export default function SearchResults({
           No results found for &quot;{searchQuery}&quot;
         </p>
         <p className="mt-1 text-xs text-muted-foreground">
-          Try adjusting your search or explore the popular movies below.
+          Try adjusting your search or explore the popular titles below.
         </p>
       </div>
     )
@@ -96,71 +104,101 @@ export default function SearchResults({
       </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-        {searchResult.results.map((movie) => (
-          <Link
-            key={movie.id}
-            href={`/entertainment/movie-details/${movie.id}`}
-            className="group block"
-          >
-            <Card className="flex h-full flex-col gap-0 overflow-hidden border-border bg-muted p-0 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/60 hover:shadow-xl hover:shadow-primary/5">
-              {/* Poster */}
-              <div className="relative aspect-2/3 overflow-hidden bg-muted">
-                {movie.poster_path ? (
-                  <Image
-                    src={`${IMAGE_BASE_URL}${movie.poster_path}`}
-                    alt={movie.title}
-                    fill
-                    sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
-                  />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center">
-                    <Film className="h-10 w-10 text-muted" />
+        {searchResult.results.map((item) => {
+          // Duck-type to distinguish movie vs TV result
+          const isMovie = "title" in item
+          const label = isMovie ? item.title : (item as { name: string }).name
+          const date = isMovie
+            ? (item as { release_date: string }).release_date
+            : (item as { first_air_date: string }).first_air_date
+          const href = isMovie
+            ? `/entertainment/movie-details/${item.id}`
+            : `/entertainment/tv-series-details/${item.id}`
+
+          return (
+            <Link key={item.id} href={href} className="group block">
+              <Card className="flex h-full flex-col gap-0 overflow-hidden border-border bg-muted p-0 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/60 hover:shadow-xl hover:shadow-primary/5">
+                {/* Poster */}
+                <div className="relative aspect-2/3 overflow-hidden bg-muted">
+                  {item.poster_path ? (
+                    <Image
+                      src={`${IMAGE_BASE_URL}${item.poster_path}`}
+                      alt={label}
+                      fill
+                      sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center">
+                      <Film className="h-10 w-10 text-muted" />
+                    </div>
+                  )}
+
+                  {/* linear overlay on hover */}
+                  <div className="absolute inset-0 bg-linear-to-t from-muted via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
+                  {/* Rating badge */}
+                  <div
+                    className={`absolute top-2 right-2 flex items-center gap-1 rounded-full bg-background/80 px-2 py-0.5 text-xs font-bold backdrop-blur-sm ${getRatingColor(item.vote_average)}`}
+                  >
+                    <Star className="h-2.5 w-2.5 fill-current" />
+                    {item.vote_average ? item.vote_average.toFixed(1) : "NR"}
                   </div>
-                )}
 
-                {/* linear overlay on hover */}
-                <div className="absolute inset-0 bg-linear-to-t from-muted via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-
-                {/* Rating badge */}
-                <div
-                  className={`absolute top-2 right-2 flex items-center gap-1 rounded-full bg-background/80 px-2 py-0.5 text-xs font-bold backdrop-blur-sm ${getRatingColor(movie.vote_average)}`}
-                >
-                  <Star className="h-2.5 w-2.5 fill-current" />
-                  {movie.vote_average ? movie.vote_average.toFixed(1) : "NR"}
+                  {/* Language tag */}
+                  <div className="absolute top-2 left-2 rounded-sm bg-background/70 px-1.5 py-0.5 text-[10px] font-bold tracking-wider text-muted-foreground uppercase backdrop-blur-sm">
+                    {item.original_language}
+                  </div>
                 </div>
 
-                {/* Language tag */}
-                <div className="absolute top-2 left-2 rounded-sm bg-background/70 px-1.5 py-0.5 text-[10px] font-bold tracking-wider text-muted-foreground uppercase backdrop-blur-sm">
-                  {movie.original_language}
-                </div>
-              </div>
+                {/* Info */}
+                <CardHeader className="p-3 pb-1">
+                  <CardTitle className="line-clamp-1 text-sm leading-tight font-bold text-foreground transition-colors group-hover:text-primary">
+                    {label}
+                  </CardTitle>
+                  <div className="mt-1 flex items-center gap-1">
+                    <Calendar className="h-2.5 w-2.5 text-muted" />
+                    <span className="text-[11px] text-muted-foreground">
+                      {date ? date.split("-")[0] : "TBA"}
+                    </span>
+                  </div>
+                </CardHeader>
 
-              {/* Info */}
-              <CardHeader className="p-3 pb-1">
-                <CardTitle className="line-clamp-1 text-sm leading-tight font-bold text-foreground transition-colors group-hover:text-primary">
-                  {movie.title}
-                </CardTitle>
-                <div className="mt-1 flex items-center gap-1">
-                  <Calendar className="h-2.5 w-2.5 text-muted" />
-                  <span className="text-[11px] text-muted-foreground">
-                    {movie.release_date
-                      ? movie.release_date.split("-")[0]
-                      : "TBA"}
-                  </span>
-                </div>
-              </CardHeader>
-
-              <CardContent className="mt-auto p-3 pt-2">
-                <CardDescription className="line-clamp-2 text-[11px] leading-relaxed text-muted-foreground">
-                  {movie.overview || "No description available."}
-                </CardDescription>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
+                <CardContent className="mt-auto p-3 pt-2">
+                  <CardDescription className="line-clamp-2 text-[11px] leading-relaxed text-muted-foreground">
+                    {item.overview || "No description available."}
+                  </CardDescription>
+                </CardContent>
+              </Card>
+            </Link>
+          )
+        })}
       </div>
+
+      <div className="mt-8 flex flex-col items-center justify-between gap-4 rounded-xl border border-dashed border-border bg-muted/30 p-6 sm:flex-row">
+        <div className="flex flex-col gap-1 text-center sm:text-left">
+          <span className="text-sm font-medium text-foreground">
+            {isMovie
+              ? "Looking for a TV show?"
+              : "Looking for a movie?"}
+          </span>
+          <span className="text-xs text-muted-foreground">
+            {isMovie
+              ? "Try switching to TV series mode to find what you're looking for."
+              : "Try switching to Movie mode to find what you're looking for."}
+          </span>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setMode(isMovie ? "TV series" : "Movie")}
+          className="shrink-0"
+        >
+          Switch to {isMovie ? "TV series" : "Movies"}
+        </Button>
+      </div>
+
       <Separator />
     </div>
   )
