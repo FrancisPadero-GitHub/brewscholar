@@ -7,7 +7,7 @@ import {
   MonitorPlay,
   ChevronLeft,
   ChevronRight,
-  Trophy,
+  Radio,
 } from "lucide-react"
 
 // components
@@ -15,23 +15,23 @@ import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 
 // types
-import type { TopRatedTvSeriesResult } from "@/types/entertainment/tv-series/top-rated"
+import type { OnTheAirTvSeriesResult } from "@/types/entertainment/tv-series/on-the-air"
 
 // helper
 import { IMAGE_BASE_URL } from "@/constants/image-size"
 import { getRatingColor } from "@/helpers/entertainment/movie-details/movie-details"
 
 // hooks
-import { useFetchTopRatedTvSeries } from "@/hooks/entertainment/fetch/tv-series/useFetchTopRated"
+import { useFetchOnTheAirTvSeries } from "@/hooks/entertainment/fetch/tv-series/useFetchOnTheAir"
 
-function TopRatedTvCard({ tvShow }: { tvShow: TopRatedTvSeriesResult }) {
+function OnTheAirTvCard({ tvShow }: { tvShow: OnTheAirTvSeriesResult }) {
   const ratingColor = getRatingColor(tvShow.vote_average)
   const year = tvShow.first_air_date
     ? tvShow.first_air_date.split("-")[0]
     : "TBA"
 
   return (
-    <Link href={`/entertainment/watch-tv/${tvShow.id}`}>
+    <Link href={`/entertainment/tv-series-details/${tvShow.id}`}>
       <motion.div
         whileHover={{ y: -4, scale: 1.02 }}
         transition={{ duration: 0.2 }}
@@ -71,10 +71,10 @@ function TopRatedTvCard({ tvShow }: { tvShow: TopRatedTvSeriesResult }) {
   )
 }
 
-export default function TopRatedTvSection() {
+export default function OnTheAirTvSection() {
   const [page, setPage] = useState(1)
   const scrollRef = useRef<HTMLDivElement>(null)
-  const { data, isFetching } = useFetchTopRatedTvSeries(page)
+  const { data, isFetching } = useFetchOnTheAirTvSeries(page)
 
   const scrollLeft = () => {
     if (scrollRef.current) {
@@ -105,8 +105,8 @@ export default function TopRatedTvSection() {
     <section className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="flex items-center gap-1 text-xs font-semibold tracking-widest text-primary uppercase sm:gap-2 sm:text-sm">
-          <Trophy className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-          Top Rated TV Series
+          <Radio className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+          On The Air
         </h2>
 
         <div className="flex items-center gap-1 sm:gap-2">
@@ -165,7 +165,7 @@ export default function TopRatedTvSection() {
               className="scrollbar-thin scrollbar-track-transparent scrollbar-thumb-border no-scrollbar flex gap-3 overflow-x-auto pb-3"
             >
               {tvShows.map((tvShow) => (
-                <TopRatedTvCard key={tvShow.id} tvShow={tvShow} />
+                <OnTheAirTvCard key={tvShow.id} tvShow={tvShow} />
               ))}
             </motion.div>
 

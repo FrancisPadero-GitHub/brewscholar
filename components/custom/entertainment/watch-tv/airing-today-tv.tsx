@@ -7,7 +7,7 @@ import {
   MonitorPlay,
   ChevronLeft,
   ChevronRight,
-  Flame,
+  CalendarClock,
 } from "lucide-react"
 
 // components
@@ -15,24 +15,23 @@ import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 
 // types
-import type { TvSeriesResult } from "@/types/entertainment/tv-series/popular-tv-series"
+import type { AiringTodayTvSeriesResult } from "@/types/entertainment/tv-series/airing-today"
 
 // helper
 import { IMAGE_BASE_URL } from "@/constants/image-size"
 import { getRatingColor } from "@/helpers/entertainment/movie-details/movie-details"
 
 // hooks
-import { useFetchPopularTvSeries } from "@/hooks/entertainment/fetch/tv-series/useFetchPopular"
+import { useFetchAiringTodayTvSeries } from "@/hooks/entertainment/fetch/tv-series/useFetchAiringToday"
 
-// Popular TV card
-function PopularTvCard({ tvShow }: { tvShow: TvSeriesResult }) {
+function AiringTodayTvCard({ tvShow }: { tvShow: AiringTodayTvSeriesResult }) {
   const ratingColor = getRatingColor(tvShow.vote_average)
   const year = tvShow.first_air_date
     ? tvShow.first_air_date.split("-")[0]
     : "TBA"
 
   return (
-    <Link href={`/entertainment/watch-tv/${tvShow.id}`}>
+    <Link href={`/entertainment/tv-series-details/${tvShow.id}`}>
       <motion.div
         whileHover={{ y: -4, scale: 1.02 }}
         transition={{ duration: 0.2 }}
@@ -72,10 +71,10 @@ function PopularTvCard({ tvShow }: { tvShow: TvSeriesResult }) {
   )
 }
 
-export default function PopularTvSection() {
+export default function AiringTodayTvSection() {
   const [page, setPage] = useState(1)
   const scrollRef = useRef<HTMLDivElement>(null)
-  const { data, isFetching } = useFetchPopularTvSeries(page)
+  const { data, isFetching } = useFetchAiringTodayTvSeries(page)
 
   const scrollLeft = () => {
     if (scrollRef.current) {
@@ -106,8 +105,8 @@ export default function PopularTvSection() {
     <section className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="flex items-center gap-1 text-xs font-semibold tracking-widest text-primary uppercase sm:gap-2 sm:text-sm">
-          <Flame className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-          Popular TV Series
+          <CalendarClock className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+          Airing Today
         </h2>
 
         <div className="flex items-center gap-1 sm:gap-2">
@@ -166,7 +165,7 @@ export default function PopularTvSection() {
               className="scrollbar-thin scrollbar-track-transparent scrollbar-thumb-border no-scrollbar flex gap-3 overflow-x-auto pb-3"
             >
               {tvShows.map((tvShow) => (
-                <PopularTvCard key={tvShow.id} tvShow={tvShow} />
+                <AiringTodayTvCard key={tvShow.id} tvShow={tvShow} />
               ))}
             </motion.div>
 

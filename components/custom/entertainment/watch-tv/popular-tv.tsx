@@ -2,28 +2,37 @@ import Image from "next/image"
 import Link from "next/link"
 import { motion } from "motion/react"
 import { useState, useRef } from "react"
-import { Star, MonitorPlay, ChevronLeft, ChevronRight, CalendarClock } from "lucide-react"
+import {
+  Star,
+  MonitorPlay,
+  ChevronLeft,
+  ChevronRight,
+  Flame,
+} from "lucide-react"
 
 // components
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 
 // types
-import type { AiringTodayTvSeriesResult } from "@/types/entertainment/tv-series/airing-today"
+import type { TvSeriesResult } from "@/types/entertainment/tv-series/popular-tv-series"
 
 // helper
 import { IMAGE_BASE_URL } from "@/constants/image-size"
 import { getRatingColor } from "@/helpers/entertainment/movie-details/movie-details"
 
 // hooks
-import { useFetchAiringTodayTvSeries } from "@/hooks/entertainment/fetch/tv-series/useFetchAiringToday"
+import { useFetchPopularTvSeries } from "@/hooks/entertainment/fetch/tv-series/useFetchPopular"
 
-function AiringTodayTvCard({ tvShow }: { tvShow: AiringTodayTvSeriesResult }) {
+// Popular TV card
+function PopularTvCard({ tvShow }: { tvShow: TvSeriesResult }) {
   const ratingColor = getRatingColor(tvShow.vote_average)
-  const year = tvShow.first_air_date ? tvShow.first_air_date.split("-")[0] : "TBA"
+  const year = tvShow.first_air_date
+    ? tvShow.first_air_date.split("-")[0]
+    : "TBA"
 
   return (
-    <Link href={`/entertainment/watch-tv/${tvShow.id}`}>
+    <Link href={`/entertainment/tv-series-details/${tvShow.id}`}>
       <motion.div
         whileHover={{ y: -4, scale: 1.02 }}
         transition={{ duration: 0.2 }}
@@ -63,10 +72,10 @@ function AiringTodayTvCard({ tvShow }: { tvShow: AiringTodayTvSeriesResult }) {
   )
 }
 
-export default function AiringTodayTvSection() {
+export default function PopularTvSection() {
   const [page, setPage] = useState(1)
   const scrollRef = useRef<HTMLDivElement>(null)
-  const { data, isFetching } = useFetchAiringTodayTvSeries(page)
+  const { data, isFetching } = useFetchPopularTvSeries(page)
 
   const scrollLeft = () => {
     if (scrollRef.current) {
@@ -97,8 +106,8 @@ export default function AiringTodayTvSection() {
     <section className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="flex items-center gap-1 text-xs font-semibold tracking-widest text-primary uppercase sm:gap-2 sm:text-sm">
-          <CalendarClock className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-          Airing Today
+          <Flame className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+          Popular TV Series
         </h2>
 
         <div className="flex items-center gap-1 sm:gap-2">
@@ -157,7 +166,7 @@ export default function AiringTodayTvSection() {
               className="scrollbar-thin scrollbar-track-transparent scrollbar-thumb-border no-scrollbar flex gap-3 overflow-x-auto pb-3"
             >
               {tvShows.map((tvShow) => (
-                <AiringTodayTvCard key={tvShow.id} tvShow={tvShow} />
+                <PopularTvCard key={tvShow.id} tvShow={tvShow} />
               ))}
             </motion.div>
 

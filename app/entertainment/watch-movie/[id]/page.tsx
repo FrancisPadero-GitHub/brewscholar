@@ -30,15 +30,18 @@ import { useFetchMovieDetails } from "@/hooks/entertainment/fetch/movies/useFetc
 // components
 import VidKingPlayer from "@/components/custom/entertainment/player/VidKingNet"
 import VidSrcMe from "@/components/custom/entertainment/player/VidSrcMe"
-import MovieInfoPanel from "@/components/custom/entertainment/watch/movie-info-panel"
-import PopularMovieSection from "@/components/custom/entertainment/watch/popular-movies"
-import TopRatedMoviesSection from "@/components/custom/entertainment/watch/top-rated-movies"
-import UpcomingMoviesSection from "@/components/custom/entertainment/watch/upcoming-movies"
-import NowPlayingMoviesSection from "@/components/custom/entertainment/watch/now-playing-movies"
+import MovieInfoPanel from "@/components/custom/entertainment/watch-movie/movie-info-panel"
+import PopularMovieSection from "@/components/custom/entertainment/watch-movie/popular-movies"
+import TopRatedMoviesSection from "@/components/custom/entertainment/watch-movie/top-rated-movies"
+import UpcomingMoviesSection from "@/components/custom/entertainment/watch-movie/upcoming-movies"
+import NowPlayingMoviesSection from "@/components/custom/entertainment/watch-movie/now-playing-movies"
 import VidLinkPro from "@/components/custom/entertainment/player/VidLinkPro"
 
 // zustand
-import { ACTIVE_PLAYER, usePlayerStore } from "@/features/zustand/entertainment/player-buttons-store"
+import {
+  ACTIVE_PLAYER,
+  usePlayerStore,
+} from "@/features/zustand/entertainment/player-buttons-store"
 import { useWatchTracker } from "@/hooks/entertainment/progress-tracker/useWatchTracker"
 import type { WatchProgress } from "@/hooks/entertainment/progress-tracker/useWatchTracker"
 
@@ -62,7 +65,8 @@ const Watch = () => {
       const stored = localStorage.getItem("watchHistory")
       if (stored) {
         try {
-          const history: Record<string, WatchProgress | undefined> = JSON.parse(stored)
+          const history: Record<string, WatchProgress | undefined> =
+            JSON.parse(stored)
           const progress = history[movieId]
           if (progress) {
             if (progress.currentTime > 0 && progress.mode === "Movie") {
@@ -89,7 +93,7 @@ const Watch = () => {
 
   const playerComponents: Record<string, JSX.Element> = {
     "Player 1": <VidLinkPro {...playerBaseProps} startTime={startTime} />,
-    "Player 2": <VidSrcMe {...playerBaseProps} />, 
+    "Player 2": <VidSrcMe {...playerBaseProps} />,
     "Player 3": <VidKingPlayer {...playerBaseProps} startTime={startTime} />,
   }
 
@@ -210,7 +214,10 @@ const Watch = () => {
       </div>
 
       {/* ── Player 3 Warning Dialog ── */}
-      <AlertDialog open={showPlayer3Warning} onOpenChange={setShowPlayer3Warning}>
+      <AlertDialog
+        open={showPlayer3Warning}
+        onOpenChange={setShowPlayer3Warning}
+      >
         <AlertDialogContent className="w-[95vw] max-w-[360px] gap-0 rounded-3xl border border-primary/20 bg-background/95 p-0 shadow-2xl shadow-primary/10 backdrop-blur-xl">
           <div className="flex items-center gap-3.5 rounded-t-3xl bg-primary/10 px-5 py-4">
             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/20 shadow-inner shadow-primary/10">
@@ -241,13 +248,19 @@ const Watch = () => {
               </p>
               <div className="flex gap-2">
                 <button
-                  onClick={() => { setActivePlayer("Player 1"); setShowPlayer3Warning(false); }}
+                  onClick={() => {
+                    setActivePlayer("Player 1")
+                    setShowPlayer3Warning(false)
+                  }}
                   className="flex-1 rounded-xl border border-border/60 bg-muted/40 py-2.5 text-xs font-bold text-foreground transition-all duration-200 hover:border-primary/50 hover:bg-primary/10 hover:text-primary active:scale-95"
                 >
                   ▶ Player 1
                 </button>
                 <button
-                  onClick={() => { setActivePlayer("Player 2"); setShowPlayer3Warning(false); }}
+                  onClick={() => {
+                    setActivePlayer("Player 2")
+                    setShowPlayer3Warning(false)
+                  }}
                   className="flex-1 rounded-xl border border-border/60 bg-muted/40 py-2.5 text-xs font-bold text-foreground transition-all duration-200 hover:border-primary/50 hover:bg-primary/10 hover:text-primary active:scale-95"
                 >
                   ▶ Player 2
@@ -268,7 +281,10 @@ const Watch = () => {
               Go Back
             </AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => { setActivePlayer("Player 3"); setShowPlayer3Warning(false); }}
+              onClick={() => {
+                setActivePlayer("Player 3")
+                setShowPlayer3Warning(false)
+              }}
               className="flex-1 rounded-xl bg-primary text-xs font-bold text-foreground shadow-lg shadow-primary/20 hover:bg-primary/90"
             >
               Continue Anyway

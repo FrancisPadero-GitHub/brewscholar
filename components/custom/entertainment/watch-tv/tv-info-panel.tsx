@@ -138,7 +138,7 @@ export default function TvInfoPanel({ tvId }: { tvId: string }) {
 
         {/* Action links */}
         <div className="flex items-center gap-2 pt-1">
-          <Link href={`/entertainment/watch-tv/${tvShow.id}`}>
+          <Link href={`/entertainment/tv-series-details/${tvShow.id}`}>
             <Button
               variant="outline"
               size="sm"

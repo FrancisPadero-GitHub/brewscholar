@@ -32,13 +32,13 @@ import VidKingPlayer from "@/components/custom/entertainment/player/VidKingNet"
 import VidSrcMe from "@/components/custom/entertainment/player/VidSrcMe"
 import VidLinkPro from "@/components/custom/entertainment/player/VidLinkPro"
 
-import TvInfoPanel from "@/components/custom/entertainment/watch/tv-info-panel"
-import TvEpisodeInfoPanel from "@/components/custom/entertainment/watch/tv-episode-info-panel"
-import TvEpisodeNavigator from "@/components/custom/entertainment/watch/tv-episode-navigator"
-import PopularTvSection from "@/components/custom/entertainment/watch/popular-tv"
-import TopRatedTvSection from "@/components/custom/entertainment/watch/top-rated-tv"
-import AiringTodayTvSection from "@/components/custom/entertainment/watch/airing-today-tv"
-import OnTheAirTvSection from "@/components/custom/entertainment/watch/on-the-air-tv"
+import TvInfoPanel from "@/components/custom/entertainment/watch-tv/tv-info-panel"
+import TvEpisodeInfoPanel from "@/components/custom/entertainment/watch-tv/tv-episode-info-panel"
+import TvEpisodeNavigator from "@/components/custom/entertainment/watch-tv/tv-episode-navigator"
+import PopularTvSection from "@/components/custom/entertainment/watch-tv/popular-tv"
+import TopRatedTvSection from "@/components/custom/entertainment/watch-tv/top-rated-tv"
+import AiringTodayTvSection from "@/components/custom/entertainment/watch-tv/airing-today-tv"
+import OnTheAirTvSection from "@/components/custom/entertainment/watch-tv/on-the-air-tv"
 
 // zustand
 import {
@@ -60,36 +60,65 @@ const WatchTv = () => {
 
   // start time for tracking progress resumption
   const [startTime, setStartTime] = useState<number>(0)
+  const [initializedTvId, setInitializedTvId] = useState<string | null>(null)
   const { season, episode, setSeason, setEpisode, setSeasonAndEpisode } =
     useTvEpisodeStore()
 
-  // track watch progress
-  useWatchTracker(tvId, mediaTitle, "TV series", season, episode)
-
   useEffect(() => {
+    if (!tvShow || initializedTvId === tvId) return
+
+    // Wrapping the logic inside a setTimeout solves the linter warning because the initial state
+    // updates are deferred to the next tick, avoiding a synchronous cascading re-render that might block the UI
     const timeoutId = setTimeout(() => {
       const stored = localStorage.getItem("watchHistory")
+      let targetSeason = 1
+      let targetEpisode = 1
+      let targetStartTime = 0
+
       if (stored) {
         try {
-          const history: Record<string, WatchProgress | undefined> =
-            JSON.parse(stored)
+          const history: Record<string, WatchProgress | undefined> = JSON.parse(stored)
           const progress = history[tvId]
-          if (progress) {
-            if (progress.currentTime > 0 && progress.mode === "TV series") {
-              setStartTime(Math.floor(progress.currentTime))
-            }
-            if (progress.mode === "TV series") {
-              setSeasonAndEpisode(progress.season || 1, progress.episode || 1)
+          if (progress && progress.mode === "TV series") {
+            const isValidSeason = tvShow.seasons.some(
+              (s) => s.season_number === progress.season
+            )
+            if (isValidSeason) {
+              targetSeason = progress.season || 1
+              targetEpisode = progress.episode || 1
+              if (progress.currentTime > 0) {
+                targetStartTime = Math.floor(progress.currentTime)
+              }
             }
           }
         } catch {
           // ignore errors
         }
       }
+
+      // Default to first valid season if season 1 doesn't exist
+      if (targetSeason === 1) {
+        const hasSeason1 = tvShow.seasons.some((s) => s.season_number === 1)
+        if (!hasSeason1) {
+          const validSeasons = tvShow.seasons.filter((s) => s.season_number > 0)
+          if (validSeasons.length > 0) {
+            targetSeason = validSeasons[0].season_number
+          }
+        }
+      }
+
+      setSeasonAndEpisode(targetSeason, targetEpisode)
+      setStartTime(targetStartTime)
+      setInitializedTvId(tvId)
     }, 0)
 
     return () => clearTimeout(timeoutId)
-  }, [tvId, setSeasonAndEpisode])
+  }, [tvId, tvShow, initializedTvId, setSeasonAndEpisode])
+
+  const isReady = initializedTvId === tvId
+
+  // track watch progress
+  useWatchTracker(isReady ? tvId : "", mediaTitle, "TV series", season, episode)
 
   // store for the players
   const { setActivePlayer, activePlayer } = usePlayerStore()
@@ -125,6 +154,15 @@ const WatchTv = () => {
         <span className="ml-3">TV Show ID is missing.</span>
       </div>
     )
+
+  if (!isReady || !tvShow) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background text-muted-foreground">
+        <Spinner />
+        <span className="ml-3">Loading TV Show...</span>
+      </div>
+    )
+  }
 
   return (
     <main className="relative min-h-screen bg-background text-foreground">
