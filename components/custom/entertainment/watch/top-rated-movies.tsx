@@ -16,7 +16,7 @@ import { IMAGE_BASE_URL } from "@/constants/image-size"
 import { getRatingColor } from "@/helpers/entertainment/movie-details/movie-details"
 
 // hooks
-import { useFetchTopRatedMovies } from "@/hooks/entertainment/fetch/useFetchTopRatedMovies"
+import { useFetchTopRatedMovies } from "@/hooks/entertainment/fetch/movies/useFetchTopRatedMovies"
 
 // Top Rated movie card
 function TopRatedMovieCard({ movie }: { movie: MovieResult }) {

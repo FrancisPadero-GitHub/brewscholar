@@ -10,7 +10,7 @@ import { IMAGE_BASE_URL } from "@/constants/image-size"
 
 // hooks
 import type { WatchProgress } from "@/hooks/entertainment/progress-tracker/useWatchTracker"
-import { useFetchMovieDetails } from "@/hooks/entertainment/fetch/useFetchMovieDetails"
+import { useFetchMovieDetails } from "@/hooks/entertainment/fetch/movies/useFetchMovieDetails"
 
 function ContinueWatchingCard({ item }: { item: WatchProgress }) {
   const { data: movie } = useFetchMovieDetails(item.mediaId)

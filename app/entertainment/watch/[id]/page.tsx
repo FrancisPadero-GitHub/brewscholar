@@ -25,7 +25,7 @@ import { AlertTriangle, ExternalLink } from "lucide-react"
 import { BACKDROP_BASE_URL } from "@/constants/image-size"
 
 // types
-import { useFetchMovieDetails } from "@/hooks/entertainment/fetch/useFetchMovieDetails"
+import { useFetchMovieDetails } from "@/hooks/entertainment/fetch/movies/useFetchMovieDetails"
 
 // components
 import VidKingPlayer from "@/components/custom/entertainment/player/VidKingNet"
@@ -234,7 +234,7 @@ const Watch = () => {
             </div>
             <div>
               <AlertDialogHeader className="gap-0 p-0 text-left">
-                <AlertDialogTitle className="text-base font-black tracking-tight leading-none">
+                <AlertDialogTitle className="text-base leading-none font-black tracking-tight">
                   Ad <span className="text-primary">Warning</span>
                 </AlertDialogTitle>
                 <p className="mt-0.5 text-[11px] text-muted-foreground">
@@ -245,7 +245,7 @@ const Watch = () => {
           </div>
 
           {/* Body */}
-          <div className="px-5 pt-4 pb-2 space-y-3">
+          <div className="space-y-3 px-5 pt-4 pb-2">
             <AlertDialogDescription className="text-[13px] leading-relaxed text-muted-foreground">
               <span className="font-semibold text-foreground">Player 3</span>{" "}
               may show intrusive pop-ups and redirect you to external apps or
@@ -254,7 +254,7 @@ const Watch = () => {
 
             {/* Safe alternatives */}
             <div className="space-y-1.5">
-              <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground/60">
+              <p className="text-[11px] font-semibold tracking-widest text-muted-foreground/60 uppercase">
                 Safer alternatives
               </p>
               <div className="flex gap-2">
@@ -282,14 +282,14 @@ const Watch = () => {
             {/* Tip banner */}
             <div className="flex items-start gap-2 rounded-xl bg-muted/30 px-3 py-2.5">
               <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 opacity-40" />
-              <span className="text-[11px] italic leading-relaxed text-muted-foreground">
+              <span className="text-[11px] leading-relaxed text-muted-foreground italic">
                 An ad-blocker is strongly recommended if you proceed.
               </span>
             </div>
           </div>
 
           {/* Footer */}
-          <AlertDialogFooter className="flex-row gap-2 px-5 pb-5 pt-3">
+          <AlertDialogFooter className="flex-row gap-2 px-5 pt-3 pb-5">
             <AlertDialogCancel className="mt-0 flex-1 rounded-xl border-border/50 bg-background/50 text-xs font-semibold hover:bg-muted">
               Go Back
             </AlertDialogCancel>

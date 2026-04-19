@@ -24,18 +24,20 @@ import { useCallback, useRef, useState, useEffect } from "react"
 import type { ComponentType, SVGProps } from "react"
 
 // types
-import type { MoviesApiResponse } from "@/types/entertainment/movies/popular-movies"
-import type { NowPlayingMoviesResponse } from "@/types/entertainment/movies/now-playing-movies"
-import type { TopRatedMoviesResponse } from "@/types/entertainment/movies/top-rated-movies"
-import type { UpcomingMoviesResponse } from "@/types/entertainment/movies/upcoming-movies"
 import type { SearchMoviesResponse } from "@/types/entertainment/movies/search-movies"
 
 // hooks
-import { useFetchPopularMovies } from "@/hooks/entertainment/fetch/useFetchPopularMovies"
-import { useFetchNowPlayingMovie } from "@/hooks/entertainment/fetch/useFetchNowPlayingMovie"
-import { useFetchTopRatedMovies } from "@/hooks/entertainment/fetch/useFetchTopRatedMovies"
-import { useFetchUpcomingMovies } from "@/hooks/entertainment/fetch/useFetchUpcomingMovies"
-import { useFetchSearchedMovies } from "@/hooks/entertainment/fetch/useFetchSearchedMovies"
+import { useFetchPopularMovies } from "@/hooks/entertainment/fetch/movies/useFetchPopularMovies"
+import { useFetchNowPlayingMovie } from "@/hooks/entertainment/fetch/movies/useFetchNowPlayingMovie"
+import { useFetchTopRatedMovies } from "@/hooks/entertainment/fetch/movies/useFetchTopRatedMovies"
+import { useFetchUpcomingMovies } from "@/hooks/entertainment/fetch/movies/useFetchUpcomingMovies"
+import { useFetchSearchedMovies } from "@/hooks/entertainment/fetch/movies/useFetchSearchedMovies"
+
+// tv hooks
+import { useFetchPopularTvSeries } from "@/hooks/entertainment/fetch/tv-series/useFetchPopular"
+import { useFetchAiringTodayTvSeries } from "@/hooks/entertainment/fetch/tv-series/useFetchAiringToday"
+import { useFetchOnTheAirTvSeries } from "@/hooks/entertainment/fetch/tv-series/useFetchOnTheAir"
+import { useFetchTopRatedTvSeries } from "@/hooks/entertainment/fetch/tv-series/useFetchTopRated"
 
 import PaginationControls from "@/components/custom/entertainment/PaginationControls"
 import SearchResults from "@/components/custom/entertainment/SearchResults"
@@ -49,8 +51,12 @@ import { Separator } from "@/components/ui/separator"
 // state management
 import {
   useFilterStore,
-  CATEGORY_TABS,
-} from "@/features/zustand/entertainment/filter-buttons-store"
+  MOVIE_CATEGORY_TABS,
+  TV_CATEGORY_TABS,
+  type MovieFiltersTab,
+  type TvFiltersTab,
+} from "@/features/zustand/entertainment/entertainment-filter-buttons-store"
+import { useEntertainmentMode } from "@/features/zustand/entertainment/entertaiment-mode"
 
 /** TODO:
  * - [done] Add search
@@ -83,16 +89,51 @@ export default function MovieHub() {
   }, [])
 
   // Tab filters Store
-  const { activeFilter, setActiveFilter, pages, setPage } = useFilterStore()
-  const currentPage = pages[activeFilter] || 1
+  const {
+    activeMovieFilter,
+    setActiveMovieFilter,
+    moviePages,
+    setMoviePage,
+    activeTvFilter,
+    setActiveTvFilter,
+    tvPages,
+    setTvPage,
+  } = useFilterStore()
+
+  // Entertainment Mode Store
+  const { mode, setMode } = useEntertainmentMode()
+  const isMovie = mode === "Movie"
+
+  const activeFilter = isMovie ? activeMovieFilter : activeTvFilter
+  const tabs = isMovie ? MOVIE_CATEGORY_TABS : TV_CATEGORY_TABS
+  const currentPage = isMovie
+    ? moviePages[activeMovieFilter] || 1
+    : tvPages[activeTvFilter] || 1
 
   // Sync URL page with store if a user shares a link directly
   useEffect(() => {
     const pageFromUrl = Number(searchParams.get("page"))
-    if (pageFromUrl && pageFromUrl !== pages[activeFilter]) {
-      setPage(activeFilter, pageFromUrl)
+    if (!pageFromUrl) return
+
+    if (isMovie) {
+      if (pageFromUrl !== moviePages[activeMovieFilter]) {
+        setMoviePage(activeMovieFilter, pageFromUrl)
+      }
+    } else {
+      if (pageFromUrl !== tvPages[activeTvFilter]) {
+        setTvPage(activeTvFilter, pageFromUrl)
+      }
     }
-  }, [searchParams, activeFilter, pages, setPage])
+  }, [
+    searchParams,
+    activeMovieFilter,
+    activeTvFilter,
+    isMovie,
+    moviePages,
+    tvPages,
+    setMoviePage,
+    setTvPage,
+  ])
 
   // Search movies
   const {
@@ -109,67 +150,140 @@ export default function MovieHub() {
   const isNowPlaying = activeFilter === "Now Playing"
   const isTopRated = activeFilter === "Top Rated"
   const isUpcoming = activeFilter === "Upcoming"
+  const isAiringToday = activeFilter === "Airing Today"
+  const isOnTheAir = activeFilter === "On The Air"
 
   const {
     data: popularData,
     isFetching: popularIsFetching,
     isError: popularIsError,
     error: popularError,
-  } = useFetchPopularMovies(currentPage, isPopular)
+  } = useFetchPopularMovies(currentPage, isMovie && isPopular)
   const {
     data: nowPlayingData,
     isFetching: nowPlayingIsFetching,
     isError: nowPlayingIsError,
     error: nowPlayingError,
-  } = useFetchNowPlayingMovie(currentPage, isNowPlaying)
+  } = useFetchNowPlayingMovie(currentPage, isMovie && isNowPlaying)
   const {
     data: topRatedData,
     isFetching: topRatedIsFetching,
     isError: topRatedIsError,
     error: topRatedError,
-  } = useFetchTopRatedMovies(currentPage, isTopRated)
+  } = useFetchTopRatedMovies(currentPage, isMovie && isTopRated)
   const {
     data: upcomingData,
     isFetching: upcomingIsFetching,
     isError: upcomingIsError,
     error: upcomingError,
-  } = useFetchUpcomingMovies(currentPage, isUpcoming)
+  } = useFetchUpcomingMovies(currentPage, isMovie && isUpcoming)
+
+  const {
+    data: popularTvData,
+    isFetching: popularTvIsFetching,
+    isError: popularTvIsError,
+    error: popularTvError,
+  } = useFetchPopularTvSeries(currentPage, !isMovie && isPopular)
+  const {
+    data: airingTodayTvData,
+    isFetching: airingTodayTvIsFetching,
+    isError: airingTodayTvIsError,
+    error: airingTodayTvError,
+  } = useFetchAiringTodayTvSeries(currentPage, !isMovie && isAiringToday)
+  const {
+    data: topRatedTvData,
+    isFetching: topRatedTvIsFetching,
+    isError: topRatedTvIsError,
+    error: topRatedTvError,
+  } = useFetchTopRatedTvSeries(currentPage, !isMovie && isTopRated)
+  const {
+    data: onTheAirTvData,
+    isFetching: onTheAirTvIsFetching,
+    isError: onTheAirTvIsError,
+    error: onTheAirTvError,
+  } = useFetchOnTheAirTvSeries(currentPage, !isMovie && isOnTheAir)
 
   // Determine which data and error states to use based on the active filter
-  const categoryData = isPopular
-    ? popularData
-    : isNowPlaying
-      ? nowPlayingData
-      : isTopRated
-        ? topRatedData
-        : upcomingData
-  const isFetching = isPopular
-    ? popularIsFetching
-    : isNowPlaying
-      ? nowPlayingIsFetching
-      : isTopRated
-        ? topRatedIsFetching
-        : upcomingIsFetching
-  const isError = isPopular
-    ? popularIsError
-    : isNowPlaying
-      ? nowPlayingIsError
-      : isTopRated
-        ? topRatedIsError
-        : upcomingIsError
-  const error = isPopular
-    ? popularError
-    : isNowPlaying
-      ? nowPlayingError
-      : isTopRated
-        ? topRatedError
-        : upcomingError
+  const categoryData = isMovie
+    ? isPopular
+      ? popularData
+      : isNowPlaying
+        ? nowPlayingData
+        : isTopRated
+          ? topRatedData
+          : upcomingData
+    : isPopular
+      ? popularTvData
+      : isAiringToday
+        ? airingTodayTvData
+        : isTopRated
+          ? topRatedTvData
+          : onTheAirTvData
+
+  const isFetching = isMovie
+    ? isPopular
+      ? popularIsFetching
+      : isNowPlaying
+        ? nowPlayingIsFetching
+        : isTopRated
+          ? topRatedIsFetching
+          : upcomingIsFetching
+    : isPopular
+      ? popularTvIsFetching
+      : isAiringToday
+        ? airingTodayTvIsFetching
+        : isTopRated
+          ? topRatedTvIsFetching
+          : onTheAirTvIsFetching
+
+  const isError = isMovie
+    ? isPopular
+      ? popularIsError
+      : isNowPlaying
+        ? nowPlayingIsError
+        : isTopRated
+          ? topRatedIsError
+          : upcomingIsError
+    : isPopular
+      ? popularTvIsError
+      : isAiringToday
+        ? airingTodayTvIsError
+        : isTopRated
+          ? topRatedTvIsError
+          : onTheAirTvIsError
+
+  const error = isMovie
+    ? isPopular
+      ? popularError
+      : isNowPlaying
+        ? nowPlayingError
+        : isTopRated
+          ? topRatedError
+          : upcomingError
+    : isPopular
+      ? popularTvError
+      : isAiringToday
+        ? airingTodayTvError
+        : isTopRated
+          ? topRatedTvError
+          : onTheAirTvError
 
   const movies = categoryData as
-    | MoviesApiResponse
-    | NowPlayingMoviesResponse
-    | TopRatedMoviesResponse
-    | UpcomingMoviesResponse
+    | {
+        results: Array<{
+          id: number
+          title?: string
+          name?: string
+          poster_path: string | null
+          backdrop_path: string | null
+          vote_average: number
+          original_language: string
+          release_date?: string
+          first_air_date?: string
+          overview: string
+        }>
+        total_pages: number
+      }
     | undefined
 
   // Map each category to an icon component (typed so TS accepts JSX usage)
@@ -178,6 +292,8 @@ export default function MovieHub() {
     "Now Playing": Clapperboard,
     "Top Rated": Star,
     Upcoming: CalendarClock,
+    "Airing Today": CalendarClock,
+    "On The Air": Clapperboard,
   }
 
   const ActiveFilterIcon: ComponentType<SVGProps<SVGSVGElement>> =
@@ -208,7 +324,9 @@ export default function MovieHub() {
           <>
             <Image
               src={`https://image.tmdb.org/t/p/w1280${featuredMovie.backdrop_path}`}
-              alt={featuredMovie.title || "Featured Movie"}
+              alt={
+                featuredMovie.title || featuredMovie.name || "Featured Movie"
+              }
               fill
               sizes="100vw"
               className="object-cover object-top opacity-30"
@@ -256,6 +374,24 @@ export default function MovieHub() {
       <div className="mx-auto max-w-7xl px-6 pb-16">
         {/* ── Search + Categories bar ── */}
         <div className="sticky top-0 z-20 -mx-6 mb-8 space-y-5 border-border bg-background/80 px-6 pt-5 backdrop-blur-md">
+          <div className="flex gap-2">
+            <Button
+              variant={mode === "Movie" ? "default" : "outline"}
+              size="xs"
+              onClick={() => setMode("Movie")}
+              className="px-2 py-1 text-[11px]"
+            >
+              Movie
+            </Button>
+            <Button
+              variant={mode === "TV series" ? "default" : "outline"}
+              size="xs"
+              onClick={() => setMode("TV series")}
+              className="px-2 py-1 text-[11px]"
+            >
+              TV series
+            </Button>
+          </div>
           <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
             {/* Search */}
             <div className="relative w-full sm:max-w-sm">
@@ -304,15 +440,26 @@ export default function MovieHub() {
             <div
               className={`${showCategoryPills ? "grid grid-cols-2" : "hidden md:flex md:flex-row"} w-full justify-center gap-2 p-1 pb-0.5 align-middle md:w-auto md:justify-start md:p-0`}
             >
-              {CATEGORY_TABS.map((category) => {
+              {tabs.map((category) => {
                 const isActive = activeFilter === category
                 return (
                   <Button
                     key={category}
                     size="sm"
                     onClick={() => {
-                      setActiveFilter(category)
-                      router.push(`${pathname}?page=${pages[category] || 1}`)
+                      if (isMovie) {
+                        const mCategory = category as MovieFiltersTab
+                        setActiveMovieFilter(mCategory)
+                        router.push(
+                          `${pathname}?page=${moviePages[mCategory] || 1}`
+                        )
+                      } else {
+                        const tCategory = category as TvFiltersTab
+                        setActiveTvFilter(tCategory)
+                        router.push(
+                          `${pathname}?page=${tvPages[tCategory] || 1}`
+                        )
+                      }
                     }}
                     variant={isActive ? "default" : "outline"}
                     className={
@@ -366,7 +513,7 @@ export default function MovieHub() {
                 return (
                   <Link
                     key={movie.id}
-                    href={`/entertainment/movie-details/${movie.id}`}
+                    href={`/entertainment/${isMovie ? "movie-details" : "tv-series-details"}/${movie.id}`}
                     className="group block"
                   >
                     <Card className="flex h-full flex-col gap-0 overflow-hidden border-border bg-muted p-0 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/60 hover:shadow-xl hover:shadow-primary/5">
@@ -375,7 +522,7 @@ export default function MovieHub() {
                         {movie.poster_path ? (
                           <Image
                             src={`${IMAGE_BASE_URL}${movie.poster_path}`}
-                            alt={movie.title}
+                            alt={movie.title || movie.name || "Poster"}
                             fill
                             sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
                             className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -409,14 +556,14 @@ export default function MovieHub() {
                       {/* Info */}
                       <CardHeader className="p-3 pb-1">
                         <CardTitle className="line-clamp-1 text-sm leading-tight font-bold text-foreground transition-colors group-hover:text-primary">
-                          {movie.title}
+                          {movie.title || movie.name}
                         </CardTitle>
                         <div className="mt-1 flex items-center gap-1">
                           <CalendarClock className="h-2.5 w-2.5 text-muted" />
                           <span className="text-[11px] text-muted-foreground">
-                            {movie.release_date
-                              ? movie.release_date.split("-")[0]
-                              : "TBA"}
+                            {(
+                              movie.release_date || movie.first_air_date
+                            )?.split("-")[0] || "TBA"}
                           </span>
                         </div>
                       </CardHeader>
@@ -443,7 +590,11 @@ export default function MovieHub() {
               totalPages={Math.min(Number(movies?.total_pages), 500)}
               route="/entertainment"
               onPageChange={(page) => {
-                setPage(activeFilter, page)
+                if (isMovie) {
+                  setMoviePage(activeFilter as MovieFiltersTab, page)
+                } else {
+                  setTvPage(activeFilter as TvFiltersTab, page)
+                }
                 router.push(`${pathname}?page=${page}`)
               }}
             />

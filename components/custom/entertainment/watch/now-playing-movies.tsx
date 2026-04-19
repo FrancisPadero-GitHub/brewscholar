@@ -22,7 +22,7 @@ import { IMAGE_BASE_URL } from "@/constants/image-size"
 import { getRatingColor } from "@/helpers/entertainment/movie-details/movie-details"
 
 // hooks
-import { useFetchNowPlayingMovie } from "@/hooks/entertainment/fetch/useFetchNowPlayingMovie"
+import { useFetchNowPlayingMovie } from "@/hooks/entertainment/fetch/movies/useFetchNowPlayingMovie"
 
 // Now Playing movie card
 function NowPlayingMovieCard({ movie }: { movie: MovieResult }) {

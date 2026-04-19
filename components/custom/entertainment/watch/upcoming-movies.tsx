@@ -22,7 +22,7 @@ import { IMAGE_BASE_URL } from "@/constants/image-size"
 import { getRatingColor } from "@/helpers/entertainment/movie-details/movie-details"
 
 // hooks
-import { useFetchUpcomingMovies } from "@/hooks/entertainment/fetch/useFetchUpcomingMovies"
+import { useFetchUpcomingMovies } from "@/hooks/entertainment/fetch/movies/useFetchUpcomingMovies"
 
 // Upcoming movie card
 function UpcomingMovieCard({ movie }: { movie: MovieResult }) {

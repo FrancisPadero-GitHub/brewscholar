@@ -33,7 +33,7 @@ import {
 import { IMAGE_BASE_URL, BACKDROP_BASE_URL } from "@/constants/image-size"
 
 // hooks
-import { useFetchMovieDetails } from "@/hooks/entertainment/fetch/useFetchMovieDetails"
+import { useFetchMovieDetails } from "@/hooks/entertainment/fetch/movies/useFetchMovieDetails"
 
 // types
 import type { MovieDetailsApiResponse } from "@/types/entertainment/movies/movie-details"
