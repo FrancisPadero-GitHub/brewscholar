@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
+import axios from "axios"
 import type { TvEpisodeDetailsApiResponse } from "@/types/entertainment/tv-series/episode-details"
 
 const fetchTvEpisodeDetails = async (
@@ -9,34 +10,27 @@ const fetchTvEpisodeDetails = async (
   if (!seriesId || !seasonNumber || !episodeNumber) return null
 
   const token = process.env.NEXT_PUBLIC_TMDB_READ_ACCESS_TOKEN
-  const url = `https://api.themoviedb.org/3/tv/${seriesId}/season/${seasonNumber}/episode/${episodeNumber}?language=en-US`
-  const options = {
-    method: "GET",
-    headers: { accept: "application/json", Authorization: `Bearer ${token}` },
-  }
 
   try {
-    const response = await fetch(url, options)
-    if (!response.ok) {
-      if (response.status === 404) {
-        return null // Episode not found, perfectly valid case
+    const { data } = await axios.get<TvEpisodeDetailsApiResponse>(
+      `https://api.themoviedb.org/3/tv/${seriesId}/season/${seasonNumber}/episode/${episodeNumber}`,
+      {
+        headers: {
+          accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        params: {
+          language: "en-US",
+        },
       }
-      let errorMsg = `Error: ${response.status} ${response.statusText}`
-      try {
-        const errorData = await response.json()
-        if (errorData.status_message) {
-          errorMsg += ` - ${errorData.status_message}`
-        }
-      } catch {
-        // Ignore JSON parse errors for error responses
-      }
-      throw new Error(errorMsg)
+    )
+
+    return data
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.status === 404) {
+      return null // Episode not found, perfectly valid case
     }
-    return response.json() as Promise<TvEpisodeDetailsApiResponse>
-  } catch (error: unknown) {
-    const message =
-      error instanceof Error ? error.message : "Unknown error occurred"
-    throw new Error(message)
+    throw error
   }
 }
 

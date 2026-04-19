@@ -1,39 +1,27 @@
 import { useQuery } from "@tanstack/react-query"
+import axios from "axios"
 import type { OnTheAirTvSeriesResponse } from "@/types/entertainment/tv-series/on-the-air"
 
 const fetchOnTheAirTvSeries = async (
   page: number
 ): Promise<OnTheAirTvSeriesResponse> => {
   const token = process.env.NEXT_PUBLIC_TMDB_READ_ACCESS_TOKEN
-  const url = `https://api.themoviedb.org/3/tv/on_the_air?language=en-US&page=${page}`
-  const options = {
-    method: "GET",
-    headers: {
-      accept: "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  }
 
-  try {
-    const response = await fetch(url, options)
-    if (!response.ok) {
-      let errorMsg = `Error: ${response.status} ${response.statusText}`
-      try {
-        const errorData = await response.json()
-        if (errorData.status_message) {
-          errorMsg += ` - ${errorData.status_message}`
-        }
-      } catch {
-        // Ignore JSON parse errors for error responses
-      }
-      throw new Error(errorMsg)
+  const { data } = await axios.get<OnTheAirTvSeriesResponse>(
+    "https://api.themoviedb.org/3/tv/on_the_air",
+    {
+      headers: {
+        accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      params: {
+        language: "en-US",
+        page: page.toString(),
+      },
     }
-    return response.json() as Promise<OnTheAirTvSeriesResponse>
-  } catch (error: unknown) {
-    const message =
-      error instanceof Error ? error.message : "Unknown error occurred"
-    throw new Error(message)
-  }
+  )
+
+  return data
 }
 
 export function useFetchOnTheAirTvSeries(

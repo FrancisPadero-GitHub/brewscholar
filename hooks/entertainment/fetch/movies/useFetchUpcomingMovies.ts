@@ -1,42 +1,27 @@
 import { useQuery } from "@tanstack/react-query"
+import axios from "axios"
 import type { UpcomingMoviesResponse } from "@/types/entertainment/movies/upcoming-movies"
 
 const fetchUpcomingMovies = async (
   page: number
 ): Promise<UpcomingMoviesResponse> => {
   const token = process.env.NEXT_PUBLIC_TMDB_READ_ACCESS_TOKEN
-  const url = `https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=${page}`
-  const options = {
-    method: "GET",
-    headers: {
-      accept: "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  }
 
-  try {
-    // fetch the api
-    const response = await fetch(url, options)
-    // catch if theres any errors
-    if (!response.ok) {
-      let errorMsg = `Error: ${response.status} ${response.statusText}`
-      try {
-        const errorData = await response.json()
-        if (errorData.status_message) {
-          errorMsg += ` - ${errorData.status_message}`
-        }
-      } catch {
-        // Ignore JSON parse errors for error responses
-      }
-      throw new Error(errorMsg)
+  const { data } = await axios.get<UpcomingMoviesResponse>(
+    "https://api.themoviedb.org/3/movie/upcoming",
+    {
+      headers: {
+        accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      params: {
+        language: "en-US",
+        page: page.toString(),
+      },
     }
-    // finally return the data in json format if no errors occurs
-    return response.json() as Promise<UpcomingMoviesResponse>
-  } catch (error: unknown) {
-    const message =
-      error instanceof Error ? error.message : "Unknown error occurred"
-    throw new Error(message)
-  }
+  )
+
+  return data
 }
 
 export function useFetchUpcomingMovies(page: number, enabled: boolean = true) {

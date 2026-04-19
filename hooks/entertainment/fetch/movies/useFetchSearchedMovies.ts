@@ -1,48 +1,29 @@
 import { useQuery } from "@tanstack/react-query"
+import axios from "axios"
 import type { SearchMoviesResponse } from "@/types/entertainment/movies/search-movies"
 
 const fetchSearchedMovies = async (
   query: string
 ): Promise<SearchMoviesResponse> => {
-  // for more Query Params refer to the API documentation
-  const params = new URLSearchParams({
-    query: query,
-    include_adult: "true",
-  })
-
   const token = process.env.NEXT_PUBLIC_TMDB_READ_ACCESS_TOKEN
-  const url = `https://api.themoviedb.org/3/search/movie?${params.toString()}include_adult=false&language=en-US&region=US`
-  const options = {
-    method: "GET",
-    headers: {
-      accept: "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  }
 
-  try {
-    // fetch the api
-    const response = await fetch(url, options)
-    // catch if theres any errors
-    if (!response.ok) {
-      let errorMsg = `Error: ${response.status} ${response.statusText}`
-      try {
-        const errorData = await response.json()
-        if (errorData.status_message) {
-          errorMsg += ` - ${errorData.status_message}`
-        }
-      } catch {
-        // Ignore JSON parse errors for error responses
-      }
-      throw new Error(errorMsg)
+  const { data } = await axios.get<SearchMoviesResponse>(
+    "https://api.themoviedb.org/3/search/movie",
+    {
+      headers: {
+        accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      params: {
+        query: query,
+        include_adult: "false",
+        language: "en-US",
+        region: "US",
+      },
     }
-    // finally return the data in json format if no errors occurs
-    return response.json() as Promise<SearchMoviesResponse>
-  } catch (error: unknown) {
-    const message =
-      error instanceof Error ? error.message : "Unknown error occurred"
-    throw new Error(message)
-  }
+  )
+
+  return data
 }
 
 export function useFetchSearchedMovies(query: string) {
@@ -54,6 +35,6 @@ export function useFetchSearchedMovies(query: string) {
     refetchOnWindowFocus: false, // Don't refetch on window focus
     refetchOnReconnect: true, // Refetch when the network reconnects
     retry: 2, // retries on failure
-    retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 30000), //
+    retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 30000),
   })
 }
