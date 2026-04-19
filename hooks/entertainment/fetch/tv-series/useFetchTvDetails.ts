@@ -1,20 +1,18 @@
 import { useQuery } from "@tanstack/react-query"
-import type { MovieDetailsApiResponse } from "@/types/entertainment/movies/movie-details"
+import type { TvSeriesDetailsApiResponse } from "@/types/entertainment/tv-series/tv-details"
 
-const fetchMovieDetails = async (
+const fetchTvDetails = async (
   id: string
-): Promise<MovieDetailsApiResponse> => {
+): Promise<TvSeriesDetailsApiResponse> => {
   const token = process.env.NEXT_PUBLIC_TMDB_READ_ACCESS_TOKEN
-  const url = `https://api.themoviedb.org/3/movie/${id}?language=en-US`
+  const url = `https://api.themoviedb.org/3/tv/${id}?language=en-US`
   const options = {
     method: "GET",
     headers: { accept: "application/json", Authorization: `Bearer ${token}` },
   }
 
   try {
-    // fetch the api
     const response = await fetch(url, options)
-    // catch if theres any errors
     if (!response.ok) {
       let errorMsg = `Error: ${response.status} ${response.statusText}`
       try {
@@ -27,8 +25,7 @@ const fetchMovieDetails = async (
       }
       throw new Error(errorMsg)
     }
-    // finally return the data in json format if no errors occurs
-    return response.json() as Promise<MovieDetailsApiResponse>
+    return response.json() as Promise<TvSeriesDetailsApiResponse>
   } catch (error: unknown) {
     const message =
       error instanceof Error ? error.message : "Unknown error occurred"
@@ -36,12 +33,12 @@ const fetchMovieDetails = async (
   }
 }
 
-export function useFetchMovieDetails(id: string) {
-  return useQuery<MovieDetailsApiResponse>({
-    queryKey: ["movie-details", id],
-    queryFn: () => fetchMovieDetails(id),
+export function useFetchTvDetails(id: string) {
+  return useQuery<TvSeriesDetailsApiResponse>({
+    queryKey: ["tv-details", id],
+    queryFn: () => fetchTvDetails(id),
     enabled: !!id,
-    staleTime: 1000 * 60 * 60 * 24, // movies are unlikely to change frequently,
+    staleTime: 1000 * 60 * 60 * 24, // tv series rarely change daily
     refetchOnWindowFocus: false, // Don't refetch on window focus
     refetchOnReconnect: true, // Refetch when the network reconnects
     retry: 2, // retries on failure
