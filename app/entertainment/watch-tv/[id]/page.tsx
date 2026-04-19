@@ -48,6 +48,7 @@ import {
 import { useTvEpisodeStore } from "@/features/zustand/entertainment/tv-episode-store"
 import { useWatchTracker } from "@/hooks/entertainment/progress-tracker/useWatchTracker"
 import type { WatchProgress } from "@/hooks/entertainment/progress-tracker/useWatchTracker"
+import { useWatchedEpisodes } from "@/hooks/entertainment/progress-tracker/useWatchedEpisodes"
 
 // Main Watch TV page
 const WatchTv = () => {
@@ -77,7 +78,8 @@ const WatchTv = () => {
 
       if (stored) {
         try {
-          const history: Record<string, WatchProgress | undefined> = JSON.parse(stored)
+          const history: Record<string, WatchProgress | undefined> =
+            JSON.parse(stored)
           const progress = history[tvId]
           if (progress && progress.mode === "TV series") {
             const isValidSeason = tvShow.seasons.some(
@@ -119,6 +121,17 @@ const WatchTv = () => {
 
   // track watch progress
   useWatchTracker(isReady ? tvId : "", mediaTitle, "TV series", season, episode)
+
+  // track watched episodes
+  const { markWatched, isWatched, watchedCountForSeason } =
+    useWatchedEpisodes(tvId)
+
+  // Mark the current episode as watched whenever it changes
+  useEffect(() => {
+    if (isReady && season > 0 && episode > 0) {
+      markWatched(season, episode)
+    }
+  }, [isReady, season, episode, markWatched])
 
   // store for the players
   const { setActivePlayer, activePlayer } = usePlayerStore()
@@ -250,16 +263,17 @@ const WatchTv = () => {
         </div>
 
         {/* ── Episode Navigator ── */}
-        {tvShow?.seasons && (
-          <TvEpisodeNavigator
-            seriesId={tvId}
-            seasons={tvShow.seasons}
-            currentSeason={season}
-            currentEpisode={episode}
-            onSeasonChange={setSeason}
-            onEpisodeChange={setEpisode}
-          />
-        )}
+
+        <TvEpisodeNavigator
+          seriesId={tvId}
+          seasons={tvShow.seasons}
+          currentSeason={season}
+          currentEpisode={episode}
+          onSeasonChange={setSeason}
+          onEpisodeChange={setEpisode}
+          isEpisodeWatched={isWatched}
+          watchedCountForSeason={watchedCountForSeason}
+        />
 
         {/* ── TV Episode info panel */}
         <TvEpisodeInfoPanel

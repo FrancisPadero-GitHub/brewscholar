@@ -10,6 +10,8 @@ import {
   Star,
   ChevronLeft,
   ChevronRight,
+  CheckCircle,
+  Eye,
 } from "lucide-react"
 
 // components
@@ -34,6 +36,8 @@ interface TvEpisodeNavigatorProps {
   currentEpisode: number
   onSeasonChange: (season: number) => void
   onEpisodeChange: (episode: number) => void
+  isEpisodeWatched?: (season: number, episode: number) => boolean
+  watchedCountForSeason?: (season: number, totalEpisodes: number) => number
 }
 
 export default function TvEpisodeNavigator({
@@ -43,6 +47,8 @@ export default function TvEpisodeNavigator({
   currentEpisode,
   onSeasonChange,
   onEpisodeChange,
+  isEpisodeWatched,
+  watchedCountForSeason,
 }: TvEpisodeNavigatorProps) {
   const { data: seasonData, isFetching } = useFetchTvSeasonDetails(
     seriesId,
@@ -154,6 +160,10 @@ export default function TvEpisodeNavigator({
 
           {filteredSeasons.map((s) => {
             const isActive = currentSeason === s.season_number
+            const seasonWatched = watchedCountForSeason
+              ? watchedCountForSeason(s.season_number, s.episode_count)
+              : 0
+            const allWatched = seasonWatched > 0 && seasonWatched >= s.episode_count
             return (
               <Button
                 key={s.id}
@@ -182,6 +192,27 @@ export default function TvEpisodeNavigator({
                   <span className={["text-[10px] opacity-70", isActive ? "text-primary-foreground/80" : ""].join(" ")}>
                     ({s.episode_count})
                   </span>
+                  {seasonWatched > 0 && (
+                    <span
+                      className={[
+                        "ml-0.5 flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[9px] font-bold",
+                        allWatched
+                          ? isActive
+                            ? "bg-emerald-500/30 text-emerald-100"
+                            : "bg-emerald-500/15 text-emerald-500"
+                          : isActive
+                            ? "bg-white/20 text-primary-foreground/90"
+                            : "bg-muted-foreground/10 text-muted-foreground",
+                      ].join(" ")}
+                    >
+                      {allWatched ? (
+                        <CheckCircle className="h-2.5 w-2.5" />
+                      ) : (
+                        <Eye className="h-2.5 w-2.5" />
+                      )}
+                      {seasonWatched}/{s.episode_count}
+                    </span>
+                  )}
                 </span>
               </Button>
             )
@@ -226,6 +257,9 @@ export default function TvEpisodeNavigator({
           >
             {seasonData.episodes.map((ep) => {
               const isActive = currentEpisode === ep.episode_number
+              const episodeWatched = isEpisodeWatched
+                ? isEpisodeWatched(currentSeason, ep.episode_number)
+                : false
               return (
                 <motion.button
                   key={ep.id}
@@ -237,7 +271,9 @@ export default function TvEpisodeNavigator({
                     "group relative flex gap-3 overflow-hidden rounded-xl border p-2.5 text-left transition-all duration-300 sm:p-3",
                     isActive
                       ? "border-primary/50 bg-primary/5 shadow-[0_0_20px_rgba(var(--primary),0.05)] ring-1 ring-primary/20"
-                      : "border-border/40 bg-background/40 hover:border-primary/30 hover:bg-primary/2",
+                      : episodeWatched
+                        ? "border-emerald-500/20 bg-emerald-500/3 hover:border-emerald-500/40 hover:bg-emerald-500/5"
+                        : "border-border/40 bg-background/40 hover:border-primary/30 hover:bg-primary/2",
                   ].join(" ")}
                 >
                   {/* Left Active Indicator Bar */}
@@ -248,6 +284,12 @@ export default function TvEpisodeNavigator({
                       transition={{ type: "spring", stiffness: 300, damping: 30 }}
                     />
                   )}
+
+                  {/* Left Watched Indicator Bar (non-active watched episodes) */}
+                  {!isActive && episodeWatched && (
+                    <div className="absolute top-0 bottom-0 left-0 w-1 bg-emerald-500/60" />
+                  )}
+
                   {/* Thumbnail */}
                   <div className="relative h-14 w-24 shrink-0 overflow-hidden rounded-lg border border-border/30 sm:h-16 sm:w-28">
                     {ep.still_path ? (
@@ -277,20 +319,35 @@ export default function TvEpisodeNavigator({
                     <div className="absolute top-1 left-1 rounded-md bg-black/70 px-1.5 py-0.5 text-[10px] font-bold text-white backdrop-blur-sm">
                       E{ep.episode_number}
                     </div>
+
+                    {/* Watched badge */}
+                    {episodeWatched && !isActive && (
+                      <div className="absolute right-1 bottom-1 flex items-center gap-0.5 rounded-md bg-emerald-600/90 px-1.5 py-0.5 text-[9px] font-bold text-white shadow-sm backdrop-blur-sm">
+                        <CheckCircle className="h-2.5 w-2.5" />
+                        Watched
+                      </div>
+                    )}
                   </div>
 
                   {/* Info */}
                   <div className="flex min-w-0 flex-1 flex-col justify-center gap-1">
-                    <h4
-                      className={[
-                        "line-clamp-1 text-xs font-bold tracking-tight sm:text-sm",
-                        isActive
-                          ? "text-primary"
-                          : "text-foreground group-hover:text-primary",
-                      ].join(" ")}
-                    >
-                      {ep.name}
-                    </h4>
+                    <div className="flex items-center gap-1.5">
+                      <h4
+                        className={[
+                          "line-clamp-1 text-xs font-bold tracking-tight sm:text-sm",
+                          isActive
+                            ? "text-primary"
+                            : episodeWatched
+                              ? "text-emerald-500 group-hover:text-emerald-400"
+                              : "text-foreground group-hover:text-primary",
+                        ].join(" ")}
+                      >
+                        {ep.name}
+                      </h4>
+                      {episodeWatched && isActive && (
+                        <CheckCircle className="h-3.5 w-3.5 shrink-0 text-emerald-500" />
+                      )}
+                    </div>
 
                     {/* Meta */}
                     <div className="flex flex-wrap items-center gap-2 text-[10px] text-muted-foreground">
