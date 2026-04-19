@@ -11,7 +11,7 @@ const fetchSearchedMovies = async (
   })
 
   const token = process.env.NEXT_PUBLIC_TMDB_READ_ACCESS_TOKEN
-  const url = `https://api.themoviedb.org/3/search/movie?${params.toString()}`
+  const url = `https://api.themoviedb.org/3/search/movie?${params.toString()}include_adult=false&language=en-US&region=US`
   const options = {
     method: "GET",
     headers: {

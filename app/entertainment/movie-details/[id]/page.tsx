@@ -234,7 +234,7 @@ export default function MovieDetails() {
                   ease: "easeInOut",
                 }}
               >
-                <Link href={`/entertainment/watch/${movie.id}`}>
+                <Link href={`/entertainment/watch-movie/${movie.id}`}>
                   <Button
                     size="sm"
                     className="shadow-[0_0_20px_--spacing(1)_var(--primary)]transition-all mt-1 gap-2 border border-primary/50 bg-primary font-bold text-primary-foreground duration-300 hover:bg-primary/90 hover:shadow-[0_0_30px_--spacing(1.5)_var(--primary)]"

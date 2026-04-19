@@ -11,17 +11,27 @@ import { IMAGE_BASE_URL } from "@/constants/image-size"
 // hooks
 import type { WatchProgress } from "@/hooks/entertainment/progress-tracker/useWatchTracker"
 import { useFetchMovieDetails } from "@/hooks/entertainment/fetch/movies/useFetchMovieDetails"
+import { useFetchTvDetails } from "@/hooks/entertainment/fetch/tv-series/useFetchTvDetails"
+import { useEntertainmentMode } from "@/features/zustand/entertainment/entertaiment-mode"
 
 function ContinueWatchingCard({ item }: { item: WatchProgress }) {
-  const { data: movie } = useFetchMovieDetails(item.mediaId)
+  const isTv = item.mode === "TV series"
+  const { data: movie } = useFetchMovieDetails(isTv ? "" : item.mediaId)
+  const { data: tvShow } = useFetchTvDetails(isTv ? item.mediaId : "")
 
-  const displayTitle = movie?.title || item.title || `Media ${item.mediaId}`
+  const mediaName = isTv ? tvShow?.name : movie?.title
+  const displayTitle = mediaName || item.title || `Media ${item.mediaId}`
 
   // Use poster path to match the aspect-2/3 ratio of regular movie cards
-  const imagePath = movie?.poster_path || movie?.backdrop_path
+  const imagePath = isTv
+    ? tvShow?.poster_path || tvShow?.backdrop_path
+    : movie?.poster_path || movie?.backdrop_path
 
   return (
-    <Link href={`/entertainment/watch/${item.mediaId}`} className="group block">
+    <Link
+      href={`/entertainment/${isTv ? "watch-tv" : "watch-movie"}/${item.mediaId}`}
+      className="group block"
+    >
       <Card className="flex h-full flex-col gap-0 overflow-hidden border-border bg-muted p-0 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/60 hover:shadow-xl hover:shadow-primary/5">
         <div className="relative aspect-2/3 overflow-hidden bg-muted">
           {imagePath ? (
@@ -69,6 +79,11 @@ function ContinueWatchingCard({ item }: { item: WatchProgress }) {
           <CardTitle className="line-clamp-1 text-sm leading-tight font-bold text-foreground transition-colors group-hover:text-primary">
             {displayTitle}
           </CardTitle>
+          {isTv && item.season && item.episode && (
+            <div className="mt-0.5 text-[10px] font-semibold text-muted-foreground">
+              S{item.season} E{item.episode}
+            </div>
+          )}
           <div className="mt-1.5 flex items-center justify-between text-[11px]">
             <div className="flex items-center gap-1 text-muted-foreground">
               <Clock className="h-3 w-3" />
@@ -91,6 +106,7 @@ function ContinueWatchingCard({ item }: { item: WatchProgress }) {
 
 export function ContinueWatching() {
   const [history, setHistory] = useState<WatchProgress[]>([])
+  const { mode } = useEntertainmentMode()
 
   useEffect(() => {
     const readHistory = () => {
@@ -120,7 +136,9 @@ export function ContinueWatching() {
     return () => window.removeEventListener("storage", onStorage)
   }, [])
 
-  if (history.length === 0) return null
+  const filteredHistory = history.filter((item) => item.mode === mode)
+
+  if (filteredHistory.length === 0) return null
 
   return (
     <div className="mb-8 space-y-4">
@@ -150,7 +168,7 @@ export function ContinueWatching() {
         </Button>
       </div>
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-        {history.map((item) => (
+        {filteredHistory.map((item) => (
           <ContinueWatchingCard key={item.mediaId} item={item} />
         ))}
       </div>

@@ -1,5 +1,7 @@
 import { useEffect } from "react"
 // types/progress.ts
+import type { ActiveMode } from "@/features/zustand/entertainment/entertaiment-mode"
+
 export interface WatchProgress {
   mediaId: string // The TMDB ID of the movie/show
   title?: string // Optional: helpful for displaying without an API call
@@ -7,9 +9,18 @@ export interface WatchProgress {
   duration: number
   percentage: number
   updatedAt: number // Epoch timestamp for sorting
+  mode?: ActiveMode
+  season?: number
+  episode?: number
 }
 
-export function useWatchTracker(currentMediaId: string, title?: string) {
+export function useWatchTracker(
+  currentMediaId: string,
+  title?: string,
+  mode: ActiveMode = "Movie",
+  season?: number,
+  episode?: number
+) {
   useEffect(() => {
     if (!currentMediaId) return
 
@@ -27,6 +38,9 @@ export function useWatchTracker(currentMediaId: string, title?: string) {
         duration: 0,
         percentage: 0,
         updatedAt: Date.now(),
+        mode,
+        season,
+        episode,
       }
       localStorage.setItem("watchHistory", JSON.stringify(history))
     }
@@ -73,6 +87,9 @@ export function useWatchTracker(currentMediaId: string, title?: string) {
           duration,
           percentage,
           updatedAt: Date.now(),
+          mode,
+          season,
+          episode,
         }
 
         // 5. Save the updated dictionary back to Local Storage
@@ -82,5 +99,5 @@ export function useWatchTracker(currentMediaId: string, title?: string) {
 
     window.addEventListener("message", handleMessage)
     return () => window.removeEventListener("message", handleMessage)
-  }, [currentMediaId, title])
+  }, [currentMediaId, title, mode, season, episode])
 }
