@@ -147,9 +147,7 @@ const Watch = () => {
               Back
             </Button>
           </Link>
-          <h1 className="hidden text-base font-black tracking-tight text-foreground sm:block sm:text-xl">
-            Now <span className="text-primary">Watching</span>
-          </h1>
+
           <Link href="/entertainment" className="ml-auto">
             <h1 className="text-2xl font-black tracking-tight text-foreground sm:text-4xl">
               Movie<span className="text-primary">Hub</span>

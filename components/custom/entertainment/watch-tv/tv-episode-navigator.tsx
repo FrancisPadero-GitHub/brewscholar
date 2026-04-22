@@ -11,8 +11,14 @@ import {
   ChevronLeft,
   ChevronRight,
   CheckCircle,
+  MonitorPlay,
   Eye,
 } from "lucide-react"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 // components
 import { Button } from "@/components/ui/button"
@@ -89,7 +95,7 @@ export default function TvEpisodeNavigator({
             <Film className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <h3 className="text-sm font-black uppercase tracking-widest text-foreground/90 sm:text-base">
+            <h3 className="text-sm font-black tracking-widest text-foreground/90 uppercase sm:text-base">
               Episodes
             </h3>
             <div className="flex items-center gap-2 text-[10px] font-medium text-muted-foreground/80">
@@ -157,13 +163,13 @@ export default function TvEpisodeNavigator({
       {/* ── Season Buttons ── */}
       <ScrollArea className="w-full">
         <div className="flex gap-2 pb-2">
-
           {filteredSeasons.map((s) => {
             const isActive = currentSeason === s.season_number
             const seasonWatched = watchedCountForSeason
               ? watchedCountForSeason(s.season_number, s.episode_count)
               : 0
-            const allWatched = seasonWatched > 0 && seasonWatched >= s.episode_count
+            const allWatched =
+              seasonWatched > 0 && seasonWatched >= s.episode_count
             return (
               <Button
                 key={s.id}
@@ -177,7 +183,7 @@ export default function TvEpisodeNavigator({
                   "relative shrink-0 text-xs font-bold transition-colors duration-200",
                   isActive
                     ? "text-primary-foreground"
-                    : "text-muted-foreground hover:text-primary hover:bg-primary/10",
+                    : "text-muted-foreground hover:bg-primary/10 hover:text-primary",
                 ].join(" ")}
               >
                 {isActive && (
@@ -189,7 +195,12 @@ export default function TvEpisodeNavigator({
                 )}
                 <span className="relative z-10 flex items-center gap-1">
                   Season {s.season_number}
-                  <span className={["text-[10px] opacity-70", isActive ? "text-primary-foreground/80" : ""].join(" ")}>
+                  <span
+                    className={[
+                      "text-[10px] opacity-70",
+                      isActive ? "text-primary-foreground/80" : "",
+                    ].join(" ")}
+                  >
                     ({s.episode_count})
                   </span>
                   {seasonWatched > 0 && (
@@ -281,7 +292,11 @@ export default function TvEpisodeNavigator({
                     <motion.div
                       layoutId="activeEpisodeBar"
                       className="absolute top-0 bottom-0 left-0 w-1 bg-primary"
-                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 300,
+                        damping: 30,
+                      }}
                     />
                   )}
 
@@ -345,7 +360,14 @@ export default function TvEpisodeNavigator({
                         {ep.name}
                       </h4>
                       {episodeWatched && isActive && (
-                        <CheckCircle className="h-3.5 w-3.5 shrink-0 text-emerald-500" />
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <MonitorPlay className="h-3.5 w-3.5 shrink-0 text-emerald-500" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Now Watching</p>
+                          </TooltipContent>
+                        </Tooltip>
                       )}
                     </div>
 

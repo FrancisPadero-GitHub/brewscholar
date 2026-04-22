@@ -90,24 +90,32 @@ export default function MovieHub() {
     }
   }, [])
 
+  // Entertainment Mode Store
+  const { mode, setMode } = useEntertainmentMode()
+  const isMovie = mode === "Movie"
+
   // Tab filters Store
   const {
+    // movie quick filters
     activeMovieFilter,
     setActiveMovieFilter,
     moviePages,
     setMoviePage,
+
+    // tv series quick filters
     activeTvFilter,
     setActiveTvFilter,
     tvPages,
     setTvPage,
   } = useFilterStore()
 
-  // Entertainment Mode Store
-  const { mode, setMode } = useEntertainmentMode()
-  const isMovie = mode === "Movie"
-
+  // Toggles for the active entertaiment mode (move or tv series)
   const activeFilter = isMovie ? activeMovieFilter : activeTvFilter
+
+  // Sets the filter pill filters for the active entertainment mode
   const tabs = isMovie ? MOVIE_CATEGORY_TABS : TV_CATEGORY_TABS
+
+  // Dedicated separate pagination for each modes
   const currentPage = isMovie
     ? moviePages[activeMovieFilter] || 1
     : tvPages[activeTvFilter] || 1

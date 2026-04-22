@@ -20,23 +20,16 @@ function VidLinkPro({
 
   let src = ""
   if (type === "movie") {
-    src = `https://vidlink.pro/movie/${id}?primaryColor=f59e0a&secondaryColor=f3f4f6&iconColor=eefdec&icons=vid&player=jw&title=true&poster=true&autoplay=false&nextbutton=true${timeParam}`
+    src = `https://vidlink.pro/movie/${id}?primaryColor=f59e0a&secondaryColor=f3f4f6&iconColor=eefdec&icons=default&player=default&title=true&poster=true&autoplay=true&nextbutton=true${timeParam}`
   } else if (type === "tv" && season && episode) {
-    src = `https://vidlink.pro/tv/${id}/${season}/${episode}?primaryColor=f59e0a&secondaryColor=f3f4f6&iconColor=eefdec&icons=vid&player=jw&title=true&poster=true&autoplay=false&nextbutton=true${timeParam}`
+    src = `https://vidlink.pro/tv/${id}/${season}/${episode}?primaryColor=f59e0a&secondaryColor=f3f4f6&iconColor=eefdec&icons=default&player=default&title=true&poster=true&autoplay=true&nextbutton=true${timeParam}`
   } else {
     // Invalid type or missing required props
     return null
   }
   return (
     <div className="aspect-video w-full">
-      <iframe
-        src={src}
-        width="100%"
-        height="100%"
-        allowFullScreen
-        title="Video Player"
-        className="rounded-xl"
-      />
+      <iframe src={src} width="100%" height="100%" allowFullScreen />
     </div>
   )
 }

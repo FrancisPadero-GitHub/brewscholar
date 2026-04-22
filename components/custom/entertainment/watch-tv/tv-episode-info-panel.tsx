@@ -12,7 +12,7 @@ import { getRatingColor } from "@/helpers/entertainment/movie-details/movie-deta
 // hooks
 import { useFetchTvEpisodeDetails } from "@/hooks/entertainment/fetch/tv-series/useFetchTvEpisodeDetails"
 
-// ─── Tv episode info panel 
+// ─── Tv episode info panel
 export default function TvEpisodeInfoPanel({
   seriesId,
   seasonNumber,
