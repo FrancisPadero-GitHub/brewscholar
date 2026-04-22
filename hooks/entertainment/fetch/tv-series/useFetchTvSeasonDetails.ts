@@ -20,6 +20,8 @@ const fetchTvSeasonDetails = async (
         },
         params: {
           language: "en-US",
+          region: "US",
+          include_adult: "false",
         },
       }
     )
@@ -33,7 +35,10 @@ const fetchTvSeasonDetails = async (
   }
 }
 
-export function useFetchTvSeasonDetails(seriesId: string, seasonNumber: number) {
+export function useFetchTvSeasonDetails(
+  seriesId: string,
+  seasonNumber: number
+) {
   return useQuery<TvSeasonDetailsApiResponse | null>({
     queryKey: ["tv-season-details", seriesId, seasonNumber],
     queryFn: () => fetchTvSeasonDetails(seriesId, seasonNumber),

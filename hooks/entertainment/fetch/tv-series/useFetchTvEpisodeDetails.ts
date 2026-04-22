@@ -21,6 +21,8 @@ const fetchTvEpisodeDetails = async (
         },
         params: {
           language: "en-US",
+          region: "US",
+          include_adult: "false",
         },
       }
     )

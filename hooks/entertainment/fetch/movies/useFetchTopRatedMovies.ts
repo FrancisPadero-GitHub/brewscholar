@@ -16,6 +16,8 @@ const fetchTopRatedMovies = async (
       },
       params: {
         language: "en-US",
+        region: "US",
+        include_adult: "false",
         page: page.toString(),
       },
     }

@@ -18,6 +18,7 @@ const fetchSearchedTvSeries = async (
         query: query,
         include_adult: "false",
         language: "en-US",
+        region: "US",
       },
     }
   )
