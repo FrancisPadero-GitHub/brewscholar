@@ -1,36 +1,102 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BrewScholar
 
-## Getting Started
+BrewScholar is a Next.js app with multiple feature modules in one UI:
 
-First, run the development server:
+- Entertainment hub for movies and TV series (TMDB-powered)
+- Scholarship section (work in progress)
+- File hosting section (work in progress)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Tech Stack
+
+- Next.js 16 (App Router)
+- React 19 + TypeScript
+- Tailwind CSS v4
+- Zustand (client state)
+- TanStack React Query (data fetching + caching)
+- Axios
+- Vercel Analytics
+
+## Main Routes
+
+- `/` landing page
+- `/entertainment` movie + TV discovery
+- `/entertainment/movie-details/[id]`
+- `/entertainment/tv-series-details/[id]`
+- `/entertainment/watch-movie/[id]`
+- `/entertainment/watch-tv/[id]`
+- `/scholarship` under construction
+- `/files-hosting` coming soon
+
+## Project Structure (high-level)
+
+```txt
+app/                           # App Router pages
+components/                    # Shared/custom UI components
+constants/                     # Static constants (image sizes, etc.)
+data/                          # UI config/static data
+features/zustand/              # Zustand stores
+helpers/                       # Pure helper utilities
+hooks/                         # Data + feature hooks
+types/                         # API and domain types
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Prerequisites
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Node.js 20+
+- pnpm 9+ (recommended; lockfile is pnpm)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Environment Variables
 
-## Learn More
+Create `.env.local` in project root:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+NEXT_PUBLIC_TMDB_READ_ACCESS_TOKEN=your_tmdb_v4_read_access_token
+NEXT_PUBLIC_TMDB_API_KEY=your_tmdb_api_key
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Notes:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- TMDB API key is requied for fetching almost all of the catalog inside
+- Entertainment data fetching relies on TMDB token above.
+- Since variable is `NEXT_PUBLIC_*`, value is exposed to browser bundle.
 
-## Deploy on Vercel
+## Local Development
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Install dependencies:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+pnpm install
+```
+
+Run dev server:
+
+```bash
+pnpm dev
+```
+
+Open:
+
+```txt
+http://localhost:3000
+```
+
+## Scripts
+
+```bash
+pnpm dev      # start development server
+pnpm build    # production build
+pnpm start    # run built app
+pnpm lint     # run eslint
+```
+
+## Current Status
+
+- Entertainment module: active
+- Scholarship module: under construction
+- File hosting module: under construction
+
+## Notes
+
+- Remote TMDB images are allowed through `next.config.ts`.
+- React Query Devtools are shown only in development.
+- Entertainment mode now persists via Zustand middleware.
