@@ -2,6 +2,11 @@
 
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import Link from "next/link"
@@ -150,6 +155,12 @@ const WatchTv = () => {
     "Player 3": <VidKingPlayer {...playerBaseProps} startTime={startTime} />,
   }
 
+  const playerTooltips: Record<string, string> = {
+    "Player 1": "Reliable streaming with minimal ads",
+    "Player 2": "Contains many ads and pop-ups",
+    "Player 3": "Contains many ads  and pop-ups",
+  }
+
   const [isMobile, setIsMobile] = useState(false)
   const [showPlayer3Warning, setShowPlayer3Warning] = useState(false)
 
@@ -234,26 +245,30 @@ const WatchTv = () => {
             {ACTIVE_PLAYER.map((player) => {
               const isActivePlayer = activePlayer === player
               return (
-                <Button
-                  key={player}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    if (player === "Player 3" && isMobile) {
-                      setShowPlayer3Warning(true)
-                    } else {
-                      setActivePlayer(player)
-                    }
-                  }}
-                  className={[
-                    "shrink-0 text-xs font-semibold whitespace-nowrap transition-all duration-200",
-                    isActivePlayer
-                      ? "scale-105 bg-primary text-foreground shadow-md ring-2 ring-primary/70 hover:bg-primary/90 hover:ring-primary"
-                      : "border-border bg-background/80 text-muted-foreground opacity-80 hover:border-primary hover:bg-muted hover:text-primary hover:opacity-100",
-                  ].join(" ")}
-                >
-                  {player}
-                </Button>
+                <Tooltip key={player}>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        if (player === "Player 3" && isMobile) {
+                          setShowPlayer3Warning(true)
+                        } else {
+                          setActivePlayer(player)
+                        }
+                      }}
+                      className={[
+                        "shrink-0 text-xs font-semibold whitespace-nowrap transition-all duration-200",
+                        isActivePlayer
+                          ? "scale-105 bg-primary text-foreground shadow-md ring-2 ring-primary/70 hover:bg-primary/90 hover:ring-primary"
+                          : "border-border bg-background/80 text-muted-foreground opacity-80 hover:border-primary hover:bg-muted hover:text-primary hover:opacity-100",
+                      ].join(" ")}
+                    >
+                      {player}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>{playerTooltips[player]}</TooltipContent>
+                </Tooltip>
               )
             })}
           </div>
