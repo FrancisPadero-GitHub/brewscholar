@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query"
+import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import axios from "axios"
 import type { OnTheAirTvSeriesResponse } from "@/types/entertainment/tv-series/on-the-air"
 
@@ -33,6 +33,7 @@ export function useFetchOnTheAirTvSeries(
   return useQuery<OnTheAirTvSeriesResponse>({
     queryKey: ["on-the-air-tv-series", page],
     queryFn: () => fetchOnTheAirTvSeries(page),
+    placeholderData: keepPreviousData,
     enabled: enabled && !isNaN(page) && page > 0, // page is not null and page must be more than 0
     staleTime: 1000 * 60 * 60 * 24, // movies are unlikely to change frequently
     refetchOnWindowFocus: false, // Don't refetch on window focus

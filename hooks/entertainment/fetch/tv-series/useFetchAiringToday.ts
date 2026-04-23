@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query"
+import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import axios from "axios"
 import type { AiringTodayTvSeriesResponse } from "@/types/entertainment/tv-series/airing-today"
 
@@ -33,6 +33,7 @@ export function useFetchAiringTodayTvSeries(
   return useQuery<AiringTodayTvSeriesResponse>({
     queryKey: ["airing-today-tv-series", page],
     queryFn: () => fetchAiringTodayTvSeries(page),
+    placeholderData: keepPreviousData,
     enabled: enabled && !isNaN(page) && page > 0, // page is not null and page must be more than 0
     staleTime: 1000 * 60 * 60 * 24, // movies are unlikely to change frequently
     refetchOnWindowFocus: false, // Don't refetch on window focus

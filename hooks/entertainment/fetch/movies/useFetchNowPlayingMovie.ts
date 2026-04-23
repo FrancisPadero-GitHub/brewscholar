@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query"
+import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import axios from "axios"
 import type { NowPlayingMoviesResponse } from "@/types/entertainment/movies/now-playing-movies"
 
@@ -30,6 +30,7 @@ export function useFetchNowPlayingMovie(page: number, enabled: boolean = true) {
   return useQuery<NowPlayingMoviesResponse>({
     queryKey: ["now-playing-movies", page],
     queryFn: () => fetchNowPlayingMovies(page),
+    placeholderData: keepPreviousData,
     enabled: enabled && !isNaN(page) && page > 0, // page is not null and page must be more than 0
     staleTime: 1000 * 60 * 60 * 24, // movies are unlikely to change frequently
     refetchOnWindowFocus: false, // Don't refetch on window focus

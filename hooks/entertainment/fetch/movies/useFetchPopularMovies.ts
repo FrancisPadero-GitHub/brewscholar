@@ -1,10 +1,8 @@
-import { useQuery } from "@tanstack/react-query"
+import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import axios from "axios"
 import type { MoviesApiResponse } from "@/types/entertainment/movies/popular-movies"
 
-const fetchPopularMovies = async (
-  page: number
-): Promise<MoviesApiResponse> => {
+const fetchPopularMovies = async (page: number): Promise<MoviesApiResponse> => {
   const token = process.env.NEXT_PUBLIC_TMDB_READ_ACCESS_TOKEN
 
   const { data } = await axios.get<MoviesApiResponse>(
@@ -16,7 +14,8 @@ const fetchPopularMovies = async (
       },
       params: {
         language: "en-US",
-        region: "US",include_adult: "false",
+        region: "US",
+        include_adult: "false",
         page: page.toString(),
       },
     }
@@ -29,6 +28,7 @@ export function useFetchPopularMovies(page: number, enabled: boolean = true) {
   return useQuery<MoviesApiResponse>({
     queryKey: ["popular-movies", page],
     queryFn: () => fetchPopularMovies(page),
+    placeholderData: keepPreviousData,
     enabled: enabled && !isNaN(page) && page > 0, // page is not null and page must be more than 0
     staleTime: 1000 * 60 * 60 * 24, // movies are unlikely to change frequently
     refetchOnWindowFocus: false, // Don't refetch on window focus

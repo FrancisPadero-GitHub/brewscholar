@@ -1,14 +1,23 @@
 import Image from "next/image"
 import Link from "next/link"
 import { motion } from "motion/react"
-import { useState, useRef } from "react"
+import { useEffect, useState, useRef } from "react"
 import {
   Star,
   Film,
   ChevronLeft,
   ChevronRight,
   CalendarClock,
+  Plus,
+  Mouse,
+  ArrowUp,
+  ArrowDown,
 } from "lucide-react"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 // components
 import { Button } from "@/components/ui/button"
@@ -76,8 +85,31 @@ function UpcomingMovieCard({ movie }: { movie: MovieResult }) {
 // Upcoming movies carousel with pagination
 export default function UpcomingMoviesSection() {
   const [page, setPage] = useState(1)
+  const [canScrollLeft, setCanScrollLeft] = useState(false)
+  const [canScrollRight, setCanScrollRight] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
+  const holdTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const holdIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const { data, isFetching } = useFetchUpcomingMovies(page)
+
+  const clearHoldTimers = () => {
+    if (holdTimeoutRef.current) {
+      clearTimeout(holdTimeoutRef.current)
+      holdTimeoutRef.current = null
+    }
+    if (holdIntervalRef.current) {
+      clearInterval(holdIntervalRef.current)
+      holdIntervalRef.current = null
+    }
+  }
+
+  const updateScrollButtons = () => {
+    const el = scrollRef.current
+    if (!el) return
+    const { scrollLeft, scrollWidth, clientWidth } = el
+    setCanScrollLeft(scrollLeft > 0)
+    setCanScrollRight(Math.ceil(scrollLeft + clientWidth) < scrollWidth - 5)
+  }
 
   const scrollLeft = () => {
     if (scrollRef.current) {
@@ -101,7 +133,44 @@ export default function UpcomingMoviesSection() {
     }
   }
 
-  const totalPagesRaw = data?.total_pages ?? 0
+  const startContinuousScroll = (direction: "left" | "right") => {
+    const action = direction === "left" ? scrollLeft : scrollRight
+    clearHoldTimers()
+    action()
+    holdTimeoutRef.current = setTimeout(() => {
+      holdIntervalRef.current = setInterval(action, 220)
+    }, 260)
+  }
+
+  useEffect(() => {
+    if (isFetching) {
+      clearHoldTimers()
+    }
+  }, [isFetching])
+
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+
+    const handleResize = () => updateScrollButtons()
+    updateScrollButtons()
+
+    el.addEventListener("scroll", updateScrollButtons, { passive: true })
+    window.addEventListener("resize", handleResize)
+
+    return () => {
+      el.removeEventListener("scroll", updateScrollButtons)
+      window.removeEventListener("resize", handleResize)
+    }
+  }, [page, isFetching])
+
+  useEffect(() => {
+    return () => {
+      clearHoldTimers()
+    }
+  }, [])
+
+  const totalPagesRaw = data?.total_pages ?? 1
   const totalPagesFiltered = Math.min(totalPagesRaw, 500)
   const movies = data?.results ?? []
 
@@ -154,14 +223,31 @@ export default function UpcomingMoviesSection() {
         ) : (
           <>
             {/* Scroll Left Button */}
-            <Button
-              variant="outline"
-              size="icon"
-              className="absolute top-1/2 left-2 z-10 h-8 w-8 -translate-y-1/2 rounded-full border-2 border-primary bg-background/95 text-primary shadow-xl transition-none hover:bg-primary hover:text-primary-foreground sm:h-10 sm:w-10"
-              onClick={scrollLeft}
-            >
-              <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
-            </Button>
+            {canScrollLeft && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="default"
+                    size="icon"
+                    className="absolute top-1/2 left-5 z-10 h-8 w-8 cursor-pointer rounded-full border-2 border-primary bg-primary/70 hover:bg-primary sm:h-10 sm:w-10"
+                    onPointerDown={() => startContinuousScroll("left")}
+                    onPointerUp={clearHoldTimers}
+                    onPointerLeave={clearHoldTimers}
+                    onPointerCancel={clearHoldTimers}
+                  >
+                    <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs font-semibold">Shift</span>
+                    <Plus className="h-3 w-3" />
+                    <Mouse className="h-4 w-4" />
+                    <ArrowUp className="h-4 w-4" />
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            )}
 
             <motion.div
               ref={scrollRef}
@@ -169,6 +255,7 @@ export default function UpcomingMoviesSection() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3 }}
+              onScroll={updateScrollButtons}
               className="scrollbar-thin scrollbar-track-transparent scrollbar-thumb-border no-scrollbar flex gap-3 overflow-x-auto pb-3"
             >
               {movies.map((movie) => (
@@ -177,14 +264,31 @@ export default function UpcomingMoviesSection() {
             </motion.div>
 
             {/* Scroll Right Button */}
-            <Button
-              variant="outline"
-              size="icon"
-              className="absolute top-1/2 right-2 z-10 h-8 w-8 -translate-y-1/2 rounded-full border-2 border-primary bg-background/95 text-primary shadow-xl transition-none hover:bg-primary hover:text-primary-foreground sm:h-10 sm:w-10"
-              onClick={scrollRight}
-            >
-              <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
-            </Button>
+            {canScrollRight && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="default"
+                    size="icon"
+                    className="absolute top-1/2 right-5 z-10 h-8 w-8 cursor-pointer rounded-full border-2 border-primary bg-primary/70 hover:bg-primary sm:h-10 sm:w-10"
+                    onPointerDown={() => startContinuousScroll("right")}
+                    onPointerUp={clearHoldTimers}
+                    onPointerLeave={clearHoldTimers}
+                    onPointerCancel={clearHoldTimers}
+                  >
+                    <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="left">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs font-semibold">Shift</span>
+                    <Plus className="h-3 w-3" />
+                    <Mouse className="h-4 w-4" />
+                    <ArrowDown className="h-4 w-4" />
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            )}
           </>
         )}
       </div>

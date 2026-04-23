@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query"
+import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import axios from "axios"
 import type { TopRatedMoviesResponse } from "@/types/entertainment/movies/top-rated-movies"
 
@@ -30,6 +30,7 @@ export function useFetchTopRatedMovies(page: number, enabled: boolean = true) {
   return useQuery<TopRatedMoviesResponse>({
     queryKey: ["top-rated-movies", page],
     queryFn: () => fetchTopRatedMovies(page),
+    placeholderData: keepPreviousData,
     enabled: enabled && !isNaN(page) && page > 0, // page is not null and page must be more than 0
     staleTime: 1000 * 60 * 60 * 24, // movies are unlikely to change frequently
     refetchOnWindowFocus: false, // Don't refetch on window focus
