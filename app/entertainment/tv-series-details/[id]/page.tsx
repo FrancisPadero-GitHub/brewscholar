@@ -64,7 +64,7 @@ export default function TvSeriesDetails() {
         <Link href="/entertainment">
           <Button variant="outline" className="mt-2 gap-2">
             <ArrowLeft className="h-4 w-4" />
-            Back to Hub
+            Back to catalog
           </Button>
         </Link>
       </div>

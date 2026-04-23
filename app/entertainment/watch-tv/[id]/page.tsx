@@ -171,23 +171,6 @@ const WatchTv = () => {
     return () => window.removeEventListener("resize", updateIsMobile)
   }, [])
 
-  if (!tvId)
-    return (
-      <div className="flex min-h-screen items-center justify-center text-muted-foreground">
-        <Spinner />
-        <span className="ml-3">TV Show ID is missing.</span>
-      </div>
-    )
-
-  if (!isReady || !tvShow) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background text-muted-foreground">
-        <Spinner />
-        <span className="ml-3">Loading TV Show...</span>
-      </div>
-    )
-  }
-
   return (
     <main className="relative min-h-screen bg-background text-foreground">
       {/* ── Backdrop image ── */}
@@ -227,75 +210,94 @@ const WatchTv = () => {
           </Link>
         </div>
 
-        {/* ── Player ── */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.4 }}
-          className="overflow-hidden rounded-2xl border border-border bg-card shadow-2xl shadow-primary/10"
-        >
-          {playerComponents[activePlayer]}
-        </motion.div>
+        {/* conditional rendering to only show the player and info if we have a valid tvId - otherwise show a loading spinner or error message. 
+        This prevents rendering the players with an invalid ID, which can cause confusing errors and a bad user experience. */}
 
-        <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <span className="text-xs text-primary sm:indent-5">
-            Experiencing any issues? Try these alternative players
-          </span>
-          <div className="flex flex-wrap gap-2">
-            {ACTIVE_PLAYER.map((player) => {
-              const isActivePlayer = activePlayer === player
-              return (
-                <Tooltip key={player}>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        if (player === "Player 3" && isMobile) {
-                          setShowPlayer3Warning(true)
-                        } else {
-                          setActivePlayer(player)
-                        }
-                      }}
-                      className={[
-                        "shrink-0 text-xs font-semibold whitespace-nowrap transition-all duration-200",
-                        isActivePlayer
-                          ? "scale-105 bg-primary text-foreground shadow-md ring-2 ring-primary/70 hover:bg-primary/90 hover:ring-primary"
-                          : "border-border bg-background/80 text-muted-foreground opacity-80 hover:border-primary hover:bg-muted hover:text-primary hover:opacity-100",
-                      ].join(" ")}
-                    >
-                      {player}
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>{playerTooltips[player]}</TooltipContent>
-                </Tooltip>
-              )
-            })}
+        {tvId ? (
+          isReady && tvShow ? (
+            <>
+              {/* ── Player ── */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4 }}
+                className="overflow-hidden rounded-2xl border border-border bg-card shadow-2xl shadow-primary/10"
+              >
+                {playerComponents[activePlayer]}
+              </motion.div>
+
+              <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <span className="text-xs text-primary sm:indent-5">
+                  Experiencing any issues? Try these alternative players
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {ACTIVE_PLAYER.map((player) => {
+                    const isActivePlayer = activePlayer === player
+                    return (
+                      <Tooltip key={player}>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              if (player === "Player 3" && isMobile) {
+                                setShowPlayer3Warning(true)
+                              } else {
+                                setActivePlayer(player)
+                              }
+                            }}
+                            className={[
+                              "shrink-0 text-xs font-semibold whitespace-nowrap transition-all duration-200",
+                              isActivePlayer
+                                ? "scale-105 bg-primary text-foreground shadow-md ring-2 ring-primary/70 hover:bg-primary/90 hover:ring-primary"
+                                : "border-border bg-background/80 text-muted-foreground opacity-80 hover:border-primary hover:bg-muted hover:text-primary hover:opacity-100",
+                            ].join(" ")}
+                          >
+                            {player}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {playerTooltips[player]}
+                        </TooltipContent>
+                      </Tooltip>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* ── Episode Navigator ── */}
+              <TvEpisodeNavigator
+                seriesId={tvId}
+                seasons={tvShow.seasons}
+                currentSeason={season}
+                currentEpisode={episode}
+                onSeasonChange={setSeason}
+                onEpisodeChange={setEpisode}
+                isEpisodeWatched={isWatched}
+                watchedCountForSeason={watchedCountForSeason}
+              />
+
+              {/* ── TV Episode info panel */}
+              <TvEpisodeInfoPanel
+                seriesId={tvId}
+                seasonNumber={season}
+                episodeNumber={episode}
+              />
+
+              {/* ── TV info panel */}
+              <TvInfoPanel tvId={tvId} />
+            </>
+          ) : (
+            <div className="flex min-h-screen items-center justify-center bg-background text-muted-foreground">
+              <Spinner />
+              <span className="ml-3">Loading TV Show...</span>
+            </div>
+          )
+        ) : (
+          <div className="flex min-h-screen items-center justify-center text-muted-foreground">
+            <span className="ml-3">Something went wrong.</span>
           </div>
-        </div>
-
-        {/* ── Episode Navigator ── */}
-
-        <TvEpisodeNavigator
-          seriesId={tvId}
-          seasons={tvShow.seasons}
-          currentSeason={season}
-          currentEpisode={episode}
-          onSeasonChange={setSeason}
-          onEpisodeChange={setEpisode}
-          isEpisodeWatched={isWatched}
-          watchedCountForSeason={watchedCountForSeason}
-        />
-
-        {/* ── TV Episode info panel */}
-        <TvEpisodeInfoPanel
-          seriesId={tvId}
-          seasonNumber={season}
-          episodeNumber={episode}
-        />
-
-        {/* ── TV info panel */}
-        <TvInfoPanel tvId={tvId} />
+        )}
 
         {/* ── Divider */}
         <div className="h-px w-full bg-border/50" />
