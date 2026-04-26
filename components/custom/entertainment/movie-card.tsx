@@ -46,14 +46,6 @@ export function MovieCard({
         {/* Hover overlay */}
         <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-        {/* Rating badge */}
-        <div
-          className={`absolute top-2 right-2 flex items-center gap-1 rounded-full bg-black/70 px-2 py-0.5 text-[11px] font-bold backdrop-blur-sm ${getRatingColor(movie.vote_average)}`}
-        >
-          <Star className="h-2.5 w-2.5 fill-current" />
-          {movie.vote_average ? movie.vote_average.toFixed(1) : "NR"}
-        </div>
-
         {/* Language badge */}
         <div className="absolute top-2 left-2 rounded-sm bg-black/60 px-1.5 py-0.5 text-[9px] font-bold tracking-wider text-zinc-300 uppercase backdrop-blur-sm">
           {movie.original_language}
@@ -84,9 +76,9 @@ export function MovieCard({
               "TBA"}
           </span>
           <span>•</span>
-          <div className="flex items-center gap-0.5">
-            <Star className="h-2.5 w-2.5 fill-amber-400 text-amber-400" />
-            <span>
+          <div className={`flex items-center gap-0.5 ${getRatingColor(movie.vote_average)}`}>
+            <Star className="h-2.5 w-2.5 fill-current" />
+            <span className="font-medium">
               {movie.vote_average ? movie.vote_average.toFixed(1) : "NR"}
             </span>
           </div>
