@@ -178,8 +178,8 @@ const Watch = () => {
               {playerComponents[activePlayer]}
             </motion.div>
 
-            <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <span className="text-xs text-primary sm:indent-5">
+            <div className="flex flex-col items-start gap-3 xl:flex-row xl:items-center xl:justify-between">
+              <span className="text-xs text-primary xl:indent-5">
                 Experiencing any issues? Try these alternative players
               </span>
               <div className="flex flex-wrap gap-2">
