@@ -36,6 +36,7 @@ import { useFetchTvDetails } from "@/hooks/entertainment/fetch/tv-series/useFetc
 import VidKingPlayer from "@/components/custom/entertainment/player/VidKingNet"
 import VidSrcMe from "@/components/custom/entertainment/player/VidSrcMe"
 import VidLinkPro from "@/components/custom/entertainment/player/VidLinkPro"
+import SuperEmbed from "@/components/custom/entertainment/player/SuperEmbed"
 
 import TvInfoPanel from "@/components/custom/entertainment/watch-tv/tv-info-panel"
 import TvEpisodeInfoPanel from "@/components/custom/entertainment/watch-tv/tv-episode-info-panel"
@@ -153,12 +154,14 @@ const WatchTv = () => {
     "Player 1": <VidLinkPro {...playerBaseProps} startTime={startTime} />,
     "Player 2": <VidSrcMe {...playerBaseProps} />,
     "Player 3": <VidKingPlayer {...playerBaseProps} startTime={startTime} />,
+    "Player 4": <SuperEmbed {...playerBaseProps} />,
   }
 
   const playerTooltips: Record<string, string> = {
     "Player 1": "Reliable streaming with minimal ads",
     "Player 2": "Contains many ads and pop-ups",
     "Player 3": "Contains many ads  and pop-ups",
+    "Player 4": "Alternative multi-player embed",
   }
 
   const [isMobile, setIsMobile] = useState(false)
@@ -360,6 +363,15 @@ const WatchTv = () => {
                   className="flex-1 rounded-xl border border-border/60 bg-muted/40 py-2.5 text-xs font-bold text-foreground transition-all duration-200 hover:border-primary/50 hover:bg-primary/10 hover:text-primary active:scale-95"
                 >
                   ▶ Player 2
+                </button>
+                <button
+                  onClick={() => {
+                    setActivePlayer("Player 4")
+                    setShowPlayer3Warning(false)
+                  }}
+                  className="flex-1 rounded-xl border border-border/60 bg-muted/40 py-2.5 text-xs font-bold text-foreground transition-all duration-200 hover:border-primary/50 hover:bg-primary/10 hover:text-primary active:scale-95"
+                >
+                  ▶ Player 4
                 </button>
               </div>
             </div>

@@ -20,9 +20,9 @@ function VidLinkPro({
 
   let src = ""
   if (type === "movie") {
-    src = `https://vidlink.pro/movie/${id}?primaryColor=f59e0a&secondaryColor=f3f4f6&iconColor=eefdec&icons=default&player=default&title=true&poster=true&autoplay=true&nextbutton=true${timeParam}`
+    src = `https://vidlink.pro/movie/${id}?primaryColor=f59e0a&secondaryColor=f3f4f6&iconColor=eefdec&icons=default&player=jw&title=true&poster=true&autoplay=true&nextbutton=true${timeParam}`
   } else if (type === "tv" && season && episode) {
-    src = `https://vidlink.pro/tv/${id}/${season}/${episode}?primaryColor=f59e0a&secondaryColor=f3f4f6&iconColor=eefdec&icons=default&player=default&title=true&poster=true&autoplay=true&nextbutton=true${timeParam}`
+    src = `https://vidlink.pro/tv/${id}/${season}/${episode}?primaryColor=f59e0a&secondaryColor=f3f4f6&iconColor=eefdec&icons=default&player=jw&title=true&poster=true&autoplay=true&nextbutton=true${timeParam}`
   } else {
     // Invalid type or missing required props
     return null

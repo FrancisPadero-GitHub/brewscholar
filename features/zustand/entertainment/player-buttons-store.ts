@@ -1,8 +1,8 @@
 import { create } from "zustand"
 
-export type ActivePlayer = "Player 1" | "Player 2" | "Player 3"
+export type ActivePlayer = "Player 1" | "Player 2" | "Player 3" | "Player 4"
 
-export const ACTIVE_PLAYER: ActivePlayer[] = ["Player 1", "Player 2", "Player 3"]
+export const ACTIVE_PLAYER: ActivePlayer[] = ["Player 1", "Player 2", "Player 3", "Player 4"]
 
 type PlayerStore = {
   activePlayer: ActivePlayer
