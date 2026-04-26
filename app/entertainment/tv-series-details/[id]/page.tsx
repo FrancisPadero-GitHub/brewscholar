@@ -9,7 +9,6 @@ import {
   Clock,
   Calendar,
   Globe,
-  Film,
   ArrowLeft,
   ExternalLink,
   Play,
@@ -78,14 +77,14 @@ export default function TvSeriesDetails() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* ── HERO BACKDROP  */}
-      <div className="relative h-[58vh] w-full overflow-hidden">
+      <div className="relative h-[58vh] w-full overflow-hidden bg-zinc-950">
         {tv.backdrop_path ? (
           <Image
             src={`${BACKDROP_BASE_URL}${tv.backdrop_path}`}
             alt={tv.name}
             fill
             sizes="100vw"
-            className="object-cover object-top"
+            className="object-cover object-top opacity-50"
             priority
           />
         ) : (
@@ -97,12 +96,12 @@ export default function TvSeriesDetails() {
         <div className="absolute inset-0 bg-linear-to-r from-background via-transparent to-transparent" />
 
         {/* Back button floating in hero */}
-        <div className="absolute top-6 left-6">
+        <div className="relative mx-auto max-w-6xl px-6 pt-7">
           <Link href="/entertainment">
             <Button
               variant="outline"
               size="sm"
-              className="gap-2 border-border/60 bg-background/70 text-foreground backdrop-blur-md hover:bg-background/90 hover:text-primary"
+              className="gap-2 border-zinc-700 bg-black/40 text-white backdrop-blur-md hover:bg-primary hover:text-primary-foreground"
             >
               <ArrowLeft className="h-4 w-4" />
               Back
@@ -116,7 +115,7 @@ export default function TvSeriesDetails() {
         {/* ── Poster + Title Row  */}
         <div className="-mt-44 flex flex-col items-start gap-8 md:flex-row md:items-end">
           {/* Poster */}
-          <div className="relative z-10 h-64 w-44 shrink-0 overflow-hidden rounded-xl border border-border shadow-2xl shadow-black/40 md:h-80 md:w-56">
+          <div className="relative z-10 h-64 w-44 shrink-0 overflow-hidden rounded-xl border-2 border-zinc-700 shadow-2xl shadow-black/40 md:h-80 md:w-56">
             {tv.poster_path ? (
               <Image
                 src={`${IMAGE_BASE_URL}${tv.poster_path}`}
@@ -217,7 +216,7 @@ export default function TvSeriesDetails() {
                 >
                   <Button
                     size="sm"
-                    className="mt-1 gap-2 bg-accent font-semibold text-accent-foreground shadow-md shadow-accent/20 hover:bg-primary hover:text-primary-foreground"
+                    className="mt-1 gap-2 rounded-full bg-accent font-semibold text-accent-foreground shadow-md shadow-accent/20 hover:bg-primary hover:text-primary-foreground"
                   >
                     <ExternalLink className="h-3.5 w-3.5" />
                     Official Site
@@ -237,7 +236,7 @@ export default function TvSeriesDetails() {
                 <Link href={`/entertainment/watch-tv/${tv.id}`}>
                   <Button
                     size="sm"
-                    className="shadow-[0_0_20px_--spacing(1)_var(--primary)]transition-all mt-1 gap-2 border border-primary/50 bg-primary font-bold text-primary-foreground duration-300 hover:bg-primary/90 hover:shadow-[0_0_30px_--spacing(1.5)_var(--primary)]"
+                    className="mt-1 gap-2 rounded-full border border-primary/50 bg-primary font-bold text-primary-foreground shadow-lg shadow-primary/30 transition-all duration-300 hover:bg-primary/90 hover:shadow-primary/40"
                   >
                     <Play className="h-4 w-4 fill-current" />
                     Play Now
@@ -302,50 +301,6 @@ export default function TvSeriesDetails() {
                 )}
               </div>
             </section>
-
-            {/* Production Companies */}
-            {tv.production_companies.length > 0 && (
-              <section>
-                <h2 className="mb-3 flex items-center gap-2 text-xs font-semibold tracking-widest text-primary uppercase">
-                  <Film className="h-4 w-4" />
-                  Production Companies
-                </h2>
-                <div className="flex flex-wrap gap-3">
-                  {tv.production_companies.map((company) => (
-                    <Card
-                      key={company.id}
-                      className="flex flex-row items-center gap-3 border-border bg-card px-4 py-2 shadow-none"
-                    >
-                      {company.logo_path ? (
-                        <div className="relative flex h-10 w-20 shrink-0 items-center justify-center rounded-lg bg-white p-1.5 shadow-xs transition-transform hover:scale-105">
-                          <Image
-                            src={`${IMAGE_BASE_URL}${company.logo_path}`}
-                            alt={company.name}
-                            fill
-                            sizes="80px"
-                            className="object-contain"
-                          />
-                        </div>
-                      ) : (
-                        <div className="flex h-10 w-20 shrink-0 items-center justify-center rounded-lg bg-muted/40 transition-transform hover:scale-105">
-                          <Film className="h-6 w-6 text-muted-foreground" />
-                        </div>
-                      )}
-                      <CardContent className="p-0">
-                        <p className="text-sm font-semibold text-foreground">
-                          {company.name}
-                        </p>
-                        {company.origin_country && (
-                          <p className="text-xs text-muted-foreground">
-                            {company.origin_country}
-                          </p>
-                        )}
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </section>
-            )}
           </div>
 
           {/* Right: Meta sidebar  */}

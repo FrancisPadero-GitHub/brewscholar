@@ -136,14 +136,14 @@ const Watch = () => {
       )}
 
       {/* ── Main Content ── */}
-      <div className="relative z-10 mx-auto max-w-6xl space-y-4 px-3 pt-4 pb-16 sm:space-y-6 sm:px-4 sm:pt-8 sm:pb-20">
+      <div className="relative z-10 mx-auto max-w-6xl space-y-4 px-6 pt-6 pb-16 sm:space-y-6 sm:pb-20">
         {/* ── Top nav row */}
         <div className="flex items-center gap-3">
-          <Link href="/entertainment">
+          <Link href={`/entertainment/movie-details/${movieId}`}>
             <Button
               variant="outline"
               size="sm"
-              className="gap-2 border-border/60 bg-background/70 hover:border-primary hover:text-primary"
+              className="gap-2 border-zinc-700 bg-black/40 text-white backdrop-blur-md hover:bg-primary hover:text-primary-foreground"
             >
               <ArrowLeft className="h-4 w-4" />
               Back

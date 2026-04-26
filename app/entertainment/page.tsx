@@ -1,12 +1,5 @@
 "use client"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Spinner } from "@/components/ui/spinner"
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -16,6 +9,12 @@ import {
   CalendarClock,
   Flame,
   X,
+  Play,
+  ChevronLeft,
+  ChevronRight,
+  Info,
+  Film,
+  Tv,
 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
@@ -44,11 +43,10 @@ import { useFetchTopRatedTvSeries } from "@/hooks/entertainment/fetch/tv-series/
 import PaginationControls from "@/components/custom/entertainment/PaginationControls"
 import SearchResults from "@/components/custom/entertainment/SearchResults"
 import { ContinueWatching } from "@/components/custom/entertainment/continue-watching"
-
-// helper
-import { IMAGE_BASE_URL } from "@/constants/image-size"
-import { getRatingColor } from "@/helpers/entertainment/movie-details/movie-details"
-import { Separator } from "@/components/ui/separator"
+import { StarRating } from "@/components/custom/entertainment/star-rating"
+import { SpotlightCard } from "@/components/custom/entertainment/spotlight-card"
+import { MovieCard } from "@/components/custom/entertainment/movie-card"
+import { EntertainmentSkeleton, HeroSkeleton, FilterBarSkeleton } from "@/components/custom/entertainment/entertainment-skeleton"
 
 // state management
 import {
@@ -60,13 +58,6 @@ import {
 } from "@/features/zustand/entertainment/entertainment-filter-buttons-store"
 import { useEntertainmentMode } from "@/features/zustand/entertainment/entertaiment-mode"
 
-/** TODO:
- * - [done] Add search
- * - [done] Add more movie sections
- * - Add favorites
- * - Add watchlists
- */
-
 export default function MovieHub() {
   // Pagination stuff
   const searchParams = useSearchParams()
@@ -76,15 +67,13 @@ export default function MovieHub() {
   // search variable container
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [showCategoryPills, setShowCategoryPills] = useState(false)
+  const [heroIndex, setHeroIndex] = useState(0)
   // search bar
   const searchInputRef = useRef<HTMLInputElement>(null)
 
   // clear search
   const clearFilters = useCallback(() => {
-    // 1. Clear the React state
     setSearchQuery("")
-
-    // 2. Clear the actual visual input box
     if (searchInputRef.current) {
       searchInputRef.current.value = ""
     }
@@ -96,31 +85,32 @@ export default function MovieHub() {
 
   // Tab filters Store
   const {
-    // movie quick filters
     activeMovieFilter,
     setActiveMovieFilter,
     moviePages,
     setMoviePage,
-
-    // tv series quick filters
     activeTvFilter,
     setActiveTvFilter,
     tvPages,
     setTvPage,
   } = useFilterStore()
 
-  // Toggles for the active entertaiment mode (move or tv series)
   const activeFilter = isMovie ? activeMovieFilter : activeTvFilter
-
-  // Sets the filter pill filters for the active entertainment mode
   const tabs = isMovie ? MOVIE_CATEGORY_TABS : TV_CATEGORY_TABS
 
-  // Dedicated separate pagination for each modes
   const currentPage = isMovie
     ? moviePages[activeMovieFilter] || 1
     : tvPages[activeTvFilter] || 1
 
-  // Sync URL page with store if a user shares a link directly
+  // Reset hero index when tab, mode, or search changes (derive state during render)
+  const currentFilterKey = `${activeFilter}-${mode}-${searchQuery}`
+  const [prevFilterKey, setPrevFilterKey] = useState(currentFilterKey)
+  if (currentFilterKey !== prevFilterKey) {
+    setPrevFilterKey(currentFilterKey)
+    setHeroIndex(0)
+  }
+
+  // Sync URL page with store
   useEffect(() => {
     const pageFromUrl = Number(searchParams.get("page"))
     if (!pageFromUrl) return
@@ -230,7 +220,7 @@ export default function MovieHub() {
     error: onTheAirTvError,
   } = useFetchOnTheAirTvSeries(currentPage, !isMovie && isOnTheAir)
 
-  // Determine which data and error states to use based on the active filter
+  // Determine active data
   const categoryData = isMovie
     ? isPopular
       ? popularData
@@ -313,7 +303,7 @@ export default function MovieHub() {
       }
     | undefined
 
-  // Map each category to an icon component (typed so TS accepts JSX usage)
+  // Map each category to an icon
   const filterIcons: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
     Popular: Flame,
     "Now Playing": Clapperboard,
@@ -323,14 +313,11 @@ export default function MovieHub() {
     "On The Air": Clapperboard,
   }
 
-  const ActiveFilterIcon: ComponentType<SVGProps<SVGSVGElement>> =
-    filterIcons[activeFilter] ?? Clapperboard
-
   if (isError) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background text-muted-foreground">
+      <div className="flex min-h-screen items-center justify-center bg-zinc-950 text-zinc-400">
         <div className="space-y-2 text-center">
-          <Clapperboard className="mx-auto h-10 w-10 text-muted" />
+          <Clapperboard className="mx-auto h-10 w-10 text-zinc-600" />
           <p className="text-lg font-medium">
             {error?.message || "Failed to load movies."}
           </p>
@@ -340,103 +327,188 @@ export default function MovieHub() {
     )
   }
 
-  const featuredMovie = movies?.results[0]
+  const maxHeroItems = Math.min(5, movies?.results.length || 0)
+  const validHeroIndex = heroIndex < maxHeroItems ? heroIndex : 0
+  const featuredMovie = movies?.results[validHeroIndex]
+  // Spotlight will pick a movie after the ones in the hero, if available
+  const spotlightMovie = movies?.results[maxHeroItems] || movies?.results[1]
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* ── Hero Banner ── */}
-      <div className="relative h-72 w-full overflow-hidden bg-muted dark:bg-zinc-900">
-        {/* Conditionally render the image and gradients ONLY if the path exists */}
+      {/* ══════════════════════ HERO BANNER ══════════════════════ */}
+      <section className="relative h-[420px] w-full overflow-hidden bg-zinc-950 sm:h-[500px]">
+        {/* Backdrop image */}
         {featuredMovie?.backdrop_path && (
           <>
             <Image
               src={`https://image.tmdb.org/t/p/w1280${featuredMovie.backdrop_path}`}
-              alt={
-                featuredMovie.title || featuredMovie.name || "Featured Movie"
-              }
+              alt={featuredMovie.title || featuredMovie.name || "Featured"}
               fill
               sizes="100vw"
-              className="object-cover object-top opacity-30"
+              className="object-cover object-top opacity-50"
               priority
             />
-            {/* layered linear: top dark → transparent → strong bottom */}
-            <div className="absolute inset-0 bg-linear-to-b from-background via-transparent to-background" />
-            <div className="absolute inset-0 bg-linear-to-r from-background via-transparent to-transparent" />
+            {/* Layered gradients */}
+            <div className="absolute inset-0 bg-linear-to-b from-background/60 via-transparent to-background" />
+            <div className="absolute inset-0 bg-linear-to-r from-background via-background/40 to-transparent" />
           </>
         )}
 
-        {/* Floating header text inside hero (Always renders to keep layout consistent) */}
-        <div className="absolute bottom-8 left-1/2 w-full max-w-7xl -translate-x-1/2 px-6">
-          <div className="flex flex-col justify-center gap-3">
-            {/* Top: Logo */}
-            <div className="flex items-center gap-3">
-              <div className="relative block h-15 w-25 sm:h-20 sm:w-25 lg:h-20 lg:w-30 dark:hidden">
-                <Image
-                  src="/brewscholar_light_mode.png"
-                  alt="BrewScholar Logo Light"
-                  fill
-                  sizes="120"
-                  className="object-contain"
-                />
+        {/* Hero content */}
+        {isFetching ? (
+          <HeroSkeleton />
+        ) : (
+          <div className="absolute inset-0 flex items-end">
+            <div className="mx-auto flex w-full max-w-7xl flex-col items-end justify-between px-6 pb-10 sm:flex-row">
+              <div className="w-full max-w-2xl space-y-4">
+                {/* Mode pill */}
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/20 px-3 py-1 text-xs font-bold tracking-wide text-primary uppercase backdrop-blur-sm">
+                  {isMovie ? (
+                    <Film className="h-3 w-3" />
+                  ) : (
+                    <Tv className="h-3 w-3" />
+                  )}
+                  {isMovie ? "Movie" : "TV Series"}
+                </span>
+
+                {/* Title */}
+                <h1 className="text-4xl leading-none font-black tracking-tight text-white sm:text-5xl lg:text-6xl">
+                  {(
+                    featuredMovie?.title ||
+                    featuredMovie?.name ||
+                    ""
+                  ).toUpperCase()}
+                </h1>
+
+                {/* Description */}
+                <p className="line-clamp-3 max-w-lg text-sm leading-relaxed text-zinc-300 sm:text-base">
+                  {featuredMovie?.overview}
+                </p>
+
+                {/* Rating */}
+                {featuredMovie && (
+                  <StarRating rating={featuredMovie.vote_average} />
+                )}
+
+                {/* CTA buttons */}
+                {featuredMovie && (
+                  <div className="flex items-center gap-3 pt-1">
+                    <Link
+                      href={`/entertainment/${isMovie ? "watch-movie" : "watch-tv"}/${featuredMovie.id}`}
+                    >
+                      <Button className="gap-2 rounded-full bg-primary px-7 py-2.5 font-bold text-primary-foreground shadow-lg shadow-primary/30 transition-all hover:bg-primary/90 hover:shadow-primary/40">
+                        <Play className="h-4 w-4 fill-current" />
+                        Watch Now
+                      </Button>
+                    </Link>
+                    <Link
+                      href={`/entertainment/${isMovie ? "movie-details" : "tv-series-details"}/${featuredMovie.id}`}
+                    >
+                      <Button
+                        variant="outline"
+                        className="gap-2 rounded-full border-zinc-500 px-6 py-2.5 text-zinc-200 backdrop-blur-sm hover:border-zinc-300 hover:text-white"
+                      >
+                        <Info className="h-4 w-4" />
+                        Details
+                      </Button>
+                    </Link>
+                  </div>
+                )}
               </div>
-              <div className="relative hidden h-15 w-25 sm:h-20 sm:w-25 lg:h-20 lg:w-30 dark:block">
-                <Image
-                  src="/brewscholar_dark_mode.png"
-                  alt="brewscholar dark mode"
-                  fill
-                  sizes="120"
-                  className="object-contain"
-                />
+
+              {/* Pagination Controls */}
+              {maxHeroItems > 1 && (
+                <div className="mt-6 flex flex-col items-end gap-3 sm:mt-0">
+                  {/* Dots indicator */}
+                  <div className="flex items-center gap-2">
+                    {Array.from({ length: maxHeroItems }).map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setHeroIndex(i)}
+                        className={`h-2 rounded-full transition-all duration-300 ${
+                          i === validHeroIndex
+                            ? "w-8 bg-primary"
+                            : "w-2 bg-zinc-600 hover:bg-zinc-400"
+                        }`}
+                        aria-label={`Go to featured movie ${i + 1}`}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Left/Right Arrows */}
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() =>
+                        setHeroIndex((i) => (i - 1 + maxHeroItems) % maxHeroItems)
+                      }
+                      className="flex h-11 w-11 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-md transition-all hover:scale-110 hover:bg-primary hover:text-primary-foreground"
+                    >
+                      <ChevronLeft className="h-5 w-5" />
+                    </button>
+                    <button
+                      onClick={() => setHeroIndex((i) => (i + 1) % maxHeroItems)}
+                      className="flex h-11 w-11 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-md transition-all hover:scale-110 hover:bg-primary hover:text-primary-foreground"
+                    >
+                      <ChevronRight className="h-5 w-5" />
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </section>
+
+      {/* ══════════════════════ STICKY FILTER BAR ══════════════════════ */}
+      {isFetching ? (
+        <FilterBarSkeleton />
+      ) : (
+        <div className="sticky top-0 z-30 border-b border-zinc-800/60 bg-background/80 backdrop-blur-xl">
+        <div className="mx-auto max-w-7xl px-6 py-4">
+          {/* Row 1: Mode toggle + Search */}
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-2">
+              {/* Mode toggle */}
+              <div className="flex overflow-hidden rounded-full border border-zinc-700 bg-zinc-900/50">
+                <button
+                  onClick={() => setMode("Movie")}
+                  className={`flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold transition-all ${
+                    isMovie
+                      ? "bg-primary text-primary-foreground"
+                      : "text-zinc-400 hover:text-zinc-200"
+                  }`}
+                >
+                  <Film className="h-3.5 w-3.5" />
+                  Movies
+                </button>
+                <button
+                  onClick={() => setMode("TV series")}
+                  className={`flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold transition-all ${
+                    !isMovie
+                      ? "bg-primary text-primary-foreground"
+                      : "text-zinc-400 hover:text-zinc-200"
+                  }`}
+                >
+                  <Tv className="h-3.5 w-3.5" />
+                  Series
+                </button>
               </div>
+
+              {/* Search hint */}
+              {searchQuery && (
+                <span className="hidden text-xs text-zinc-500 sm:block">
+                  {isMovie
+                    ? "Looking for a TV show? Switch modes."
+                    : "Looking for a movie? Switch modes."}
+                </span>
+              )}
             </div>
 
-            {/* Bottom: MovieHub title */}
-            <h1 className="text-3xl font-black tracking-tight text-foreground sm:text-4xl">
-              Movie<span className="text-primary">Hub</span>
-            </h1>
-          </div>
-        </div>
-      </div>
-
-      <div className="mx-auto max-w-7xl px-6 pb-16">
-        {/* ── Search + Categories bar ── */}
-        <div className="sticky top-0 z-20 -mx-6 mb-8 space-y-5 border-border bg-background/80 px-6 pt-5 backdrop-blur-md">
-          <div className="flex items-center gap-2">
-            <Button
-              variant={mode === "Movie" ? "default" : "outline"}
-              size="xs"
-              onClick={() => {
-                setMode("Movie")
-              }}
-              className="px-2 py-1 text-[11px]"
-            >
-              Movie
-            </Button>
-            <Button
-              variant={mode === "TV series" ? "default" : "outline"}
-              size="xs"
-              onClick={() => {
-                setMode("TV series")
-              }}
-              className="px-2 py-1 text-[11px]"
-            >
-              TV series
-            </Button>
-            {/* Search warning */}
-            {searchQuery && (
-              <span className="hidden text-xs text-muted-foreground sm:block">
-                {isMovie
-                  ? "Looking for a TV show? Try switching modes."
-                  : "Looking for a movie? Try switching modes."}
-              </span>
-            )}
-          </div>
-          <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-            {/* Search */}
-            <div className="relative w-full sm:max-w-sm">
-              <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            {/* Search bar */}
+            <div className="relative w-full sm:max-w-xs">
+              <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-500" />
               <Input
-                placeholder={`Search ${isMovie ? "movies" : "tv series"}`}
+                placeholder={`Search ${isMovie ? "movies" : "TV series"}...`}
                 ref={searchInputRef}
                 defaultValue={searchQuery}
                 onKeyDown={(e) => {
@@ -444,47 +516,46 @@ export default function MovieHub() {
                     setSearchQuery(searchInputRef.current?.value ?? "")
                   }
                 }}
-                // Added pr-28 to leave space for the button on the right
-                className="border-border bg-muted pr-28 pl-9 text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary"
+                className="rounded-full border-zinc-700 bg-zinc-900/50 pr-20 pl-9 text-sm text-foreground placeholder:text-zinc-600 focus-visible:border-primary focus-visible:ring-primary/30"
               />
-
-              {/* Only show the clear button if there is actually a search query */}
               {searchQuery && (
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={clearFilters}
-                  // Added absolute positioning to pin it to the right
-                  className="absolute top-0 right-1 h-7 gap-1 px-2 text-xs text-muted-foreground hover:bg-transparent hover:text-foreground"
+                  className="absolute top-1/2 right-1 -translate-y-1/2 gap-1 rounded-full px-2 text-xs text-zinc-500 hover:bg-transparent hover:text-zinc-200"
                 >
                   <X className="h-3.5 w-3.5" />
                   Clear
                 </Button>
               )}
             </div>
+          </div>
 
-            {/* Category pills toggle (mobile only) */}
-            <div className="flex w-full items-center justify-end md:hidden">
+          {/* Row 2: Category tabs */}
+          <div className="mt-3 flex items-center gap-1">
+            {/* Mobile toggle */}
+            <div className="flex md:hidden">
               <Button
-                variant="outline"
+                variant="ghost"
                 size="xs"
                 onClick={() => setShowCategoryPills((prev) => !prev)}
-                className="px-2 py-1 text-[11px]"
+                className="px-2 py-1 text-[11px] text-zinc-400"
               >
-                {showCategoryPills ? "Hide categories" : "Show categories"}
+                {showCategoryPills ? "Hide" : "Categories"}
               </Button>
             </div>
 
             {/* Category pills */}
             <div
-              className={`${showCategoryPills ? "grid grid-cols-2" : "hidden md:flex md:flex-row"} w-full justify-center gap-2 p-1 pb-0.5 align-middle md:w-auto md:justify-start md:p-0`}
+              className={`${showCategoryPills ? "flex flex-wrap" : "hidden md:flex"} gap-1`}
             >
               {tabs.map((category) => {
                 const isActive = activeFilter === category
+                const Icon = filterIcons[category] ?? Clapperboard
                 return (
-                  <Button
+                  <button
                     key={category}
-                    size="sm"
                     onClick={() => {
                       if (isMovie) {
                         const mCategory = category as MovieFiltersTab
@@ -500,28 +571,33 @@ export default function MovieHub() {
                         )
                       }
                     }}
-                    variant={isActive ? "default" : "outline"}
-                    className={
+                    className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
                       isActive
-                        ? "shrink-0 rounded-full bg-primary px-2 py-1 text-[10px] font-semibold whitespace-nowrap text-background hover:bg-primary/80 sm:text-xs"
-                        : "shrink-0 rounded-full border-border px-2 py-1 text-[10px] whitespace-nowrap text-muted-foreground hover:border-primary hover:bg-muted hover:text-primary sm:text-xs"
-                    }
+                        ? "bg-primary/15 text-primary ring-1 ring-primary/30"
+                        : "text-zinc-500 hover:bg-zinc-800/50 hover:text-zinc-300"
+                    }`}
                   >
+                    <Icon className="h-3 w-3" />
                     {category}
-                  </Button>
+                    {isActive && (
+                      <span className="ml-0.5 h-1.5 w-1.5 rounded-full bg-primary" />
+                    )}
+                  </button>
                 )
               })}
             </div>
           </div>
-          <Separator />
         </div>
+      </div>
+      )}
 
-        {/* ── Movie Grid ── */}
+      {/* ══════════════════════ MAIN CONTENT ══════════════════════ */}
+      <div className="mx-auto max-w-7xl px-6 pt-6 pb-16">
         <main>
-          {/* Continue Watching Component */}
+          {/* Continue Watching */}
           {!searchQuery && <ContinueWatching />}
 
-          {/* Search results Here */}
+          {/* Search Results */}
           <SearchResults
             searchResult={searchResult}
             searchQuery={searchQuery}
@@ -530,94 +606,37 @@ export default function MovieHub() {
             error={searchError}
           />
 
+          {/* Section header */}
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <ActiveFilterIcon className="h-4 w-4 text-primary" />
-              <h2 className="text-xs font-semibold tracking-widest text-primary uppercase">
+              {(() => {
+                const Icon = filterIcons[activeFilter] ?? Clapperboard
+                return <Icon className="h-4 w-4 text-primary" />
+              })()}
+              <h2 className="text-sm font-bold tracking-wide text-foreground">
                 {activeFilter}
               </h2>
             </div>
-            <span className="text-xs font-medium text-muted-foreground">
+            <span className="text-xs font-medium text-zinc-500">
               {movies?.results.length} results
             </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          {/* ── Movie Grid ── */}
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
             {isFetching ? (
-              <div className="col-span-full flex h-[60vh] items-center justify-center bg-background">
-                <Spinner className="h-10 w-10 text-primary" />
-              </div>
+              <EntertainmentSkeleton count={20} />
             ) : (
-              movies?.results.map((movie) => {
-                return (
-                  <Link
-                    key={movie.id}
-                    href={`/entertainment/${isMovie ? "movie-details" : "tv-series-details"}/${movie.id}`}
-                    className="group block"
-                  >
-                    <Card className="flex h-full flex-col gap-0 overflow-hidden border-border bg-muted p-0 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/60 hover:shadow-xl hover:shadow-primary/5">
-                      {/* Poster */}
-                      <div className="relative aspect-2/3 overflow-hidden bg-muted">
-                        {movie.poster_path ? (
-                          <Image
-                            src={`${IMAGE_BASE_URL}${movie.poster_path}`}
-                            alt={movie.title || movie.name || "Poster"}
-                            fill
-                            sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
-                            className="object-cover transition-transform duration-500 group-hover:scale-105"
-                            loading="lazy"
-                          />
-                        ) : (
-                          <div className="flex h-full w-full items-center justify-center">
-                            <Clapperboard className="h-10 w-10 text-muted" />
-                          </div>
-                        )}
-
-                        {/* linear overlay on hover */}
-                        <div className="absolute inset-0 bg-linear-to-t from-muted via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-
-                        {/* Rating badge */}
-                        <div
-                          className={`absolute top-2 right-2 flex items-center gap-1 rounded-full bg-background/80 px-2 py-0.5 text-xs font-bold backdrop-blur-sm ${getRatingColor(movie.vote_average)}`}
-                        >
-                          <Star className="h-2.5 w-2.5 fill-current" />
-                          {movie.vote_average
-                            ? movie.vote_average.toFixed(1)
-                            : "NR"}
-                        </div>
-
-                        {/* Language tag */}
-                        <div className="absolute top-2 left-2 rounded-sm bg-background/70 px-1.5 py-0.5 text-[10px] font-bold tracking-wider text-muted-foreground uppercase backdrop-blur-sm">
-                          {movie.original_language}
-                        </div>
-                      </div>
-
-                      {/* Info */}
-                      <CardHeader className="p-3 pb-1">
-                        <CardTitle className="line-clamp-1 text-sm leading-tight font-bold text-foreground transition-colors group-hover:text-primary">
-                          {movie.title || movie.name}
-                        </CardTitle>
-                        <div className="mt-1 flex items-center gap-1">
-                          <CalendarClock className="h-2.5 w-2.5 text-muted" />
-                          <span className="text-[11px] text-muted-foreground">
-                            {(
-                              movie.release_date || movie.first_air_date
-                            )?.split("-")[0] || "TBA"}
-                          </span>
-                        </div>
-                      </CardHeader>
-
-                      <CardContent className="mt-auto p-3 pt-2">
-                        <CardDescription className="line-clamp-2 text-[11px] leading-relaxed text-muted-foreground">
-                          {movie.overview || "No description available."}
-                        </CardDescription>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                )
-              })
+              movies?.results.map((movie) => (
+                <MovieCard key={movie.id} movie={movie} isMovie={isMovie} />
+              ))
             )}
           </div>
+
+          {/* Spotlight after grid (if enough items) */}
+          {spotlightMovie && !isFetching && !searchQuery && (
+            <SpotlightCard movie={spotlightMovie} isMovie={isMovie} />
+          )}
         </main>
 
         {/* Pagination */}
@@ -625,7 +644,6 @@ export default function MovieHub() {
           <div className="mt-14 flex justify-center">
             <PaginationControls
               currentPage={currentPage}
-              // Even though it says a lot of pages, TMDB only returns 500 movies in popular section
               totalPages={Math.min(Number(movies?.total_pages), 500)}
               route="/entertainment"
               onPageChange={(page) => {
