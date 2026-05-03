@@ -46,7 +46,17 @@ import { ContinueWatching } from "@/components/custom/entertainment/continue-wat
 import { StarRating } from "@/components/custom/entertainment/star-rating"
 import { SpotlightCard } from "@/components/custom/entertainment/spotlight-card"
 import { MovieCard } from "@/components/custom/entertainment/movie-card"
-import { EntertainmentSkeleton, HeroSkeleton, FilterBarSkeleton } from "@/components/custom/entertainment/entertainment-skeleton"
+import {
+  EntertainmentSkeleton,
+  HeroSkeleton,
+  FilterBarSkeleton,
+} from "@/components/custom/entertainment/entertainment-skeleton"
+import {
+  buildMovieDetailsPath,
+  buildTvDetailsPath,
+  buildWatchMoviePath,
+  buildWatchTvPath,
+} from "@/lib/utils"
 
 // state management
 import {
@@ -394,7 +404,17 @@ export default function MovieHub() {
                 {featuredMovie && (
                   <div className="flex items-center gap-3 pt-1">
                     <Link
-                      href={`/entertainment/${isMovie ? "watch-movie" : "watch-tv"}/${featuredMovie.id}`}
+                      href={
+                        isMovie
+                          ? buildWatchMoviePath(
+                              featuredMovie.id,
+                              featuredMovie.title
+                            )
+                          : buildWatchTvPath(
+                              featuredMovie.id,
+                              featuredMovie.name
+                            )
+                      }
                     >
                       <Button className="gap-2 rounded-full bg-primary px-7 py-2.5 font-bold text-primary-foreground shadow-lg shadow-primary/30 transition-all hover:bg-primary/90 hover:shadow-primary/40">
                         <Play className="h-4 w-4 fill-current" />
@@ -402,7 +422,17 @@ export default function MovieHub() {
                       </Button>
                     </Link>
                     <Link
-                      href={`/entertainment/${isMovie ? "movie-details" : "tv-series-details"}/${featuredMovie.id}`}
+                      href={
+                        isMovie
+                          ? buildMovieDetailsPath(
+                              featuredMovie.id,
+                              featuredMovie.title
+                            )
+                          : buildTvDetailsPath(
+                              featuredMovie.id,
+                              featuredMovie.name
+                            )
+                      }
                     >
                       <Button
                         variant="outline"
@@ -439,14 +469,18 @@ export default function MovieHub() {
                   <div className="flex gap-3">
                     <button
                       onClick={() =>
-                        setHeroIndex((i) => (i - 1 + maxHeroItems) % maxHeroItems)
+                        setHeroIndex(
+                          (i) => (i - 1 + maxHeroItems) % maxHeroItems
+                        )
                       }
                       className="flex h-11 w-11 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-md transition-all hover:scale-110 hover:bg-primary hover:text-primary-foreground"
                     >
                       <ChevronLeft className="h-5 w-5" />
                     </button>
                     <button
-                      onClick={() => setHeroIndex((i) => (i + 1) % maxHeroItems)}
+                      onClick={() =>
+                        setHeroIndex((i) => (i + 1) % maxHeroItems)
+                      }
                       className="flex h-11 w-11 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-md transition-all hover:scale-110 hover:bg-primary hover:text-primary-foreground"
                     >
                       <ChevronRight className="h-5 w-5" />
@@ -464,131 +498,131 @@ export default function MovieHub() {
         <FilterBarSkeleton />
       ) : (
         <div className="sticky top-0 z-30 border-b border-zinc-800/60 bg-background/80 backdrop-blur-xl">
-        <div className="mx-auto max-w-7xl px-6 py-4">
-          {/* Row 1: Mode toggle + Search */}
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-2">
-              {/* Mode toggle */}
-              <div className="flex overflow-hidden rounded-full border border-zinc-700 bg-zinc-900/50">
-                <button
-                  onClick={() => setMode("Movie")}
-                  className={`flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold transition-all ${
-                    isMovie
-                      ? "bg-primary text-primary-foreground"
-                      : "text-zinc-400 hover:text-zinc-200"
-                  }`}
-                >
-                  <Film className="h-3.5 w-3.5" />
-                  Movies
-                </button>
-                <button
-                  onClick={() => setMode("TV series")}
-                  className={`flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold transition-all ${
-                    !isMovie
-                      ? "bg-primary text-primary-foreground"
-                      : "text-zinc-400 hover:text-zinc-200"
-                  }`}
-                >
-                  <Tv className="h-3.5 w-3.5" />
-                  Series
-                </button>
-              </div>
-
-              {/* Search hint */}
-              {searchQuery && (
-                <span className="hidden text-xs text-zinc-500 sm:block">
-                  {isMovie
-                    ? "Looking for a TV show? Switch modes."
-                    : "Looking for a movie? Switch modes."}
-                </span>
-              )}
-            </div>
-
-            {/* Search bar */}
-            <div className="relative w-full sm:max-w-xs">
-              <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-500" />
-              <Input
-                placeholder={`Search ${isMovie ? "movies" : "TV series"}...`}
-                ref={searchInputRef}
-                defaultValue={searchQuery}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    setSearchQuery(searchInputRef.current?.value ?? "")
-                  }
-                }}
-                className="rounded-full border-zinc-700 bg-zinc-900/50 pr-20 pl-9 text-sm text-foreground placeholder:text-zinc-600 focus-visible:border-primary focus-visible:ring-primary/30"
-              />
-              {searchQuery && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={clearFilters}
-                  className="absolute top-1/2 right-1 -translate-y-1/2 gap-1 rounded-full px-2 text-xs text-zinc-500 hover:bg-transparent hover:text-zinc-200"
-                >
-                  <X className="h-3.5 w-3.5" />
-                  Clear
-                </Button>
-              )}
-            </div>
-          </div>
-
-          {/* Row 2: Category tabs */}
-          <div className="mt-3 flex items-center gap-1">
-            {/* Mobile toggle */}
-            <div className="flex md:hidden">
-              <Button
-                variant="ghost"
-                size="xs"
-                onClick={() => setShowCategoryPills((prev) => !prev)}
-                className="px-2 py-1 text-[11px] text-zinc-400"
-              >
-                {showCategoryPills ? "Hide" : "Categories"}
-              </Button>
-            </div>
-
-            {/* Category pills */}
-            <div
-              className={`${showCategoryPills ? "flex flex-wrap" : "hidden md:flex"} gap-1`}
-            >
-              {tabs.map((category) => {
-                const isActive = activeFilter === category
-                const Icon = filterIcons[category] ?? Clapperboard
-                return (
+          <div className="mx-auto max-w-7xl px-6 py-4">
+            {/* Row 1: Mode toggle + Search */}
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-2">
+                {/* Mode toggle */}
+                <div className="flex overflow-hidden rounded-full border border-zinc-700 bg-zinc-900/50">
                   <button
-                    key={category}
-                    onClick={() => {
-                      if (isMovie) {
-                        const mCategory = category as MovieFiltersTab
-                        setActiveMovieFilter(mCategory)
-                        router.push(
-                          `${pathname}?page=${moviePages[mCategory] || 1}`
-                        )
-                      } else {
-                        const tCategory = category as TvFiltersTab
-                        setActiveTvFilter(tCategory)
-                        router.push(
-                          `${pathname}?page=${tvPages[tCategory] || 1}`
-                        )
-                      }
-                    }}
-                    className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
-                      isActive
-                        ? "bg-primary/15 text-primary ring-1 ring-primary/30"
-                        : "text-zinc-500 hover:bg-zinc-800/50 hover:text-zinc-300"
+                    onClick={() => setMode("Movie")}
+                    className={`flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold transition-all ${
+                      isMovie
+                        ? "bg-primary text-primary-foreground"
+                        : "text-zinc-400 hover:text-zinc-200"
                     }`}
                   >
-                    <Icon className="h-3 w-3" />
-                    {category}
-                    {isActive && (
-                      <span className="ml-0.5 h-1.5 w-1.5 rounded-full bg-primary" />
-                    )}
+                    <Film className="h-3.5 w-3.5" />
+                    Movies
                   </button>
-                )
-              })}
+                  <button
+                    onClick={() => setMode("TV series")}
+                    className={`flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold transition-all ${
+                      !isMovie
+                        ? "bg-primary text-primary-foreground"
+                        : "text-zinc-400 hover:text-zinc-200"
+                    }`}
+                  >
+                    <Tv className="h-3.5 w-3.5" />
+                    Series
+                  </button>
+                </div>
+
+                {/* Search hint */}
+                {searchQuery && (
+                  <span className="hidden text-xs text-zinc-500 sm:block">
+                    {isMovie
+                      ? "Looking for a TV show? Switch modes."
+                      : "Looking for a movie? Switch modes."}
+                  </span>
+                )}
+              </div>
+
+              {/* Search bar */}
+              <div className="relative w-full sm:max-w-xs">
+                <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+                <Input
+                  placeholder={`Search ${isMovie ? "movies" : "TV series"}...`}
+                  ref={searchInputRef}
+                  defaultValue={searchQuery}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setSearchQuery(searchInputRef.current?.value ?? "")
+                    }
+                  }}
+                  className="rounded-full border-zinc-700 bg-zinc-900/50 pr-20 pl-9 text-sm text-foreground placeholder:text-zinc-600 focus-visible:border-primary focus-visible:ring-primary/30"
+                />
+                {searchQuery && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={clearFilters}
+                    className="absolute top-1/2 right-1 -translate-y-1/2 gap-1 rounded-full px-2 text-xs text-zinc-500 hover:bg-transparent hover:text-zinc-200"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                    Clear
+                  </Button>
+                )}
+              </div>
+            </div>
+
+            {/* Row 2: Category tabs */}
+            <div className="mt-3 flex items-center gap-1">
+              {/* Mobile toggle */}
+              <div className="flex md:hidden">
+                <Button
+                  variant="ghost"
+                  size="xs"
+                  onClick={() => setShowCategoryPills((prev) => !prev)}
+                  className="px-2 py-1 text-[11px] text-zinc-400"
+                >
+                  {showCategoryPills ? "Hide" : "Categories"}
+                </Button>
+              </div>
+
+              {/* Category pills */}
+              <div
+                className={`${showCategoryPills ? "flex flex-wrap" : "hidden md:flex"} gap-1`}
+              >
+                {tabs.map((category) => {
+                  const isActive = activeFilter === category
+                  const Icon = filterIcons[category] ?? Clapperboard
+                  return (
+                    <button
+                      key={category}
+                      onClick={() => {
+                        if (isMovie) {
+                          const mCategory = category as MovieFiltersTab
+                          setActiveMovieFilter(mCategory)
+                          router.push(
+                            `${pathname}?page=${moviePages[mCategory] || 1}`
+                          )
+                        } else {
+                          const tCategory = category as TvFiltersTab
+                          setActiveTvFilter(tCategory)
+                          router.push(
+                            `${pathname}?page=${tvPages[tCategory] || 1}`
+                          )
+                        }
+                      }}
+                      className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
+                        isActive
+                          ? "bg-primary/15 text-primary ring-1 ring-primary/30"
+                          : "text-zinc-500 hover:bg-zinc-800/50 hover:text-zinc-300"
+                      }`}
+                    >
+                      <Icon className="h-3 w-3" />
+                      {category}
+                      {isActive && (
+                        <span className="ml-0.5 h-1.5 w-1.5 rounded-full bg-primary" />
+                      )}
+                    </button>
+                  )
+                })}
+              </div>
             </div>
           </div>
         </div>
-      </div>
       )}
 
       {/* ══════════════════════ MAIN CONTENT ══════════════════════ */}

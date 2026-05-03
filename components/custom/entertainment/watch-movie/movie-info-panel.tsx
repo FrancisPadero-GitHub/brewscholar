@@ -14,6 +14,7 @@ import {
   getRatingColor,
   formatRuntime,
 } from "@/helpers/entertainment/movie-details/movie-details"
+import { buildMovieDetailsPath } from "@/lib/utils"
 
 // helper
 import { IMAGE_BASE_URL } from "@/constants/image-size"
@@ -138,7 +139,7 @@ export default function MovieInfoPanel({ movieId }: { movieId: string }) {
 
         {/* Action links */}
         <div className="flex items-center gap-2 pt-1">
-          <Link href={`/entertainment/movie-details/${movie.id}`}>
+          <Link href={buildMovieDetailsPath(movie.id, movie.title)}>
             <Button
               variant="outline"
               size="sm"

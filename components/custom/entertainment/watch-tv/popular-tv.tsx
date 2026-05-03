@@ -29,6 +29,7 @@ import type { TvSeriesResult } from "@/types/entertainment/tv-series/popular-tv-
 // helper
 import { IMAGE_BASE_URL } from "@/constants/image-size"
 import { getRatingColor } from "@/helpers/entertainment/movie-details/movie-details"
+import { buildTvDetailsPath } from "@/lib/utils"
 
 // hooks
 import { useFetchPopularTvSeries } from "@/hooks/entertainment/fetch/tv-series/useFetchPopular"
@@ -41,7 +42,7 @@ function PopularTvCard({ tvShow }: { tvShow: TvSeriesResult }) {
     : "TBA"
 
   return (
-    <Link href={`/entertainment/tv-series-details/${tvShow.id}`}>
+    <Link href={buildTvDetailsPath(tvShow.id, tvShow.name)}>
       <motion.div
         whileHover={{ y: -4, scale: 1.02 }}
         transition={{ duration: 0.2 }}

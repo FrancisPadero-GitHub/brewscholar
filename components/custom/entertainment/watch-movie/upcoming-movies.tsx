@@ -29,6 +29,7 @@ import type { MovieResult } from "@/types/entertainment/movies/upcoming-movies"
 // helper
 import { IMAGE_BASE_URL } from "@/constants/image-size"
 import { getRatingColor } from "@/helpers/entertainment/movie-details/movie-details"
+import { buildMovieDetailsPath } from "@/lib/utils"
 
 // hooks
 import { useFetchUpcomingMovies } from "@/hooks/entertainment/fetch/movies/useFetchUpcomingMovies"
@@ -39,7 +40,7 @@ function UpcomingMovieCard({ movie }: { movie: MovieResult }) {
   const year = movie.release_date ? movie.release_date.split("-")[0] : "TBA"
 
   return (
-    <Link href={`/entertainment/movie-details/${movie.id}`}>
+    <Link href={buildMovieDetailsPath(movie.id, movie.title)}>
       <motion.div
         whileHover={{ y: -4, scale: 1.02 }}
         transition={{ duration: 0.2 }}

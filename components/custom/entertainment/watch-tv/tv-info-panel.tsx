@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge"
 // types
 import type { TvSeriesDetailsApiResponse } from "@/types/entertainment/tv-series/tv-details"
 import { getRatingColor } from "@/helpers/entertainment/movie-details/movie-details"
+import { buildTvDetailsPath } from "@/lib/utils"
 
 // helper
 import { IMAGE_BASE_URL } from "@/constants/image-size"
@@ -138,7 +139,7 @@ export default function TvInfoPanel({ tvId }: { tvId: string }) {
 
         {/* Action links */}
         <div className="flex items-center gap-2 pt-1">
-          <Link href={`/entertainment/tv-series-details/${tvShow.id}`}>
+          <Link href={buildTvDetailsPath(tvShow.id, tvShow.name)}>
             <Button
               variant="outline"
               size="sm"

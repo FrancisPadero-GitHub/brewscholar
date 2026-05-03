@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { Play, Film, Clock, Trash, ChevronLeft, ChevronRight } from "lucide-react"
+import {
+  Play,
+  Film,
+  Clock,
+  Trash,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useRef } from "react"
 
@@ -14,6 +21,7 @@ import { useFetchMovieDetails } from "@/hooks/entertainment/fetch/movies/useFetc
 import { useFetchTvDetails } from "@/hooks/entertainment/fetch/tv-series/useFetchTvDetails"
 import { useEntertainmentMode } from "@/features/zustand/entertainment/entertaiment-mode"
 import { useTvEpisodeStore } from "@/features/zustand/entertainment/tv-episode-store"
+import { buildWatchMoviePath, buildWatchTvPath } from "@/lib/utils"
 
 function ContinueWatchingCard({ item }: { item: WatchProgress }) {
   const isTv = item.mode === "TV series"
@@ -36,7 +44,11 @@ function ContinueWatchingCard({ item }: { item: WatchProgress }) {
 
   return (
     <Link
-      href={`/entertainment/${isTv ? "watch-tv" : "watch-movie"}/${item.mediaId}`}
+      href={
+        isTv
+          ? buildWatchTvPath(item.mediaId, displayTitle)
+          : buildWatchMoviePath(item.mediaId, displayTitle)
+      }
       className="group block shrink-0"
       onClick={handleClick}
     >
@@ -185,10 +197,10 @@ export function ContinueWatching() {
       </div>
 
       {/* Horizontal scroll */}
-      <div className="relative group/scroll">
+      <div className="group/scroll relative">
         <button
           onClick={() => scroll("left")}
-          className="absolute top-1/2 left-0 z-10 -translate-y-1/2 rounded-full bg-black/70 p-1.5 text-white opacity-0 backdrop-blur-sm transition-opacity hover:bg-black/90 group-hover/scroll:opacity-100"
+          className="absolute top-1/2 left-0 z-10 -translate-y-1/2 rounded-full bg-black/70 p-1.5 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover/scroll:opacity-100 hover:bg-black/90"
         >
           <ChevronLeft className="h-4 w-4" />
         </button>
@@ -203,7 +215,7 @@ export function ContinueWatching() {
         </div>
         <button
           onClick={() => scroll("right")}
-          className="absolute top-1/2 right-0 z-10 -translate-y-1/2 rounded-full bg-black/70 p-1.5 text-white opacity-0 backdrop-blur-sm transition-opacity hover:bg-black/90 group-hover/scroll:opacity-100"
+          className="absolute top-1/2 right-0 z-10 -translate-y-1/2 rounded-full bg-black/70 p-1.5 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover/scroll:opacity-100 hover:bg-black/90"
         >
           <ChevronRight className="h-4 w-4" />
         </button>

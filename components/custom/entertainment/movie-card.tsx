@@ -4,6 +4,7 @@ import { Star, Clapperboard, Heart, Eye } from "lucide-react"
 
 import { IMAGE_BASE_URL } from "@/constants/image-size"
 import { getRatingColor } from "@/helpers/entertainment/movie-details/movie-details"
+import { buildMovieDetailsPath, buildTvDetailsPath } from "@/lib/utils"
 
 export function MovieCard({
   movie,
@@ -21,11 +22,12 @@ export function MovieCard({
   }
   isMovie: boolean
 }) {
+  const detailsHref = isMovie
+    ? buildMovieDetailsPath(movie.id, movie.title)
+    : buildTvDetailsPath(movie.id, movie.name)
+
   return (
-    <Link
-      href={`/entertainment/${isMovie ? "movie-details" : "tv-series-details"}/${movie.id}`}
-      className="group block"
-    >
+    <Link href={detailsHref} className="group block">
       <div className="relative aspect-2/3 overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10">
         {/* Poster */}
         {movie.poster_path ? (
@@ -76,7 +78,9 @@ export function MovieCard({
               "TBA"}
           </span>
           <span>•</span>
-          <div className={`flex items-center gap-0.5 ${getRatingColor(movie.vote_average)}`}>
+          <div
+            className={`flex items-center gap-0.5 ${getRatingColor(movie.vote_average)}`}
+          >
             <Star className="h-2.5 w-2.5 fill-current" />
             <span className="font-medium">
               {movie.vote_average ? movie.vote_average.toFixed(1) : "NR"}

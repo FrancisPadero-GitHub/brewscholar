@@ -50,11 +50,13 @@ import {
 } from "@/features/zustand/entertainment/player-buttons-store"
 import { useWatchTracker } from "@/hooks/entertainment/progress-tracker/useWatchTracker"
 import type { WatchProgress } from "@/hooks/entertainment/progress-tracker/useWatchTracker"
+import { buildMovieDetailsPath } from "@/lib/utils"
 
 // Main Watch Movie page
 const Watch = () => {
   const params = useParams()
-  const movieId = params.id as string
+  const rawMovieParam = params.id as string
+  const movieId = rawMovieParam.split("-")[0]
 
   const { data: movie } = useFetchMovieDetails(movieId)
   const mediaTitle = movie?.title
@@ -145,7 +147,7 @@ const Watch = () => {
       <div className="relative z-10 mx-auto max-w-6xl space-y-4 px-6 pt-6 pb-16 sm:space-y-6 sm:pb-20">
         {/* ── Top nav row */}
         <div className="flex items-center gap-3">
-          <Link href={`/entertainment/movie-details/${movieId}`}>
+          <Link href={buildMovieDetailsPath(movieId, movie?.title)}>
             <Button
               variant="outline"
               size="sm"

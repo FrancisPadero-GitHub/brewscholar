@@ -4,6 +4,12 @@ import { Play, Info, Clapperboard } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { IMAGE_BASE_URL } from "@/constants/image-size"
 import { StarRating } from "./star-rating"
+import {
+  buildMovieDetailsPath,
+  buildTvDetailsPath,
+  buildWatchMoviePath,
+  buildWatchTvPath,
+} from "@/lib/utils"
 
 export function SpotlightCard({
   movie,
@@ -87,7 +93,11 @@ export function SpotlightCard({
           {/* Actions */}
           <div className="mt-2 flex items-center gap-3">
             <Link
-              href={`/entertainment/${isMovie ? "watch-movie" : "watch-tv"}/${movie.id}`}
+              href={
+                isMovie
+                  ? buildWatchMoviePath(movie.id, movie.title)
+                  : buildWatchTvPath(movie.id, movie.name)
+              }
             >
               <Button className="gap-2 rounded-full bg-primary px-6 font-bold text-primary-foreground hover:bg-primary/90">
                 <Play className="h-4 w-4 fill-current" />
@@ -95,7 +105,11 @@ export function SpotlightCard({
               </Button>
             </Link>
             <Link
-              href={`/entertainment/${isMovie ? "movie-details" : "tv-series-details"}/${movie.id}`}
+              href={
+                isMovie
+                  ? buildMovieDetailsPath(movie.id, movie.title)
+                  : buildTvDetailsPath(movie.id, movie.name)
+              }
             >
               <Button
                 variant="outline"

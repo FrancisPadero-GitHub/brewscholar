@@ -56,11 +56,13 @@ import { useTvEpisodeStore } from "@/features/zustand/entertainment/tv-episode-s
 import { useWatchTracker } from "@/hooks/entertainment/progress-tracker/useWatchTracker"
 import type { WatchProgress } from "@/hooks/entertainment/progress-tracker/useWatchTracker"
 import { useWatchedEpisodes } from "@/hooks/entertainment/progress-tracker/useWatchedEpisodes"
+import { buildTvDetailsPath } from "@/lib/utils"
 
 // Main Watch TV page
 const WatchTv = () => {
   const params = useParams()
-  const tvId = params.id as string
+  const rawTvParam = params.id as string
+  const tvId = rawTvParam.split("-")[0]
 
   const { data: tvShow } = useFetchTvDetails(tvId)
   const mediaTitle = tvShow?.name
@@ -199,7 +201,7 @@ const WatchTv = () => {
       <div className="relative z-10 mx-auto max-w-6xl space-y-4 px-6 pt-6 pb-16 sm:space-y-6 sm:pb-20">
         {/* ── Top nav row */}
         <div className="flex items-center gap-3">
-          <Link href={`/entertainment/tv-series-details/${tvId}`}>
+          <Link href={buildTvDetailsPath(tvId, tvShow?.name)}>
             <Button
               variant="outline"
               size="sm"

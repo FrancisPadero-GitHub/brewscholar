@@ -31,6 +31,7 @@ import {
   formatCurrency,
 } from "@/helpers/entertainment/movie-details/movie-details"
 import { IMAGE_BASE_URL, BACKDROP_BASE_URL } from "@/constants/image-size"
+import { buildWatchMoviePath } from "@/lib/utils"
 
 // hooks
 import { useFetchMovieDetails } from "@/hooks/entertainment/fetch/movies/useFetchMovieDetails"
@@ -45,7 +46,8 @@ import { StatPill } from "@/components/custom/entertainment/movie-details/stat-p
 // ─── Main page
 export default function MovieDetails() {
   const params = useParams()
-  const movieId = params.id as string
+  const rawMovieParam = params.id as string
+  const movieId = rawMovieParam.split("-")[0]
 
   const { data, isFetching, isError, error } = useFetchMovieDetails(movieId)
   const movie = data as MovieDetailsApiResponse | undefined
@@ -234,7 +236,7 @@ export default function MovieDetails() {
                   ease: "easeInOut",
                 }}
               >
-                <Link href={`/entertainment/watch-movie/${movie.id}`}>
+                <Link href={buildWatchMoviePath(movie.id, movie.title)}>
                   <Button
                     size="sm"
                     className="mt-1 gap-2 rounded-full border border-primary/50 bg-primary font-bold text-primary-foreground shadow-lg shadow-primary/30 transition-all duration-300 hover:bg-primary/90 hover:shadow-primary/40"

@@ -10,6 +10,7 @@ import { useEntertainmentMode } from "@/features/zustand/entertainment/entertaim
 import { Separator } from "@/components/ui/separator"
 import { Clapperboard } from "lucide-react"
 import { EntertainmentSkeleton } from "./entertainment-skeleton"
+import { buildMovieDetailsPath, buildTvDetailsPath } from "@/lib/utils"
 
 type SearchResponse = SearchMoviesResponse | SearchTvSeriesResponse
 
@@ -101,8 +102,8 @@ export default function SearchResults({
             ? (item as { release_date: string }).release_date
             : (item as { first_air_date: string }).first_air_date
           const href = isMovieItem
-            ? `/entertainment/movie-details/${item.id}`
-            : `/entertainment/tv-series-details/${item.id}`
+            ? buildMovieDetailsPath(item.id, item.title)
+            : buildTvDetailsPath(item.id, (item as { name: string }).name)
 
           return (
             <Link key={item.id} href={href} className="group block">

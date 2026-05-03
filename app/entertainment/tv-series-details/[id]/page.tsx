@@ -29,6 +29,7 @@ import {
   formatRuntime,
 } from "@/helpers/entertainment/movie-details/movie-details"
 import { IMAGE_BASE_URL, BACKDROP_BASE_URL } from "@/constants/image-size"
+import { buildWatchTvPath } from "@/lib/utils"
 
 // hooks
 import { useFetchTvDetails } from "@/hooks/entertainment/fetch/tv-series/useFetchTvDetails"
@@ -43,7 +44,8 @@ import { StatPill } from "@/components/custom/entertainment/movie-details/stat-p
 // ─── Main page
 export default function TvSeriesDetails() {
   const params = useParams()
-  const tvId = params.id as string
+  const rawTvParam = params.id as string
+  const tvId = rawTvParam.split("-")[0]
 
   const { data, isFetching, isError, error } = useFetchTvDetails(tvId)
   const tv = data as TvSeriesDetailsApiResponse | undefined
@@ -233,7 +235,7 @@ export default function TvSeriesDetails() {
                   ease: "easeInOut",
                 }}
               >
-                <Link href={`/entertainment/watch-tv/${tv.id}`}>
+                <Link href={buildWatchTvPath(tv.id, tv.name)}>
                   <Button
                     size="sm"
                     className="mt-1 gap-2 rounded-full border border-primary/50 bg-primary font-bold text-primary-foreground shadow-lg shadow-primary/30 transition-all duration-300 hover:bg-primary/90 hover:shadow-primary/40"

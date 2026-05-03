@@ -29,6 +29,7 @@ import type { AiringTodayTvSeriesResult } from "@/types/entertainment/tv-series/
 // helper
 import { IMAGE_BASE_URL } from "@/constants/image-size"
 import { getRatingColor } from "@/helpers/entertainment/movie-details/movie-details"
+import { buildTvDetailsPath } from "@/lib/utils"
 
 // hooks
 import { useFetchAiringTodayTvSeries } from "@/hooks/entertainment/fetch/tv-series/useFetchAiringToday"
@@ -40,7 +41,7 @@ function AiringTodayTvCard({ tvShow }: { tvShow: AiringTodayTvSeriesResult }) {
     : "TBA"
 
   return (
-    <Link href={`/entertainment/tv-series-details/${tvShow.id}`}>
+    <Link href={buildTvDetailsPath(tvShow.id, tvShow.name)}>
       <motion.div
         whileHover={{ y: -4, scale: 1.02 }}
         transition={{ duration: 0.2 }}

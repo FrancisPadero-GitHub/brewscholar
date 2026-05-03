@@ -29,6 +29,7 @@ import type { TopRatedTvSeriesResult } from "@/types/entertainment/tv-series/top
 // helper
 import { IMAGE_BASE_URL } from "@/constants/image-size"
 import { getRatingColor } from "@/helpers/entertainment/movie-details/movie-details"
+import { buildTvDetailsPath } from "@/lib/utils"
 
 // hooks
 import { useFetchTopRatedTvSeries } from "@/hooks/entertainment/fetch/tv-series/useFetchTopRated"
@@ -40,7 +41,7 @@ function TopRatedTvCard({ tvShow }: { tvShow: TopRatedTvSeriesResult }) {
     : "TBA"
 
   return (
-    <Link href={`/entertainment/tv-series-details/${tvShow.id}`}>
+    <Link href={buildTvDetailsPath(tvShow.id, tvShow.name)}>
       <motion.div
         whileHover={{ y: -4, scale: 1.02 }}
         transition={{ duration: 0.2 }}
