@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
     position: "bottom-left",
   },
   images: {
+    unoptimized: true, // Disable Next.js's built-in image optimization to avoid hitting the 5k limit prop
     remotePatterns: [
       {
         protocol: "https",
