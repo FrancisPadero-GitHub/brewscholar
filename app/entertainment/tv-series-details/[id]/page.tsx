@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect } from "react"
 import { useParams } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
@@ -50,6 +51,16 @@ export default function TvSeriesDetails() {
 
   const { data, isFetching, isError, error } = useFetchTvDetails(tvId)
   const tv = data as TvSeriesDetailsApiResponse | undefined
+
+  // Dynamic Browser Tab Title
+  useEffect(() => {
+    if (tv?.name) {
+      const releaseYear = tv.first_air_date ? tv.first_air_date.split("-")[0] : "TBA"
+      document.title = `${tv.name} (${releaseYear}) - Movie Hub | BrewScholar`
+    } else {
+      document.title = "Loading Series... - Movie Hub | BrewScholar"
+    }
+  }, [tv])
 
   // ── Loading state
   if (isFetching) return <MovieDetailsSkeleton />

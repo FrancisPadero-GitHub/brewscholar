@@ -46,6 +46,7 @@ import { ContinueWatching } from "@/components/custom/entertainment/continue-wat
 import { StarRating } from "@/components/custom/entertainment/star-rating"
 import { SpotlightCard } from "@/components/custom/entertainment/spotlight-card"
 import { MovieCard } from "@/components/custom/entertainment/movie-card"
+import { ShareSection } from "@/components/custom/entertainment/share-section"
 import {
   EntertainmentSkeleton,
   HeroSkeleton,
@@ -144,6 +145,11 @@ export default function MovieHub() {
     setMoviePage,
     setTvPage,
   ])
+
+  // Set browser tab title
+  useEffect(() => {
+    document.title = "Movie Hub - BrewScholar"
+  }, [])
 
   // Search movies
   const {
@@ -691,6 +697,9 @@ export default function MovieHub() {
             />
           </div>
         )}
+
+        {/* Share Section */}
+        <ShareSection />
       </div>
     </div>
   )

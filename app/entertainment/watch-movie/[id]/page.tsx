@@ -65,6 +65,16 @@ const Watch = () => {
   // start time for tracking progress resumption
   const [startTime, setStartTime] = useState<number>(0)
 
+  // Dynamic Browser Tab Title
+  useEffect(() => {
+    if (movie?.title) {
+      const releaseYear = movie.release_date ? movie.release_date.split("-")[0] : "TBA"
+      document.title = `Watching ${movie.title} (${releaseYear}) - Movie Hub | BrewScholar`
+    } else {
+      document.title = "Watch Movie - Movie Hub | BrewScholar"
+    }
+  }, [movie])
+
   // track watch progress
   useWatchTracker(movieId, mediaTitle, "Movie", undefined, undefined)
 

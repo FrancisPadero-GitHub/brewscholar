@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect } from "react"
 import { useParams } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
@@ -52,6 +53,16 @@ export default function MovieDetails() {
 
   const { data, isFetching, isError, error } = useFetchMovieDetails(movieId)
   const movie = data as MovieDetailsApiResponse | undefined
+
+  // Dynamic Browser Tab Title
+  useEffect(() => {
+    if (movie?.title) {
+      const releaseYear = movie.release_date ? movie.release_date.split("-")[0] : "TBA"
+      document.title = `${movie.title} (${releaseYear}) - Movie Hub | BrewScholar`
+    } else {
+      document.title = "Loading Movie... - Movie Hub | BrewScholar"
+    }
+  }, [movie])
 
   // ── Loading state
   if (isFetching) return <MovieDetailsSkeleton />

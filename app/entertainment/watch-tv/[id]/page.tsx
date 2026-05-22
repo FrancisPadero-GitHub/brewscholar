@@ -70,9 +70,19 @@ const WatchTv = () => {
 
   // start time for tracking progress resumption
   const [startTime, setStartTime] = useState<number>(0)
+
   const [initializedTvId, setInitializedTvId] = useState<string | null>(null)
   const { season, episode, setSeason, setEpisode, setSeasonAndEpisode } =
     useTvEpisodeStore()
+
+  // Dynamic Browser Tab Title
+  useEffect(() => {
+    if (tvShow?.name) {
+      document.title = `Watching ${tvShow.name} S${season}E${episode} - Movie Hub | BrewScholar`
+    } else {
+      document.title = "Watch TV Series - Movie Hub | BrewScholar"
+    }
+  }, [tvShow, season, episode])
 
   useEffect(() => {
     if (!tvShow || initializedTvId === tvId) return
@@ -301,7 +311,7 @@ const WatchTv = () => {
               <span className="ml-3">Loading TV Show...</span>
             </div>
           )
-        ) : (
+        ) : ( 
           <div className="flex min-h-screen items-center justify-center text-muted-foreground">
             <span className="ml-3">Something went wrong.</span>
           </div>
