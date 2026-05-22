@@ -17,6 +17,7 @@ import {
   Play,
   Users,
   Award,
+  CalendarClock,
 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
@@ -76,6 +77,16 @@ export default function MovieDetails() {
 
   const releaseYear = movie.release_date.split("-")[0] || "TBA"
   const ratingColor = getRatingColor(movie.vote_average)
+
+  const isNewOrUpcoming = (() => {
+    if (!movie.release_date) return true
+    const releaseDate = new Date(movie.release_date)
+    const today = new Date()
+    const diffTime = today.getTime() - releaseDate.getTime()
+    const diffDays = diffTime / (1000 * 60 * 60 * 24)
+    // Dynamic notice if released in last 120 days or scheduled in the future
+    return diffDays < 120 || releaseDate > today
+  })()
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -256,6 +267,31 @@ export default function MovieDetails() {
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
           {/* Left: Overview + Stats  */}
           <div className="space-y-8 lg:col-span-2">
+            {/* Friendly Availability Alert */}
+            <div className={`relative overflow-hidden rounded-2xl border p-4.5 transition-all duration-300 ${
+              isNewOrUpcoming 
+                ? "border-amber-500/30 bg-amber-500/10 text-amber-200" 
+                : "border-border/60 bg-muted/30 text-zinc-300"
+            }`}>
+              <div className="flex gap-3">
+                <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
+                  isNewOrUpcoming ? "bg-amber-500/20 text-amber-400" : "bg-zinc-800 text-zinc-400"
+                }`}>
+                  <CalendarClock className="h-5 w-5" />
+                </div>
+                <div className="space-y-1">
+                  <h3 className={`text-sm font-bold tracking-tight ${isNewOrUpcoming ? "text-amber-300" : "text-zinc-200"}`}>
+                    {isNewOrUpcoming ? "⚡ Release Notice & Playback Info" : "💡 Content Availability Notice"}
+                  </h3>
+                  <p className="text-xs/relaxed text-zinc-400">
+                    {isNewOrUpcoming 
+                      ? `Since this content is very new (released ${movie.release_date ? new Date(movie.release_date).toLocaleDateString("en-US", { month: 'long', year: 'numeric' }) : "TBA"}), third-party player streams may still be indexing and could take some time to become fully stable or available.`
+                      : "Playback sources are provided by public third-party player APIs. If a source experiences playback latency or is unavailable, please try switching between the alternative players inside the watch room."}
+                  </p>
+                </div>
+              </div>
+            </div>
+
             {/* Overview */}
             <section>
               <h2 className="mb-3 flex items-center gap-2 text-xs font-semibold tracking-widest text-primary uppercase">
