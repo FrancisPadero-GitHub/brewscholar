@@ -6,11 +6,8 @@ import {
   Film,
   Clock,
   Trash,
-  ChevronLeft,
-  ChevronRight,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useRef } from "react"
 
 // helper
 import { IMAGE_BASE_URL } from "@/constants/image-size"
@@ -49,17 +46,17 @@ function ContinueWatchingCard({ item }: { item: WatchProgress }) {
           ? buildWatchTvPath(item.mediaId, displayTitle)
           : buildWatchMoviePath(item.mediaId, displayTitle)
       }
-      className="group block shrink-0"
+      className="group block w-full"
       onClick={handleClick}
     >
-      <div className="relative h-[200px] w-[140px] overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10 sm:h-[240px] sm:w-[165px]">
+      <div className="relative aspect-[2/3] w-full overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10">
         {/* Poster */}
         {imagePath ? (
           <Image
             src={`${IMAGE_BASE_URL}${imagePath}`}
             alt={displayTitle}
             fill
-            sizes="165px"
+            sizes="(max-width: 640px) 140px, 165px"
             className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
@@ -96,7 +93,7 @@ function ContinueWatchingCard({ item }: { item: WatchProgress }) {
       </div>
 
       {/* Info below poster */}
-      <div className="mt-2 w-[140px] space-y-0.5 sm:w-[165px]">
+      <div className="mt-2 w-full space-y-0.5">
         <p className="line-clamp-1 text-sm font-bold text-foreground transition-colors group-hover:text-primary">
           {displayTitle}
         </p>
@@ -128,8 +125,8 @@ function ContinueWatchingCard({ item }: { item: WatchProgress }) {
 
 export function ContinueWatching() {
   const [history, setHistory] = useState<WatchProgress[]>([])
+  const [isExpanded, setIsExpanded] = useState(false)
   const { mode } = useEntertainmentMode()
-  const scrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const readHistory = () => {
@@ -143,7 +140,7 @@ export function ContinueWatching() {
         const sorted = Object.values(parsed).sort(
           (a, b) => b.updatedAt - a.updatedAt
         )
-        setHistory(sorted.slice(0, 5))
+        setHistory(sorted)
       } catch {
         setHistory([])
       }
@@ -162,13 +159,9 @@ export function ContinueWatching() {
 
   if (filteredHistory.length === 0) return null
 
-  const scroll = (direction: "left" | "right") => {
-    if (!scrollRef.current) return
-    scrollRef.current.scrollBy({
-      left: direction === "left" ? -280 : 280,
-      behavior: "smooth",
-    })
-  }
+  const displayItems = isExpanded
+    ? filteredHistory
+    : filteredHistory.slice(0, 5)
 
   return (
     <div className="mb-8 space-y-4">
@@ -196,30 +189,26 @@ export function ContinueWatching() {
         </Button>
       </div>
 
-      {/* Horizontal scroll */}
-      <div className="group/scroll relative">
-        <button
-          onClick={() => scroll("left")}
-          className="absolute top-1/2 left-0 z-10 -translate-y-1/2 rounded-full bg-black/70 p-1.5 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover/scroll:opacity-100 hover:bg-black/90"
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </button>
-        <div
-          ref={scrollRef}
-          className="scrollbar-hide flex gap-3 overflow-x-auto scroll-smooth pb-2"
-          style={{ scrollbarWidth: "none" }}
-        >
-          {filteredHistory.map((item) => (
-            <ContinueWatchingCard key={item.mediaId} item={item} />
-          ))}
-        </div>
-        <button
-          onClick={() => scroll("right")}
-          className="absolute top-1/2 right-0 z-10 -translate-y-1/2 rounded-full bg-black/70 p-1.5 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover/scroll:opacity-100 hover:bg-black/90"
-        >
-          <ChevronRight className="h-4 w-4" />
-        </button>
+      {/* Responsive Grid layout */}
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        {displayItems.map((item) => (
+          <ContinueWatchingCard key={item.mediaId} item={item} />
+        ))}
       </div>
+
+      {/* See More / Show Less Button */}
+      {filteredHistory.length > 5 && (
+        <div className="flex justify-center pt-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="border-zinc-700 bg-black/40 text-xs font-semibold text-white backdrop-blur-md hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-200"
+          >
+            {isExpanded ? "Show Less" : `See More (${filteredHistory.length - 5} more)`}
+          </Button>
+        </div>
+      )}
     </div>
   )
 }
