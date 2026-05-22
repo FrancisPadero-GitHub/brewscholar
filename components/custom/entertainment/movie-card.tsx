@@ -58,12 +58,12 @@ export function MovieCard({
         <div className="absolute inset-x-0 bottom-0 translate-y-2 px-3 pb-3 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
           {/* Action icons */}
           <div className="mb-2 flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm transition-colors hover:bg-white/20">
+            {/* <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm transition-colors hover:bg-white/20">
               <Heart className="h-3.5 w-3.5 text-white" />
             </div>
             <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm transition-colors hover:bg-white/20">
               <Eye className="h-3.5 w-3.5 text-white" />
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

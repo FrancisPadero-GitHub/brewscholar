@@ -14,7 +14,10 @@ function ThemeProvider({
       disableTransitionOnChange
       {...props}
     >
-      <ThemeHotkey />
+      {/* 
+        Temporarily disabled I might provide a better theming implementation on this one 
+        Default is always dark mode     
+      <ThemeHotkey /> */}
       {children}
     </NextThemesProvider>
   )
