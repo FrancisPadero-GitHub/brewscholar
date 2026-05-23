@@ -58,11 +58,11 @@ export default function Footer() {
   ]
 
   return (
-    <footer className="relative z-20 border-t border-border/40 bg-zinc-950 py-10 text-zinc-400">
+    <footer className="relative z-20 border-t border-border/40 bg-zinc-950 py-12 text-zinc-400 sm:py-10">
       <div className="mx-auto max-w-7xl px-6">
-        <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
+        <div className="flex flex-col items-center justify-between gap-10 md:flex-row md:gap-6">
           {/* Logo & Description */}
-          <div className="space-y-2 text-center md:text-left">
+          <div className="space-y-3 text-center md:space-y-2 md:text-left">
             <Link
               href="/entertainment"
               className="flex items-center justify-center gap-2 md:justify-start"
@@ -81,8 +81,8 @@ export default function Footer() {
           </div>
 
           {/* Interactive Hover API Section */}
-          <div className="flex flex-col items-center gap-3 md:items-end">
-            <div className="flex items-center gap-2">
+          <div className="flex flex-col items-center gap-4 md:items-end">
+            <div className="flex flex-col items-center gap-2 sm:flex-row">
               <span className="text-xs text-zinc-500">
                 Metadata & Video Playback:
               </span>
@@ -104,7 +104,7 @@ export default function Footer() {
                 </HoverCardTrigger>
 
                 <HoverCardContent
-                  className="w-80 border-zinc-800/80 bg-zinc-950 p-4 shadow-xl shadow-black/40"
+                  className="w-[calc(100vw-48px)] border-zinc-800/80 bg-zinc-950 p-4 shadow-xl shadow-black/40 sm:w-80"
                   align="end"
                 >
                   <div className="space-y-3">
@@ -157,9 +157,11 @@ export default function Footer() {
         </div>
 
         {/* Bottom Line */}
-        <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-border/20 pt-6 text-[11px] text-zinc-600 sm:flex-row">
-          <p>© {currentYear} MovieHub. Powered by Next.js and Tailwind CSS.</p>
-          <div className="flex gap-4">
+        <div className="mt-8 flex flex-col items-center justify-between gap-6 border-t border-border/20 pt-6 text-[11px] text-zinc-600 sm:flex-row sm:gap-4">
+          <p className="text-center sm:text-left">
+            © {currentYear} MovieHub. Powered by Next.js and Tailwind CSS.
+          </p>
+          <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 sm:gap-4">
             <Link href="/" className="transition-colors hover:text-zinc-400">
               Home
             </Link>
@@ -169,7 +171,7 @@ export default function Footer() {
             >
               Movie Hub
             </Link>
-            <span className="text-zinc-800">|</span>
+            <span className="hidden text-zinc-800 sm:inline">|</span>
             <span className="cursor-default select-none">
               API Status: Online (most of the time)
             </span>
