@@ -36,7 +36,11 @@ const fetchTvEpisodeDetails = async (
   }
 }
 
-export function useFetchTvEpisodeDetails(seriesId: string, seasonNumber: number, episodeNumber: number) {
+export function useFetchTvEpisodeDetails(
+  seriesId: string,
+  seasonNumber: number,
+  episodeNumber: number
+) {
   return useQuery<TvEpisodeDetailsApiResponse | null>({
     queryKey: ["tv-episode-details", seriesId, seasonNumber, episodeNumber],
     queryFn: () => fetchTvEpisodeDetails(seriesId, seasonNumber, episodeNumber),

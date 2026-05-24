@@ -41,11 +41,11 @@ export const movies = [
       "The adventures of Gustave H, a legendary concierge at a famous hotel.",
     category: "Comedy",
   },
-];
+]
 
 export const categories = [
   "All Movies",
   "Trending",
   "New Releases",
   "Top Rated",
-];
+]

@@ -58,7 +58,7 @@ export function HeroSkeleton() {
 
 export function FilterBarSkeleton() {
   return (
-    <div className="sticky top-0 z-30 border-b border-zinc-800/60 bg-background/80 backdrop-blur-xl pointer-events-none">
+    <div className="pointer-events-none sticky top-0 z-30 border-b border-zinc-800/60 bg-background/80 backdrop-blur-xl">
       <div className="mx-auto max-w-7xl px-6 py-4">
         {/* Row 1: Mode toggle + Search */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -77,7 +77,10 @@ export function FilterBarSkeleton() {
         <div className="mt-3 flex items-center gap-1">
           <div className="hidden flex-wrap gap-2 md:flex">
             {["w-24", "w-32", "w-28", "w-24", "w-36", "w-28"].map((w, i) => (
-              <div key={i} className={`h-7 ${w} animate-pulse rounded-full bg-zinc-800/60`} />
+              <div
+                key={i}
+                className={`h-7 ${w} animate-pulse rounded-full bg-zinc-800/60`}
+              />
             ))}
           </div>
           {/* Mobile toggle skeleton */}

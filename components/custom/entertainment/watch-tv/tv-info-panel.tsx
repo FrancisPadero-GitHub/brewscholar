@@ -1,5 +1,12 @@
 import Image from "next/image"
-import { Star, Clock, Calendar, Globe, MonitorPlay, CalendarClock } from "lucide-react"
+import {
+  Star,
+  Clock,
+  Calendar,
+  Globe,
+  MonitorPlay,
+  CalendarClock,
+} from "lucide-react"
 import { motion } from "motion/react"
 import Link from "next/link"
 
@@ -107,7 +114,9 @@ export default function TvInfoPanel({ tvId }: { tvId: string }) {
 
           {/* Quick stats row */}
           <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-            <span className={`flex items-center gap-1 font-bold ${ratingColor}`}>
+            <span
+              className={`flex items-center gap-1 font-bold ${ratingColor}`}
+            >
               <Star className="h-3.5 w-3.5 fill-current" />
               {tvShow.vote_average.toFixed(1)}
               <span className="font-normal text-muted-foreground">/10</span>
@@ -164,24 +173,34 @@ export default function TvInfoPanel({ tvId }: { tvId: string }) {
       </motion.div>
 
       {/* Friendly Availability Alert */}
-      <div className={`relative overflow-hidden rounded-2xl border p-4 transition-all duration-300 ${
-        isNewOrUpcoming 
-          ? "border-amber-500/30 bg-amber-500/10 text-amber-200" 
-          : "border-border/60 bg-muted/30 text-zinc-300"
-      }`}>
+      <div
+        className={`relative overflow-hidden rounded-2xl border p-4 transition-all duration-300 ${
+          isNewOrUpcoming
+            ? "border-amber-500/30 bg-amber-500/10 text-amber-200"
+            : "border-border/60 bg-muted/30 text-zinc-300"
+        }`}
+      >
         <div className="flex gap-3">
-          <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
-            isNewOrUpcoming ? "bg-amber-500/20 text-amber-400" : "bg-zinc-800 text-zinc-400"
-          }`}>
+          <div
+            className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
+              isNewOrUpcoming
+                ? "bg-amber-500/20 text-amber-400"
+                : "bg-zinc-800 text-zinc-400"
+            }`}
+          >
             <CalendarClock className="h-5 w-5" />
           </div>
           <div className="space-y-1">
-            <h3 className={`text-sm font-bold tracking-tight ${isNewOrUpcoming ? "text-amber-300" : "text-zinc-200"}`}>
-              {isNewOrUpcoming ? "⚡ Release Notice & Playback Info" : "💡 Series Availability Notice"}
+            <h3
+              className={`text-sm font-bold tracking-tight ${isNewOrUpcoming ? "text-amber-300" : "text-zinc-200"}`}
+            >
+              {isNewOrUpcoming
+                ? "⚡ Release Notice & Playback Info"
+                : "💡 Series Availability Notice"}
             </h3>
             <p className="text-xs/relaxed text-zinc-400">
-              {isNewOrUpcoming 
-                ? `Since this TV series is brand new or recently aired (first air date: ${tvShow.first_air_date ? new Date(tvShow.first_air_date).toLocaleDateString("en-US", { month: 'long', year: 'numeric' }) : "TBA"}), player servers may still be compiling and indexing the episodes. Some episodes might take time to become available.`
+              {isNewOrUpcoming
+                ? `Since this TV series is brand new or recently aired (first air date: ${tvShow.first_air_date ? new Date(tvShow.first_air_date).toLocaleDateString("en-US", { month: "long", year: "numeric" }) : "TBA"}), player servers may still be compiling and indexing the episodes. Some episodes might take time to become available.`
                 : "Playback sources are provided by public third-party player APIs. If a source experiences playback latency or is unavailable, please try switching between the alternative players inside the watch room."}
             </p>
           </div>

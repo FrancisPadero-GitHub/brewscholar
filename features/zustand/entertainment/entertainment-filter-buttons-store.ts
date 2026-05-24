@@ -1,7 +1,15 @@
 import { create } from "zustand"
 
-export type MovieFiltersTab = "Popular" | "Top Rated" | "Now Playing" | "Upcoming"
-export type TvFiltersTab = "Popular" | "Top Rated" | "Airing Today" | "On The Air"
+export type MovieFiltersTab =
+  | "Popular"
+  | "Top Rated"
+  | "Now Playing"
+  | "Upcoming"
+export type TvFiltersTab =
+  | "Popular"
+  | "Top Rated"
+  | "Airing Today"
+  | "On The Air"
 
 export const MOVIE_CATEGORY_TABS: MovieFiltersTab[] = [
   "Popular",
@@ -22,7 +30,7 @@ type FilterStore = {
   setActiveMovieFilter: (tab: MovieFiltersTab) => void
   moviePages: Record<MovieFiltersTab, number>
   setMoviePage: (tab: MovieFiltersTab, page: number) => void
-  
+
   activeTvFilter: TvFiltersTab
   setActiveTvFilter: (tab: TvFiltersTab) => void
   tvPages: Record<TvFiltersTab, number>
@@ -31,7 +39,8 @@ type FilterStore = {
 
 export const useFilterStore = create<FilterStore>((set) => ({
   activeMovieFilter: "Popular",
-  setActiveMovieFilter: (tab: MovieFiltersTab) => set({ activeMovieFilter: tab }),
+  setActiveMovieFilter: (tab: MovieFiltersTab) =>
+    set({ activeMovieFilter: tab }),
   moviePages: {
     "Now Playing": 1,
     Popular: 1,

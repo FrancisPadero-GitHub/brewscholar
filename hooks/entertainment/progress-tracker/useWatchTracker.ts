@@ -60,15 +60,17 @@ export function useWatchTracker(
         }
       }
 
-      const isPlayerEvent = payload?.type === "PLAYER_EVENT" || payload?.type === "MEDIA_DATA"
+      const isPlayerEvent =
+        payload?.type === "PLAYER_EVENT" || payload?.type === "MEDIA_DATA"
 
       if (isPlayerEvent) {
         // 1. Get the raw data
         const currentTime = payload?.data?.currentTime
         const duration = payload?.data?.duration
-        
+
         // Skip invalid updates
-        if (typeof currentTime !== "number" || typeof duration !== "number") return
+        if (typeof currentTime !== "number" || typeof duration !== "number")
+          return
 
         // 2. Fetch existing history from Local Storage
         const existingData = localStorage.getItem("watchHistory")

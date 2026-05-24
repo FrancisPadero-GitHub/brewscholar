@@ -311,7 +311,7 @@ const WatchTv = () => {
               <span className="ml-3">Loading TV Show...</span>
             </div>
           )
-        ) : ( 
+        ) : (
           <div className="flex min-h-screen items-center justify-center text-muted-foreground">
             <span className="ml-3">Something went wrong.</span>
           </div>

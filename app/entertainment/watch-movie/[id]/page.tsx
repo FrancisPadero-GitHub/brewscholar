@@ -68,7 +68,9 @@ const Watch = () => {
   // Dynamic Browser Tab Title
   useEffect(() => {
     if (movie?.title) {
-      const releaseYear = movie.release_date ? movie.release_date.split("-")[0] : "TBA"
+      const releaseYear = movie.release_date
+        ? movie.release_date.split("-")[0]
+        : "TBA"
       document.title = `Watching ${movie.title} (${releaseYear}) - Movie Hub | BrewScholar`
     } else {
       document.title = "Watch Movie - Movie Hub | BrewScholar"

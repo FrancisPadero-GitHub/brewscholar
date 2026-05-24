@@ -57,7 +57,9 @@ export default function MovieDetails() {
   // Dynamic Browser Tab Title
   useEffect(() => {
     if (movie?.title) {
-      const releaseYear = movie.release_date ? movie.release_date.split("-")[0] : "TBA"
+      const releaseYear = movie.release_date
+        ? movie.release_date.split("-")[0]
+        : "TBA"
       document.title = `${movie.title} (${releaseYear}) - Movie Hub | BrewScholar`
     } else {
       document.title = "Loading Movie... - Movie Hub | BrewScholar"
@@ -279,24 +281,34 @@ export default function MovieDetails() {
           {/* Left: Overview + Stats  */}
           <div className="space-y-8 lg:col-span-2">
             {/* Friendly Availability Alert */}
-            <div className={`relative overflow-hidden rounded-2xl border p-4.5 transition-all duration-300 ${
-              isNewOrUpcoming 
-                ? "border-amber-500/30 bg-amber-500/10 text-amber-200" 
-                : "border-border/60 bg-muted/30 text-zinc-300"
-            }`}>
+            <div
+              className={`relative overflow-hidden rounded-2xl border p-4.5 transition-all duration-300 ${
+                isNewOrUpcoming
+                  ? "border-amber-500/30 bg-amber-500/10 text-amber-200"
+                  : "border-border/60 bg-muted/30 text-zinc-300"
+              }`}
+            >
               <div className="flex gap-3">
-                <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
-                  isNewOrUpcoming ? "bg-amber-500/20 text-amber-400" : "bg-zinc-800 text-zinc-400"
-                }`}>
+                <div
+                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
+                    isNewOrUpcoming
+                      ? "bg-amber-500/20 text-amber-400"
+                      : "bg-zinc-800 text-zinc-400"
+                  }`}
+                >
                   <CalendarClock className="h-5 w-5" />
                 </div>
                 <div className="space-y-1">
-                  <h3 className={`text-sm font-bold tracking-tight ${isNewOrUpcoming ? "text-amber-300" : "text-zinc-200"}`}>
-                    {isNewOrUpcoming ? "⚡ Release Notice & Playback Info" : "💡 Content Availability Notice"}
+                  <h3
+                    className={`text-sm font-bold tracking-tight ${isNewOrUpcoming ? "text-amber-300" : "text-zinc-200"}`}
+                  >
+                    {isNewOrUpcoming
+                      ? "⚡ Release Notice & Playback Info"
+                      : "💡 Content Availability Notice"}
                   </h3>
                   <p className="text-xs/relaxed text-zinc-400">
-                    {isNewOrUpcoming 
-                      ? `Since this content is very new (released ${movie.release_date ? new Date(movie.release_date).toLocaleDateString("en-US", { month: 'long', year: 'numeric' }) : "TBA"}), third-party player streams may still be indexing and could take some time to become fully stable or available.`
+                    {isNewOrUpcoming
+                      ? `Since this content is very new (released ${movie.release_date ? new Date(movie.release_date).toLocaleDateString("en-US", { month: "long", year: "numeric" }) : "TBA"}), third-party player streams may still be indexing and could take some time to become fully stable or available.`
                       : "Playback sources are provided by public third-party player APIs. If a source experiences playback latency or is unavailable, please try switching between the alternative players inside the watch room."}
                   </p>
                 </div>

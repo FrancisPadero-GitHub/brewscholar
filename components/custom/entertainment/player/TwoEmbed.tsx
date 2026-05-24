@@ -7,7 +7,12 @@ interface TwoEmbedProps {
   episode?: string
 }
 
-function TwoEmbed({ id, type, season, episode }: TwoEmbedProps): JSX.Element | null {
+function TwoEmbed({
+  id,
+  type,
+  season,
+  episode,
+}: TwoEmbedProps): JSX.Element | null {
   let src = ""
   if (type === "movie") {
     src = `https://www.2embed.cc/embed/${id}`

@@ -31,7 +31,7 @@ export default function FilesPage() {
         @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
         .uc-back{position:absolute;left:1rem;top:1rem}
       `}</style>
-      
+
       {/* Header Section */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 h-96 bg-linear-to-b from-card to-transparent" />
@@ -76,7 +76,9 @@ export default function FilesPage() {
           </div>
 
           <div className="uc-title">Coming Soon</div>
-          <div className="uc-sub">This area is being prepared — stay tuned.</div>
+          <div className="uc-sub">
+            This area is being prepared — stay tuned.
+          </div>
           <div className="bounce text-sm text-white/90">
             We&apos;ll be live shortly 🚀
           </div>

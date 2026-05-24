@@ -1,12 +1,7 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import {
-  Play,
-  Film,
-  Clock,
-  Trash,
-} from "lucide-react"
+import { Play, Film, Clock, Trash } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 // helper
@@ -203,9 +198,11 @@ export function ContinueWatching() {
             variant="outline"
             size="sm"
             onClick={() => setIsExpanded(!isExpanded)}
-            className="border-zinc-700 bg-black/40 text-xs font-semibold text-white backdrop-blur-md hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-200"
+            className="border-zinc-700 bg-black/40 text-xs font-semibold text-white backdrop-blur-md transition-all duration-200 hover:border-primary hover:bg-primary hover:text-primary-foreground"
           >
-            {isExpanded ? "Show Less" : `See More (${filteredHistory.length - 5} more)`}
+            {isExpanded
+              ? "Show Less"
+              : `See More (${filteredHistory.length - 5} more)`}
           </Button>
         </div>
       )}
