@@ -46,6 +46,8 @@ import type { TvImagesApiResponse } from "@/types/entertainment/tv-series/tv-ima
 // components (reuse movie skeleton and pill since structure is identical)
 import { MovieDetailsSkeleton } from "@/components/custom/entertainment/movie-details/skeleton"
 import { StatPill } from "@/components/custom/entertainment/movie-details/stat-pill"
+import TvRecommendationsSection from "@/components/custom/entertainment/watch-tv/tv-recommendations"
+
 
 // ─── Main page
 export default function TvSeriesDetails() {
@@ -593,7 +595,11 @@ export default function TvSeriesDetails() {
             </Link>
           </aside>
         </div>
+
+        <Separator className="my-10 border-border" />
+        <TvRecommendationsSection seriesId={tvId} />
       </div>
     </div>
   )
 }
+

@@ -48,6 +48,8 @@ import type { MovieImagesApiResponse } from "@/types/entertainment/movies/movie-
 // components
 import { MovieDetailsSkeleton } from "@/components/custom/entertainment/movie-details/skeleton"
 import { StatPill } from "@/components/custom/entertainment/movie-details/stat-pill"
+import MovieRecommendationsSection from "@/components/custom/entertainment/watch-movie/movie-recommendations"
+
 
 // ─── Main page
 export default function MovieDetails() {
@@ -65,8 +67,8 @@ export default function MovieDetails() {
   const movieImages = imagesData as MovieImagesApiResponse | undefined
 
   const logo =
-    movieImages?.logos?.find((l) => l.iso_639_1 === "en") ||
-    movieImages?.logos?.[0]
+    movieImages?.logos.find((l) => l.iso_639_1 === "en") ||
+    movieImages?.logos[0]
 
   const directors = credits?.crew.filter((member) => member.job === "Director")
   const writers = credits?.crew.filter(
@@ -584,7 +586,11 @@ export default function MovieDetails() {
             )}
           </aside>
         </div>
+
+        <Separator className="my-10 border-border" />
+        <MovieRecommendationsSection movieId={movieId} />
       </div>
     </div>
   )
 }
+

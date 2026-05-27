@@ -47,6 +47,8 @@ import PopularTvSection from "@/components/custom/entertainment/watch-tv/popular
 import TopRatedTvSection from "@/components/custom/entertainment/watch-tv/top-rated-tv"
 import AiringTodayTvSection from "@/components/custom/entertainment/watch-tv/airing-today-tv"
 import OnTheAirTvSection from "@/components/custom/entertainment/watch-tv/on-the-air-tv"
+import TvRecommendationsSection from "@/components/custom/entertainment/watch-tv/tv-recommendations"
+
 
 // zustand
 import {
@@ -322,6 +324,9 @@ const WatchTv = () => {
 
         {/* ── Divider */}
         <div className="h-px w-full bg-border/50" />
+
+        {/* ── TV Recommendations */}
+        <TvRecommendationsSection seriesId={tvId} />
 
         {/* ── Related TV catalogs */}
         <PopularTvSection />

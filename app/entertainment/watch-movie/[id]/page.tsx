@@ -36,6 +36,8 @@ import VidKingPlayer from "@/components/custom/entertainment/player/VidKingNet"
 import VidEasy from "@/components/custom/entertainment/player/VidEasy"
 import VidSrcMe from "@/components/custom/entertainment/player/VidSrcMe"
 import MovieInfoPanel from "@/components/custom/entertainment/watch-movie/movie-info-panel"
+import MovieRecommendationsSection from "@/components/custom/entertainment/watch-movie/movie-recommendations"
+
 import PopularMovieSection from "@/components/custom/entertainment/watch-movie/popular-movies"
 import TopRatedMoviesSection from "@/components/custom/entertainment/watch-movie/top-rated-movies"
 import UpcomingMoviesSection from "@/components/custom/entertainment/watch-movie/upcoming-movies"
@@ -243,6 +245,8 @@ const Watch = () => {
 
         {/* ── Divider */}
         <div className="h-px w-full bg-border/50" />
+        {/* ── Movie Recommendations */}
+        <MovieRecommendationsSection movieId={movieId} />
         {/* ── Related movies catalog */}
         <PopularMovieSection />
         <NowPlayingMoviesSection />
