@@ -53,6 +53,7 @@ import type { MovieImagesApiResponse } from "@/types/entertainment/movies/movie-
 import { MovieDetailsSkeleton } from "@/components/custom/entertainment/movie-details/skeleton"
 import { StatPill } from "@/components/custom/entertainment/movie-details/stat-pill"
 import MovieRecommendationsSection from "@/components/custom/entertainment/watch-movie/movie-recommendations"
+import MovieReviewsSection from "@/components/custom/entertainment/movie-details/movie-reviews"
 
 // ─── Main page
 export default function MovieDetails() {
@@ -631,6 +632,9 @@ export default function MovieDetails() {
             </section>
           </>
         )}
+
+        <Separator className="my-10 border-border" />
+        <MovieReviewsSection movieId={movieId} />
 
         <Separator className="my-10 border-border" />
         <MovieRecommendationsSection movieId={movieId} />

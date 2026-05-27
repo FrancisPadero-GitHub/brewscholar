@@ -51,6 +51,7 @@ import type { TvImagesApiResponse } from "@/types/entertainment/tv-series/tv-ima
 import { MovieDetailsSkeleton } from "@/components/custom/entertainment/movie-details/skeleton"
 import { StatPill } from "@/components/custom/entertainment/movie-details/stat-pill"
 import TvRecommendationsSection from "@/components/custom/entertainment/watch-tv/tv-recommendations"
+import TvReviewsSection from "@/components/custom/entertainment/tv-series-details/tv-reviews"
 
 // ─── Main page
 export default function TvSeriesDetails() {
@@ -641,6 +642,9 @@ export default function TvSeriesDetails() {
             </section>
           </>
         )}
+
+        <Separator className="my-10 border-border" />
+        <TvReviewsSection seriesId={tvId} />
 
         <Separator className="my-10 border-border" />
         <TvRecommendationsSection seriesId={tvId} />
