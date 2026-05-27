@@ -1,10 +1,10 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState, type MouseEvent } from "react"
 import { useParams } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
-import { motion } from "motion/react"
+import { motion, AnimatePresence } from "motion/react"
 import {
   Star,
   Clock,
@@ -19,6 +19,10 @@ import {
   Users,
   Award,
   CalendarClock,
+  X,
+  Download,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
@@ -50,12 +54,32 @@ import { MovieDetailsSkeleton } from "@/components/custom/entertainment/movie-de
 import { StatPill } from "@/components/custom/entertainment/movie-details/stat-pill"
 import MovieRecommendationsSection from "@/components/custom/entertainment/watch-movie/movie-recommendations"
 
-
 // ─── Main page
 export default function MovieDetails() {
   const params = useParams()
   const rawMovieParam = params.id as string
   const movieId = rawMovieParam.split("-")[0]
+
+  const [activeImgIndex, setActiveImgIndex] = useState<number | null>(null)
+
+  // Image navigation helpers for the lightbox
+  const goPrevImage = (e: MouseEvent) => {
+    e.stopPropagation()
+    setActiveImgIndex((prev) => {
+      if (prev === null) return 0
+      const max = Math.min(movieImages?.backdrops.length ?? 0, 6)
+      return (prev - 1 + max) % max
+    })
+  }
+
+  const goNextImage = (e: MouseEvent) => {
+    e.stopPropagation()
+    setActiveImgIndex((prev) => {
+      if (prev === null) return 0
+      const max = Math.min(movieImages?.backdrops.length ?? 0, 6)
+      return (prev + 1) % max
+    })
+  }
 
   const { data, isFetching, isError, error } = useFetchMovieDetails(movieId)
   const movie = data as MovieDetailsApiResponse | undefined
@@ -402,33 +426,6 @@ export default function MovieDetails() {
               </section>
             )}
 
-            {/* Media Gallery */}
-            {movieImages && movieImages.backdrops.length > 0 && (
-              <section className="space-y-4">
-                <h2 className="flex items-center gap-2 text-xs font-semibold tracking-widest text-primary uppercase">
-                  <Film className="h-4 w-4" />
-                  Media Gallery
-                </h2>
-                <div className="scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent flex gap-4 overflow-x-auto pb-4">
-                  {movieImages.backdrops.slice(0, 10).map((img, i) => (
-                    <div
-                      key={i}
-                      style={{ aspectRatio: img.aspect_ratio }}
-                      className="group border-zinc-850 relative flex h-36 shrink-0 overflow-hidden rounded-xl border bg-zinc-900/30 transition-all duration-300 hover:scale-[1.02] hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5"
-                    >
-                      <Image
-                        src={`https://image.tmdb.org/t/p/w780${img.file_path}`}
-                        alt={`${movie.title} Backdrop ${i + 1}`}
-                        fill
-                        sizes="320px"
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
-
             {/* Box Office Stats */}
             {(movie.budget > 0 || movie.revenue > 0) && (
               <section>
@@ -587,10 +584,182 @@ export default function MovieDetails() {
           </aside>
         </div>
 
+        {/* Media Gallery in Bento Layout */}
+        {movieImages && movieImages.backdrops.length > 0 && (
+          <>
+            <Separator className="my-10 border-border" />
+            <section className="space-y-4">
+              <h2 className="flex items-center gap-2 text-xs font-semibold tracking-widest text-primary uppercase">
+                <Film className="h-4 w-4" />
+                Media Gallery
+              </h2>
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+                {movieImages.backdrops.slice(0, 6).map((img, i) => {
+                  let gridClasses =
+                    "group relative overflow-hidden rounded-2xl border border-border bg-card transition-all duration-500 hover:scale-[1.02] hover:border-primary/30 hover:shadow-xl hover:shadow-primary/10 aspect-video"
+                  if (i === 0) {
+                    gridClasses +=
+                      " col-span-2 row-span-2 md:col-span-2 md:row-span-2 lg:col-span-2 lg:row-span-2 !aspect-auto min-h-[200px] md:min-h-[280px]"
+                  } else if (i === 3) {
+                    gridClasses += " col-span-2 md:col-span-1 lg:col-span-2"
+                  }
+
+                  return (
+                    <div
+                      key={i}
+                      className={gridClasses + " cursor-pointer"}
+                      onClick={() => setActiveImgIndex(i)}
+                    >
+                      <Image
+                        src={`https://image.tmdb.org/t/p/w780${img.file_path}`}
+                        alt={`${movie.title} Backdrop ${i + 1}`}
+                        fill
+                        sizes={
+                          i === 0 ? "(max-width: 768px) 100vw, 50vw" : "33vw"
+                        }
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center bg-linear-to-t from-black/50 via-transparent to-transparent opacity-0 transition-opacity duration-300 hover:opacity-100">
+                        <span className="scale-90 rounded-full bg-black/60 px-4 py-2 text-xs font-semibold text-white opacity-0 backdrop-blur-xs transition-all duration-300 group-hover:scale-100 group-hover:opacity-100">
+                          🔍 View Image
+                        </span>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </section>
+          </>
+        )}
+
         <Separator className="my-10 border-border" />
         <MovieRecommendationsSection movieId={movieId} />
+
+        {/* Lightbox Modal */}
+        <AnimatePresence>
+          {activeImgIndex !== null && movieImages?.backdrops && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/95 p-4 backdrop-blur-xl md:p-10"
+              onClick={() => setActiveImgIndex(null)}
+            >
+              {/* Close backdrop click but don't close when clicking inside container */}
+              <div
+                className="relative flex w-full max-w-5xl flex-col items-center"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Header */}
+                <div className="flex w-full items-center justify-between pb-4 text-white">
+                  <div>
+                    <h3 className="max-w-[200px] truncate text-lg font-bold md:max-w-md md:text-xl">
+                      {movie.title}
+                    </h3>
+                    <p className="text-xs text-muted-foreground">
+                      Backdrop {activeImgIndex + 1} of{" "}
+                      {Math.min(movieImages.backdrops.length, 6)}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      className="h-9 w-9 rounded-full border-zinc-700 bg-zinc-900/60 text-white hover:bg-zinc-800"
+                      onClick={() => {
+                        const img = movieImages.backdrops[activeImgIndex]
+                        const url = `https://image.tmdb.org/t/p/original${img.file_path}`
+                        const filename = `${movie.title.toLowerCase().replace(/[^a-z0-9]/g, "-")}-backdrop-${activeImgIndex + 1}.jpg`
+                        fetch(url)
+                          .then((response) => response.blob())
+                          .then((blob) => {
+                            const blobUrl = URL.createObjectURL(blob)
+                            const link = document.createElement("a")
+                            link.href = blobUrl
+                            link.download = filename
+                            document.body.appendChild(link)
+                            link.click()
+                            document.body.removeChild(link)
+                            URL.revokeObjectURL(blobUrl)
+                          })
+                          .catch(() => {
+                            window.open(url, "_blank")
+                          })
+                      }}
+                    >
+                      <Download className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      className="h-9 w-9 rounded-full border-zinc-700 bg-zinc-900/60 text-white hover:bg-zinc-800"
+                      onClick={() => setActiveImgIndex(null)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Focal Image */}
+                <motion.div
+                  initial={{ scale: 0.95 }}
+                  animate={{ scale: 1 }}
+                  exit={{ scale: 0.95 }}
+                  className="border-zinc-850 relative aspect-video w-full overflow-hidden rounded-2xl border bg-zinc-950 shadow-2xl"
+                >
+                  {/* Left / Right navigation buttons */}
+                  <div className="absolute top-1/2 left-4 z-20 -translate-y-1/2">
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="h-10 w-10 rounded-full bg-black/40 text-white hover:bg-black/50"
+                      onClick={goPrevImage}
+                      aria-label="Previous image"
+                    >
+                      <ChevronLeft className="h-5 w-5" />
+                    </Button>
+                  </div>
+
+                  <div className="absolute top-1/2 right-4 z-20 -translate-y-1/2">
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="h-10 w-10 rounded-full bg-black/40 text-white hover:bg-black/50"
+                      onClick={goNextImage}
+                      aria-label="Next image"
+                    >
+                      <ChevronRight className="h-5 w-5" />
+                    </Button>
+                  </div>
+                  <Image
+                    src={`https://image.tmdb.org/t/p/original${movieImages.backdrops[activeImgIndex].file_path}`}
+                    alt={`${movie.title} Backdrop ${activeImgIndex + 1}`}
+                    fill
+                    className="object-contain"
+                    sizes="100vw"
+                    priority
+                  />
+                </motion.div>
+
+                {/* Image Navigator */}
+                <div className="flex gap-2 pt-6">
+                  {movieImages.backdrops.slice(0, 6).map((_, idx) => (
+                    <button
+                      key={idx}
+                      className={`h-2 w-2 rounded-full transition-all duration-300 ${
+                        activeImgIndex === idx
+                          ? "w-5 bg-primary"
+                          : "bg-zinc-700 hover:bg-zinc-500"
+                      }`}
+                      onClick={() => setActiveImgIndex(idx)}
+                    />
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   )
 }
-
