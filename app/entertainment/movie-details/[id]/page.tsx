@@ -38,10 +38,12 @@ import { buildWatchMoviePath } from "@/lib/utils"
 // hooks
 import { useFetchMovieDetails } from "@/hooks/entertainment/fetch/movies/useFetchMovieDetails"
 import { useFetchMovieCredits } from "@/hooks/entertainment/fetch/movies/useFetchMovieCredits"
+import { useFetchMovieImages } from "@/hooks/entertainment/fetch/movies/useFetchMovieImages"
 
 // types
 import type { MovieDetailsApiResponse } from "@/types/entertainment/movies/movie-details"
 import type { MovieCreditsApiResponse } from "@/types/entertainment/movies/movie-credits"
+import type { MovieImagesApiResponse } from "@/types/entertainment/movies/movie-images"
 
 // components
 import { MovieDetailsSkeleton } from "@/components/custom/entertainment/movie-details/skeleton"
@@ -58,6 +60,13 @@ export default function MovieDetails() {
 
   const { data: creditsData } = useFetchMovieCredits(movieId)
   const credits = creditsData as MovieCreditsApiResponse | undefined
+
+  const { data: imagesData } = useFetchMovieImages(movieId)
+  const movieImages = imagesData as MovieImagesApiResponse | undefined
+
+  const logo =
+    movieImages?.logos?.find((l) => l.iso_639_1 === "en") ||
+    movieImages?.logos?.[0]
 
   const directors = credits?.crew.filter((member) => member.job === "Director")
   const writers = credits?.crew.filter(
@@ -184,9 +193,22 @@ export default function MovieDetails() {
               ))}
             </div>
 
-            <h1 className="text-3xl font-black tracking-tight text-foreground md:text-5xl">
-              {movie.title}
-            </h1>
+            {logo ? (
+              <div className="relative h-16 w-64 overflow-hidden md:h-24 md:w-80">
+                <Image
+                  src={`${IMAGE_BASE_URL}${logo.file_path}`}
+                  alt={movie.title}
+                  fill
+                  sizes="(max-width: 768px) 256px, 320px"
+                  className="object-contain object-left drop-shadow-lg"
+                  priority
+                />
+              </div>
+            ) : (
+              <h1 className="text-3xl font-black tracking-tight text-foreground md:text-5xl">
+                {movie.title}
+              </h1>
+            )}
 
             {movie.original_title !== movie.title && (
               <p className="text-sm text-muted-foreground italic">
@@ -372,6 +394,33 @@ export default function MovieDetails() {
                           {actor.character}
                         </span>
                       </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Media Gallery */}
+            {movieImages && movieImages.backdrops.length > 0 && (
+              <section className="space-y-4">
+                <h2 className="flex items-center gap-2 text-xs font-semibold tracking-widest text-primary uppercase">
+                  <Film className="h-4 w-4" />
+                  Media Gallery
+                </h2>
+                <div className="scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent flex gap-4 overflow-x-auto pb-4">
+                  {movieImages.backdrops.slice(0, 10).map((img, i) => (
+                    <div
+                      key={i}
+                      style={{ aspectRatio: img.aspect_ratio }}
+                      className="group border-zinc-850 relative flex h-36 shrink-0 overflow-hidden rounded-xl border bg-zinc-900/30 transition-all duration-300 hover:scale-[1.02] hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5"
+                    >
+                      <Image
+                        src={`https://image.tmdb.org/t/p/w780${img.file_path}`}
+                        alt={`${movie.title} Backdrop ${i + 1}`}
+                        fill
+                        sizes="320px"
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
                     </div>
                   ))}
                 </div>

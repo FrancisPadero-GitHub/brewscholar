@@ -1,4 +1,4 @@
-import { ReactNode } from "react"
+import type { ReactNode } from "react"
 import Footer from "@/components/custom/entertainment/footer"
 
 export const metadata = {

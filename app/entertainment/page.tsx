@@ -33,6 +33,8 @@ import { useFetchTopRatedMovies } from "@/hooks/entertainment/fetch/movies/useFe
 import { useFetchUpcomingMovies } from "@/hooks/entertainment/fetch/movies/useFetchUpcomingMovies"
 import { useFetchSearchedMovies } from "@/hooks/entertainment/fetch/movies/useFetchSearchedMovies"
 import { useFetchSearchedTvSeries } from "@/hooks/entertainment/fetch/tv-series/useFetchSearchedTvSeries"
+import { useFetchMovieImages } from "@/hooks/entertainment/fetch/movies/useFetchMovieImages"
+import { useFetchTvImages } from "@/hooks/entertainment/fetch/tv-series/useFetchTvImages"
 
 // tv hooks
 import { useFetchPopularTvSeries } from "@/hooks/entertainment/fetch/tv-series/useFetchPopular"
@@ -68,6 +70,69 @@ import {
   type TvFiltersTab,
 } from "@/features/zustand/entertainment/entertainment-filter-buttons-store"
 import { useEntertainmentMode } from "@/features/zustand/entertainment/entertaiment-mode"
+
+function MovieHeroLogo({ id, title }: { id: string; title: string }) {
+  const { data } = useFetchMovieImages(id)
+  const logo = data?.logos.find((l) => l.iso_639_1 === "en") || data?.logos[0]
+  if (!logo) {
+    return (
+      <h1 className="text-4xl leading-none font-black tracking-tight text-white sm:text-5xl lg:text-6xl">
+        {title.toUpperCase()}
+      </h1>
+    )
+  }
+  return (
+    <div className="relative h-20 w-80 sm:h-28 sm:w-[450px] overflow-hidden">
+      <Image
+        src={`https://image.tmdb.org/t/p/w500${logo.file_path}`}
+        alt={title}
+        fill
+        sizes="(max-width: 640px) 320px, 450px"
+        className="object-contain object-left drop-shadow-lg"
+        priority
+      />
+    </div>
+  )
+}
+
+function TvHeroLogo({ id, title }: { id: string; title: string }) {
+  const { data } = useFetchTvImages(id)
+  const logo = data?.logos.find((l) => l.iso_639_1 === "en") || data?.logos[0]
+  if (!logo) {
+    return (
+      <h1 className="text-4xl leading-none font-black tracking-tight text-white sm:text-5xl lg:text-6xl">
+        {title.toUpperCase()}
+      </h1>
+    )
+  }
+  return (
+    <div className="relative h-20 w-80 sm:h-28 sm:w-[450px] overflow-hidden">
+      <Image
+        src={`https://image.tmdb.org/t/p/w500${logo.file_path}`}
+        alt={title}
+        fill
+        sizes="(max-width: 640px) 320px, 450px"
+        className="object-contain object-left drop-shadow-lg"
+        priority
+      />
+    </div>
+  )
+}
+
+interface HeroLogoProps {
+  id: number
+  title: string
+  isMovie: boolean
+}
+
+function HeroLogo({ id, title, isMovie }: HeroLogoProps) {
+  const idStr = id.toString()
+  return isMovie ? (
+    <MovieHeroLogo id={idStr} title={title} />
+  ) : (
+    <TvHeroLogo id={idStr} title={title} />
+  )
+}
 
 export default function MovieHub() {
   // Pagination stuff
@@ -388,13 +453,13 @@ export default function MovieHub() {
                 </span>
 
                 {/* Title */}
-                <h1 className="text-4xl leading-none font-black tracking-tight text-white sm:text-5xl lg:text-6xl">
-                  {(
-                    featuredMovie?.title ||
-                    featuredMovie?.name ||
-                    ""
-                  ).toUpperCase()}
-                </h1>
+                {featuredMovie && (
+                  <HeroLogo
+                    id={featuredMovie.id}
+                    title={featuredMovie.title || featuredMovie.name || ""}
+                    isMovie={isMovie}
+                  />
+                )}
 
                 {/* Description */}
                 <p className="line-clamp-3 max-w-lg text-sm leading-relaxed text-zinc-300 sm:text-base">

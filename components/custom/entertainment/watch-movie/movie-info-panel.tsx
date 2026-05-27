@@ -21,11 +21,17 @@ import { IMAGE_BASE_URL } from "@/constants/image-size"
 
 // hooks
 import { useFetchMovieDetails } from "@/hooks/entertainment/fetch/movies/useFetchMovieDetails"
+import { useFetchMovieImages } from "@/hooks/entertainment/fetch/movies/useFetchMovieImages"
+import type { MovieImagesApiResponse } from "@/types/entertainment/movies/movie-images"
 
 // ─── Movie info panel (details beneath the player)
 export default function MovieInfoPanel({ movieId }: { movieId: string }) {
   const { data, isFetching } = useFetchMovieDetails(movieId)
   const movie = data as MovieDetailsApiResponse | undefined
+
+  const { data: imagesData } = useFetchMovieImages(movieId)
+  const movieImages = imagesData as MovieImagesApiResponse | undefined
+  const logo = movieImages?.logos?.find((l) => l.iso_639_1 === "en") || movieImages?.logos?.[0]
 
   if (isFetching) {
     return (
@@ -95,9 +101,22 @@ export default function MovieInfoPanel({ movieId }: { movieId: string }) {
 
           {/* Title */}
           <div>
-            <h2 className="text-lg leading-tight font-black tracking-tight text-foreground md:text-xl">
-              {movie.title}
-            </h2>
+            {logo ? (
+              <div className="relative h-10 w-44 md:h-14 md:w-56 overflow-hidden">
+                <Image
+                  src={`${IMAGE_BASE_URL}${logo.file_path}`}
+                  alt={movie.title}
+                  fill
+                  sizes="(max-width: 768px) 176px, 224px"
+                  className="object-contain object-left drop-shadow-lg"
+                  priority
+                />
+              </div>
+            ) : (
+              <h2 className="text-lg leading-tight font-black tracking-tight text-foreground md:text-xl">
+                {movie.title}
+              </h2>
+            )}
             {movie.tagline && (
               <p className="mt-0.5 text-xs text-muted-foreground italic">
                 &ldquo;{movie.tagline}&rdquo;

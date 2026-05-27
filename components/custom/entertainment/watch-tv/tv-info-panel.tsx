@@ -25,11 +25,17 @@ import { IMAGE_BASE_URL } from "@/constants/image-size"
 
 // hooks
 import { useFetchTvDetails } from "@/hooks/entertainment/fetch/tv-series/useFetchTvDetails"
+import { useFetchTvImages } from "@/hooks/entertainment/fetch/tv-series/useFetchTvImages"
+import type { TvImagesApiResponse } from "@/types/entertainment/tv-series/tv-images"
 
 // ─── Tv info panel (details beneath the player)
 export default function TvInfoPanel({ tvId }: { tvId: string }) {
   const { data, isFetching } = useFetchTvDetails(tvId)
   const tvShow = data as TvSeriesDetailsApiResponse | undefined
+
+  const { data: imagesData } = useFetchTvImages(tvId)
+  const tvImages = imagesData as TvImagesApiResponse | undefined
+  const logo = tvImages?.logos?.find((l) => l.iso_639_1 === "en") || tvImages?.logos?.[0]
 
   if (isFetching) {
     return (
@@ -102,9 +108,22 @@ export default function TvInfoPanel({ tvId }: { tvId: string }) {
 
           {/* Name */}
           <div>
-            <h2 className="text-lg leading-tight font-black tracking-tight text-foreground md:text-xl">
-              {tvShow.name}
-            </h2>
+            {logo ? (
+              <div className="relative h-10 w-44 md:h-14 md:w-56 overflow-hidden">
+                <Image
+                  src={`${IMAGE_BASE_URL}${logo.file_path}`}
+                  alt={tvShow.name}
+                  fill
+                  sizes="(max-width: 768px) 176px, 224px"
+                  className="object-contain object-left drop-shadow-lg"
+                  priority
+                />
+              </div>
+            ) : (
+              <h2 className="text-lg leading-tight font-black tracking-tight text-foreground md:text-xl">
+                {tvShow.name}
+              </h2>
+            )}
             {tvShow.tagline && (
               <p className="mt-0.5 text-xs text-muted-foreground italic">
                 &ldquo;{tvShow.tagline}&rdquo;

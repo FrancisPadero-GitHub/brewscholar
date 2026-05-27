@@ -36,10 +36,12 @@ import { buildWatchTvPath } from "@/lib/utils"
 // hooks
 import { useFetchTvDetails } from "@/hooks/entertainment/fetch/tv-series/useFetchTvDetails"
 import { useFetchTvCredits } from "@/hooks/entertainment/fetch/tv-series/useFetchTvCredits"
+import { useFetchTvImages } from "@/hooks/entertainment/fetch/tv-series/useFetchTvImages"
 
 // types
 import type { TvSeriesDetailsApiResponse } from "@/types/entertainment/tv-series/tv-details"
 import type { TvCreditsApiResponse } from "@/types/entertainment/tv-series/tv-credits"
+import type { TvImagesApiResponse } from "@/types/entertainment/tv-series/tv-images"
 
 // components (reuse movie skeleton and pill since structure is identical)
 import { MovieDetailsSkeleton } from "@/components/custom/entertainment/movie-details/skeleton"
@@ -56,6 +58,11 @@ export default function TvSeriesDetails() {
 
   const { data: creditsData } = useFetchTvCredits(tvId)
   const credits = creditsData as TvCreditsApiResponse | undefined
+
+  const { data: imagesData } = useFetchTvImages(tvId)
+  const tvImages = imagesData as TvImagesApiResponse | undefined
+
+  const logo = tvImages?.logos?.find((l) => l.iso_639_1 === "en") || tvImages?.logos?.[0]
 
   const creators = tv?.created_by || []
   const directors = credits?.crew.filter((member) => member.job === "Director")
@@ -181,9 +188,22 @@ export default function TvSeriesDetails() {
               ))}
             </div>
 
-            <h1 className="text-3xl font-black tracking-tight text-foreground md:text-5xl">
-              {tv.name}
-            </h1>
+            {logo ? (
+              <div className="relative h-16 w-64 md:h-24 md:w-80 overflow-hidden">
+                <Image
+                  src={`${IMAGE_BASE_URL}${logo.file_path}`}
+                  alt={tv.name}
+                  fill
+                  sizes="(max-width: 768px) 256px, 320px"
+                  className="object-contain object-left drop-shadow-lg"
+                  priority
+                />
+              </div>
+            ) : (
+              <h1 className="text-3xl font-black tracking-tight text-foreground md:text-5xl">
+                {tv.name}
+              </h1>
+            )}
 
             {tv.original_name !== tv.name && (
               <p className="text-sm text-muted-foreground italic">
@@ -369,6 +389,33 @@ export default function TvSeriesDetails() {
                           {actor.character}
                         </span>
                       </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Media Gallery */}
+            {tvImages && tvImages.backdrops && tvImages.backdrops.length > 0 && (
+              <section className="space-y-4">
+                <h2 className="flex items-center gap-2 text-xs font-semibold tracking-widest text-primary uppercase">
+                  <Tv className="h-4 w-4" />
+                  Media Gallery
+                </h2>
+                <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
+                  {tvImages.backdrops.slice(0, 10).map((img, i) => (
+                    <div
+                      key={i}
+                      style={{ aspectRatio: img.aspect_ratio }}
+                      className="group relative flex h-36 shrink-0 overflow-hidden rounded-xl border border-zinc-850 bg-zinc-900/30 transition-all duration-300 hover:scale-[1.02] hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5"
+                    >
+                      <Image
+                        src={`https://image.tmdb.org/t/p/w780${img.file_path}`}
+                        alt={`${tv.name} Backdrop ${i + 1}`}
+                        fill
+                        sizes="320px"
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
                     </div>
                   ))}
                 </div>
