@@ -37,9 +37,11 @@ import { buildWatchMoviePath } from "@/lib/utils"
 
 // hooks
 import { useFetchMovieDetails } from "@/hooks/entertainment/fetch/movies/useFetchMovieDetails"
+import { useFetchMovieCredits } from "@/hooks/entertainment/fetch/movies/useFetchMovieCredits"
 
 // types
 import type { MovieDetailsApiResponse } from "@/types/entertainment/movies/movie-details"
+import type { MovieCreditsApiResponse } from "@/types/entertainment/movies/movie-credits"
 
 // components
 import { MovieDetailsSkeleton } from "@/components/custom/entertainment/movie-details/skeleton"
@@ -53,6 +55,14 @@ export default function MovieDetails() {
 
   const { data, isFetching, isError, error } = useFetchMovieDetails(movieId)
   const movie = data as MovieDetailsApiResponse | undefined
+
+  const { data: creditsData } = useFetchMovieCredits(movieId)
+  const credits = creditsData as MovieCreditsApiResponse | undefined
+
+  const directors = credits?.crew.filter((member) => member.job === "Director")
+  const writers = credits?.crew.filter(
+    (member) => member.job === "Writer" || member.job === "Screenplay"
+  )
 
   // Dynamic Browser Tab Title
   useEffect(() => {
@@ -326,6 +336,48 @@ export default function MovieDetails() {
               </p>
             </section>
 
+            {/* Top Cast */}
+            {credits && credits.cast.length > 0 && (
+              <section className="space-y-4">
+                <h2 className="flex items-center gap-2 text-xs font-semibold tracking-widest text-primary uppercase">
+                  <Users className="h-4 w-4" />
+                  Top Cast
+                </h2>
+                <div className="scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent flex gap-4 overflow-x-auto pb-4">
+                  {credits.cast.slice(0, 5).map((actor) => (
+                    <div
+                      key={actor.id}
+                      className="group border-zinc-850 relative flex w-40 shrink-0 flex-col overflow-hidden rounded-xl border bg-zinc-900/30 p-2 transition-all duration-300 hover:scale-[1.03] hover:border-primary/30 hover:bg-zinc-900/60"
+                    >
+                      <div className="bg-zinc-850 relative h-36 w-full overflow-hidden rounded-lg">
+                        {actor.profile_path ? (
+                          <Image
+                            src={`${IMAGE_BASE_URL}${actor.profile_path}`}
+                            alt={actor.name}
+                            fill
+                            sizes="128px"
+                            className="object-cover transition-transform duration-500 group-hover:scale-102"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center bg-zinc-800 text-zinc-500">
+                            <Users className="h-8 w-8" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="mt-2 flex flex-col px-0.5">
+                        <span className="truncate text-sm font-bold text-zinc-100 transition-colors duration-200 group-hover:text-primary">
+                          {actor.name}
+                        </span>
+                        <span className="mt-0.5 truncate text-[11px] font-medium text-zinc-400">
+                          {actor.character}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
             {/* Box Office Stats */}
             {(movie.budget > 0 || movie.revenue > 0) && (
               <section>
@@ -394,6 +446,28 @@ export default function MovieDetails() {
                         : "TBA"}
                     </dd>
                   </div>
+
+                  {directors && directors.length > 0 && (
+                    <div>
+                      <dt className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+                        Director{directors.length > 1 ? "s" : ""}
+                      </dt>
+                      <dd className="mt-0.5 font-medium text-foreground">
+                        {directors.map((d) => d.name).join(", ")}
+                      </dd>
+                    </div>
+                  )}
+
+                  {writers && writers.length > 0 && (
+                    <div>
+                      <dt className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+                        Writer{writers.length > 1 ? "s" : ""}
+                      </dt>
+                      <dd className="mt-0.5 font-medium text-foreground">
+                        {writers.map((w) => w.name).join(", ")}
+                      </dd>
+                    </div>
+                  )}
 
                   {movie.runtime > 0 && (
                     <div>
