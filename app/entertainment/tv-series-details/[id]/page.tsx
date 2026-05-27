@@ -35,9 +35,11 @@ import { buildWatchTvPath } from "@/lib/utils"
 
 // hooks
 import { useFetchTvDetails } from "@/hooks/entertainment/fetch/tv-series/useFetchTvDetails"
+import { useFetchTvCredits } from "@/hooks/entertainment/fetch/tv-series/useFetchTvCredits"
 
 // types
 import type { TvSeriesDetailsApiResponse } from "@/types/entertainment/tv-series/tv-details"
+import type { TvCreditsApiResponse } from "@/types/entertainment/tv-series/tv-credits"
 
 // components (reuse movie skeleton and pill since structure is identical)
 import { MovieDetailsSkeleton } from "@/components/custom/entertainment/movie-details/skeleton"
@@ -51,6 +53,12 @@ export default function TvSeriesDetails() {
 
   const { data, isFetching, isError, error } = useFetchTvDetails(tvId)
   const tv = data as TvSeriesDetailsApiResponse | undefined
+
+  const { data: creditsData } = useFetchTvCredits(tvId)
+  const credits = creditsData as TvCreditsApiResponse | undefined
+
+  const creators = tv?.created_by || []
+  const directors = credits?.crew.filter((member) => member.job === "Director")
 
   // Dynamic Browser Tab Title
   useEffect(() => {
@@ -325,6 +333,48 @@ export default function TvSeriesDetails() {
               </p>
             </section>
 
+            {/* Top Cast */}
+            {credits && credits.cast.length > 0 && (
+              <section className="space-y-4">
+                <h2 className="flex items-center gap-2 text-xs font-semibold tracking-widest text-primary uppercase">
+                  <Users className="h-4 w-4" />
+                  Top Cast
+                </h2>
+                <div className="scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent flex gap-4 overflow-x-auto pb-4">
+                  {credits.cast.slice(0, 5).map((actor) => (
+                    <div
+                      key={actor.id}
+                      className="group border-zinc-850 relative flex w-40 shrink-0 flex-col overflow-hidden rounded-xl border bg-zinc-900/30 p-2 transition-all duration-300 hover:scale-[1.03] hover:border-primary/30 hover:bg-zinc-900/60"
+                    >
+                      <div className="bg-zinc-850 relative h-36 w-full overflow-hidden rounded-lg">
+                        {actor.profile_path ? (
+                          <Image
+                            src={`${IMAGE_BASE_URL}${actor.profile_path}`}
+                            alt={actor.name}
+                            fill
+                            sizes="128px"
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center bg-zinc-800 text-zinc-500">
+                            <Users className="h-8 w-8" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="mt-2 flex flex-col px-0.5">
+                        <span className="truncate text-sm font-bold text-zinc-100 transition-colors duration-200 group-hover:text-primary">
+                          {actor.name}
+                        </span>
+                        <span className="mt-0.5 truncate text-[11px] font-medium text-zinc-400">
+                          {actor.character}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
             {/* TV Stats */}
             <section>
               <h2 className="mb-3 flex items-center gap-2 text-xs font-semibold tracking-widest text-primary uppercase">
@@ -391,6 +441,28 @@ export default function TvSeriesDetails() {
                         : "TBA"}
                     </dd>
                   </div>
+
+                  {creators.length > 0 && (
+                    <div>
+                      <dt className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+                        Creator{creators.length > 1 ? "s" : ""}
+                      </dt>
+                      <dd className="mt-0.5 font-medium text-foreground">
+                        {creators.map((c) => c.name).join(", ")}
+                      </dd>
+                    </div>
+                  )}
+
+                  {directors && directors.length > 0 && (
+                    <div>
+                      <dt className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+                        Director{directors.length > 1 ? "s" : ""}
+                      </dt>
+                      <dd className="mt-0.5 font-medium text-foreground">
+                        {directors.map((d) => d.name).join(", ")}
+                      </dd>
+                    </div>
+                  )}
 
                   {tv.last_air_date && (
                     <div>
