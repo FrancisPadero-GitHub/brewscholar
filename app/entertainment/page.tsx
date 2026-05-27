@@ -417,7 +417,7 @@ export default function MovieHub() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* ══════════════════════ HERO BANNER ══════════════════════ */}
-      <section className="relative h-[420px] w-full overflow-hidden bg-zinc-950 sm:h-[500px]">
+      <section className="relative h-[465px] w-full overflow-hidden bg-zinc-950 sm:h-[500px]">
         {/* Backdrop image */}
         {featuredMovie?.backdrop_path && (
           <>
@@ -440,7 +440,7 @@ export default function MovieHub() {
           <HeroSkeleton />
         ) : (
           <div className="absolute inset-0 flex items-end">
-            <div className="mx-auto flex w-full max-w-7xl flex-col items-end justify-between px-6 pb-10 sm:flex-row">
+            <div className="mx-auto flex w-full max-w-7xl flex-col items-start justify-between px-6 pb-10 sm:flex-row sm:items-end">
               <div className="w-full max-w-2xl space-y-4">
                 {/* Mode pill */}
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/20 px-3 py-1 text-xs font-bold tracking-wide text-primary uppercase backdrop-blur-sm">
@@ -519,7 +519,7 @@ export default function MovieHub() {
 
               {/* Pagination Controls */}
               {maxHeroItems > 1 && (
-                <div className="mt-6 flex flex-col items-end gap-3 sm:mt-0">
+                <div className="mt-6 flex w-full flex-row items-center justify-between gap-3 sm:mt-0 sm:w-auto sm:flex-col sm:items-end">
                   {/* Dots indicator */}
                   <div className="flex items-center gap-2">
                     {Array.from({ length: maxHeroItems }).map((_, i) => (

@@ -4,58 +4,37 @@ import { useEffect, useState, type MouseEvent } from "react"
 import { useParams } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
-import { motion, AnimatePresence } from "motion/react"
+import { AnimatePresence, motion } from "motion/react"
 import {
-  Star,
-  Clock,
-  Calendar,
-  Globe,
-  Film,
-  DollarSign,
-  TrendingUp,
   ArrowLeft,
-  ExternalLink,
-  Play,
-  Users,
-  Award,
   CalendarClock,
-  X,
-  Download,
   ChevronLeft,
   ChevronRight,
-  Volume2,
-  VolumeX,
-  PlayCircle,
+  Download,
+  Film,
+  Users,
+  X,
+  DollarSign,
+  TrendingUp,
+  Award,
+  ExternalLink,
 } from "lucide-react"
 
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination"
 
-// helpers
 import {
-  getRatingColor,
-  formatRuntime,
   formatCurrency,
+  formatRuntime,
 } from "@/helpers/entertainment/movie-details/movie-details"
-import { IMAGE_BASE_URL, BACKDROP_BASE_URL } from "@/constants/image-size"
-import { buildWatchMoviePath } from "@/lib/utils"
+import { IMAGE_BASE_URL } from "@/constants/image-size"
 
 // hooks
 import { useFetchMovieDetails } from "@/hooks/entertainment/fetch/movies/useFetchMovieDetails"
@@ -73,6 +52,8 @@ import { MovieDetailsSkeleton } from "@/components/custom/entertainment/movie-de
 import { StatPill } from "@/components/custom/entertainment/movie-details/stat-pill"
 import MovieRecommendationsSection from "@/components/custom/entertainment/watch-movie/movie-recommendations"
 import MovieReviewsSection from "@/components/custom/entertainment/movie-details/movie-reviews"
+import { MovieHero } from "@/components/custom/entertainment/movie-details/movie-hero"
+import { VideosGallery } from "@/components/custom/entertainment/videos-gallery"
 
 // ─── Main page
 export default function MovieDetails() {
@@ -81,8 +62,6 @@ export default function MovieDetails() {
   const movieId = rawMovieParam.split("-")[0]
 
   const [activeImgIndex, setActiveImgIndex] = useState<number | null>(null)
-  const [isMuted, setIsMuted] = useState(true)
-  const [videoLoaded, setVideoLoaded] = useState(false)
   const [isTrailerOpen, setIsTrailerOpen] = useState(false)
   const [activeVideoKey, setActiveVideoKey] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState("all")
@@ -118,30 +97,6 @@ export default function MovieDetails() {
 
   const { data: videosData } = useFetchMovieVideos(movieId)
   const movieVideos = videosData?.results || []
-
-  const getFilteredVideos = () => {
-    switch (activeTab) {
-      case "trailers":
-        return movieVideos.filter((v) => v.type === "Trailer")
-      case "teasers":
-        return movieVideos.filter((v) => v.type === "Teaser")
-      case "bts":
-        return movieVideos.filter((v) => v.type === "Behind the Scenes")
-      case "clips":
-        return movieVideos.filter(
-          (v) => v.type === "Clip" || v.type === "Featurette"
-        )
-      default:
-        return movieVideos
-    }
-  }
-
-  const filteredVideos = getFilteredVideos()
-  const ITEMS_PER_PAGE = 6
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
-  const endIndex = startIndex + ITEMS_PER_PAGE
-  const paginatedVideos = filteredVideos.slice(startIndex, endIndex)
-  const totalPages = Math.ceil(filteredVideos.length / ITEMS_PER_PAGE)
 
   const bgVideo =
     movieVideos.find(
@@ -184,17 +139,6 @@ export default function MovieDetails() {
     }
   }, [activeImgIndex, movieImages])
 
-  useEffect(() => {
-    const iframe = document.getElementById("hero-bg-video") as HTMLIFrameElement
-    if (iframe.contentWindow) {
-      const command = isMuted ? "mute" : "unmute"
-      iframe.contentWindow.postMessage(
-        JSON.stringify({ event: "command", func: command, args: "" }),
-        "*"
-      )
-    }
-  }, [isMuted, videoLoaded])
-
   const directors = credits?.crew.filter((member) => member.job === "Director")
   const writers = credits?.crew.filter(
     (member) => member.job === "Writer" || member.job === "Screenplay"
@@ -234,9 +178,6 @@ export default function MovieDetails() {
     )
   }
 
-  const releaseYear = movie.release_date.split("-")[0] || "TBA"
-  const ratingColor = getRatingColor(movie.vote_average)
-
   const isNewOrUpcoming = (() => {
     if (!movie.release_date) return true
     const releaseDate = new Date(movie.release_date)
@@ -247,308 +188,21 @@ export default function MovieDetails() {
     return diffDays < 120 || releaseDate > today
   })()
 
-  const renderVideoGrid = (vlist: typeof movieVideos) => {
-    if (vlist.length === 0) {
-      return (
-        <div className="flex h-36 items-center justify-center rounded-xl border border-dashed border-zinc-800 text-muted-foreground">
-          No videos available in this category.
-        </div>
-      )
-    }
-
-    return (
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {vlist.map((video) => (
-          <div
-            key={video.id}
-            onClick={() => {
-              setActiveVideoKey(video.key)
-              setIsTrailerOpen(true)
-            }}
-            className="group relative cursor-pointer overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950 p-2 transition-all duration-300 hover:scale-[1.02] hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5"
-          >
-            <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-zinc-900">
-              <Image
-                src={`https://img.youtube.com/vi/${video.key}/0.jpg`}
-                alt={video.name}
-                fill
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                <div className="flex h-12 w-12 scale-90 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform duration-300 group-hover:scale-100">
-                  <Play className="ml-0.5 h-6 w-6 fill-current" />
-                </div>
-              </div>
-              <span className="absolute right-2 bottom-2 rounded-sm bg-black/85 px-1.5 py-0.5 text-[10px] font-medium text-zinc-300">
-                {video.type}
-              </span>
-            </div>
-            <div className="mt-3 px-1">
-              <h3 className="truncate text-sm font-semibold text-zinc-200 transition-colors group-hover:text-primary">
-                {video.name}
-              </h3>
-              <p className="mt-1 text-[11px] text-zinc-500">
-                {video.site} &bull;{" "}
-                {new Date(video.published_at).toLocaleDateString("en-US", {
-                  month: "short",
-                  year: "numeric",
-                })}
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
-    )
-  }
-
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* ── HERO BACKDROP  */}
-      <div className="relative h-[58vh] w-full overflow-hidden bg-zinc-950">
-        {bgVideo ? (
-          <div
-            className={`absolute inset-0 transition-opacity duration-1000 ${
-              videoLoaded ? "opacity-35" : "opacity-0"
-            }`}
-          >
-            <iframe
-              id="hero-bg-video"
-              src={`https://www.youtube.com/embed/${bgVideo.key}?autoplay=1&mute=1&controls=0&loop=1&playlist=${bgVideo.key}&playsinline=1&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&enablejsapi=1`}
-              className="pointer-events-none absolute top-1/2 left-1/2 h-[56.25vw] min-h-full w-screen min-w-[177.77%] -translate-x-1/2 -translate-y-1/2 object-cover"
-              allow="autoplay; encrypted-media"
-              onLoad={() => setVideoLoaded(true)}
-            />
-          </div>
-        ) : null}
-
-        {/* Static image backdrop - shown if video is loading or not available */}
-        <div
-          className={`absolute inset-0 transition-opacity duration-1000 ${
-            bgVideo && videoLoaded ? "opacity-0" : "opacity-50"
-          }`}
-        >
-          {movie.backdrop_path ? (
-            <Image
-              src={`${BACKDROP_BASE_URL}${movie.backdrop_path}`}
-              alt={movie.title}
-              fill
-              sizes="100vw"
-              className="object-cover object-top"
-              priority
-            />
-          ) : (
-            <div className="h-full w-full bg-muted" />
-          )}
-        </div>
-
-        {/* Gradient overlays – same layered approach as MovieHub */}
-        <div className="absolute inset-0 bg-linear-to-t from-background via-background/60 to-background/10" />
-        <div className="absolute inset-0 bg-linear-to-r from-background via-transparent to-transparent" />
-
-        {/* Back button and ambient audio toggle floating in hero */}
-        <div className="relative z-20 mx-auto flex max-w-6xl items-center justify-between px-6 pt-7">
-          <Link href="/entertainment">
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-2 border-zinc-700 bg-black/40 text-white backdrop-blur-md hover:bg-primary hover:text-primary-foreground"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back
-            </Button>
-          </Link>
-
-          {bgVideo && videoLoaded && (
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={(e) => {
-                e.preventDefault()
-                setIsMuted(!isMuted)
-              }}
-              className="h-9 w-9 cursor-pointer rounded-full border-zinc-700 bg-black/40 text-white shadow-lg backdrop-blur-md hover:bg-white hover:text-black"
-              title={
-                isMuted ? "Unmute background video" : "Mute background video"
-              }
-            >
-              {isMuted ? (
-                <VolumeX className="h-4.5 w-4.5 animate-pulse" />
-              ) : (
-                <Volume2 className="h-4.5 w-4.5 text-primary" />
-              )}
-            </Button>
-          )}
-        </div>
-      </div>
+      <MovieHero
+        movie={movie}
+        movieVideos={movieVideos}
+        bgVideo={bgVideo}
+        logo={logo}
+        onWatchTrailer={(key) => {
+          setActiveVideoKey(key)
+          setIsTrailerOpen(true)
+        }}
+      />
 
       {/* ── MAIN CONTENT  */}
       <div className="mx-auto max-w-6xl px-6 pb-24">
-        {/* ── Poster + Title Row  */}
-        <div className="-mt-44 flex flex-col items-start gap-8 md:flex-row md:items-end">
-          {/* Poster */}
-          <div className="relative z-10 h-64 w-44 shrink-0 overflow-hidden rounded-xl border-2 border-zinc-700 shadow-2xl shadow-black/40 md:h-80 md:w-56">
-            {movie.poster_path ? (
-              <Image
-                src={`${IMAGE_BASE_URL}${movie.poster_path}`}
-                alt={movie.title}
-                fill
-                sizes="(max-width: 768px) 176px, 224px"
-                className="object-cover"
-                priority
-              />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center bg-muted">
-                <Film className="h-12 w-12 text-muted-foreground" />
-              </div>
-            )}
-          </div>
-
-          {/* Title block */}
-          <div className="z-10 flex-1 space-y-3 pb-2">
-            {/* Genre badges */}
-            <div className="flex flex-wrap gap-2">
-              {movie.genres.map((g) => (
-                <Badge
-                  key={g.id}
-                  variant="outline"
-                  className="border-primary/40 bg-primary/10 text-primary"
-                >
-                  {g.name}
-                </Badge>
-              ))}
-            </div>
-
-            {logo ? (
-              <div className="relative h-16 w-64 overflow-hidden md:h-24 md:w-80">
-                <Image
-                  src={`${IMAGE_BASE_URL}${logo.file_path}`}
-                  alt={movie.title}
-                  fill
-                  sizes="(max-width: 768px) 256px, 320px"
-                  className="object-contain object-left drop-shadow-lg"
-                  priority
-                />
-              </div>
-            ) : (
-              <h1 className="text-3xl font-black tracking-tight text-foreground md:text-5xl">
-                {movie.title}
-              </h1>
-            )}
-
-            {movie.original_title !== movie.title && (
-              <p className="text-sm text-muted-foreground italic">
-                {movie.original_title}
-              </p>
-            )}
-
-            {movie.tagline && (
-              <p className="text-base font-medium text-accent-foreground italic">
-                &ldquo;{movie.tagline}&rdquo;
-              </p>
-            )}
-
-            {/* Quick stats row */}
-            <div className="flex flex-wrap items-center gap-3 pt-1 text-sm text-muted-foreground">
-              {/* Rating */}
-              <span
-                className={`flex items-center gap-1 text-base font-bold ${ratingColor}`}
-              >
-                <Star className="h-4 w-4 fill-current" />
-                {movie.vote_average.toFixed(1)}
-                <span className="text-xs font-normal text-muted-foreground">
-                  / 10
-                </span>
-              </span>
-
-              <span className="text-border">|</span>
-
-              {movie.runtime > 0 && (
-                <>
-                  <span className="flex items-center gap-1">
-                    <Clock className="h-3.5 w-3.5 text-primary" />
-                    {formatRuntime(movie.runtime)}
-                  </span>
-                  <span className="text-border">|</span>
-                </>
-              )}
-
-              <span className="flex items-center gap-1">
-                <Calendar className="h-3.5 w-3.5 text-primary" />
-                {releaseYear}
-              </span>
-
-              <span className="text-border">|</span>
-
-              <span className="flex items-center gap-1 uppercase">
-                <Globe className="h-3.5 w-3.5 text-primary" />
-                {movie.original_language}
-              </span>
-
-              {/* Status */}
-              <span className="rounded-full bg-primary/15 px-2.5 py-0.5 text-xs font-semibold text-primary">
-                {movie.status}
-              </span>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-3">
-              {/* Official Site */}
-              {movie.homepage && (
-                <Link
-                  href={movie.homepage}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Button
-                    size="sm"
-                    className="mt-1 cursor-pointer gap-2 rounded-full bg-accent font-semibold text-accent-foreground shadow-md shadow-accent/20 hover:bg-primary hover:text-primary-foreground"
-                  >
-                    <ExternalLink className="h-3.5 w-3.5" />
-                    Official Site
-                  </Button>
-                </Link>
-              )}
-
-              {/* Watch Trailer */}
-              {bgVideo && (
-                <Button
-                  size="sm"
-                  onClick={() => {
-                    setActiveVideoKey(bgVideo.key)
-                    setIsTrailerOpen(true)
-                  }}
-                  className="mt-1 animate-pulse cursor-pointer gap-2 rounded-full border border-zinc-700 bg-black/40 font-semibold text-white shadow-md backdrop-blur-md transition-all hover:bg-white hover:text-black"
-                >
-                  <Film className="h-3.5 w-3.5 text-primary" />
-                  Watch Trailer
-                </Button>
-              )}
-
-              {/* Play now */}
-              <motion.div
-                animate={{ y: [0, -5, 0] }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              >
-                <Link href={buildWatchMoviePath(movie.id, movie.title)}>
-                  <Button
-                    size="sm"
-                    className="mt-1 cursor-pointer gap-2 rounded-full border border-primary/50 bg-primary font-bold text-primary-foreground shadow-lg shadow-primary/30 transition-all duration-300 hover:bg-primary/90 hover:shadow-primary/40"
-                  >
-                    <Play className="h-4 w-4 fill-current" />
-                    Play Now
-                  </Button>
-                </Link>
-              </motion.div>
-            </div>
-          </div>
-        </div>
-
-        <Separator className="my-10 border-border" />
-
         {/* ── Details Grid  */}
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
           {/* Left: Overview + Stats  */}
@@ -848,146 +502,17 @@ export default function MovieDetails() {
         )}
 
         {/* Videos and Clips Section */}
-        {movieVideos.length > 0 && (
-          <>
-            <Separator className="my-10 border-border" />
-            <section className="space-y-6">
-              <h2 className="flex items-center gap-2 text-xs font-semibold tracking-widest text-primary uppercase">
-                <PlayCircle className="h-4 w-4" />
-                Videos & Clips
-              </h2>
-
-              <Tabs
-                value={activeTab}
-                onValueChange={(val) => {
-                  setActiveTab(val)
-                  setCurrentPage(1)
-                }}
-                className="w-full"
-              >
-                <TabsList className="flex h-auto max-w-max flex-wrap gap-1 rounded-xl border border-zinc-800 bg-zinc-900/50 p-1">
-                  <TabsTrigger
-                    value="all"
-                    className="cursor-pointer rounded-lg px-3 py-1.5 text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground md:text-sm"
-                  >
-                    All ({movieVideos.length})
-                  </TabsTrigger>
-                  {movieVideos.some((v) => v.type === "Trailer") && (
-                    <TabsTrigger
-                      value="trailers"
-                      className="cursor-pointer rounded-lg px-3 py-1.5 text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground md:text-sm"
-                    >
-                      Trailers (
-                      {movieVideos.filter((v) => v.type === "Trailer").length})
-                    </TabsTrigger>
-                  )}
-                  {movieVideos.some((v) => v.type === "Teaser") && (
-                    <TabsTrigger
-                      value="teasers"
-                      className="cursor-pointer rounded-lg px-3 py-1.5 text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground md:text-sm"
-                    >
-                      Teasers (
-                      {movieVideos.filter((v) => v.type === "Teaser").length})
-                    </TabsTrigger>
-                  )}
-                  {movieVideos.some((v) => v.type === "Behind the Scenes") && (
-                    <TabsTrigger
-                      value="bts"
-                      className="cursor-pointer rounded-lg px-3 py-1.5 text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground md:text-sm"
-                    >
-                      Behind the Scenes (
-                      {
-                        movieVideos.filter(
-                          (v) => v.type === "Behind the Scenes"
-                        ).length
-                      }
-                      )
-                    </TabsTrigger>
-                  )}
-                  {movieVideos.some(
-                    (v) => v.type === "Clip" || v.type === "Featurette"
-                  ) && (
-                    <TabsTrigger
-                      value="clips"
-                      className="cursor-pointer rounded-lg px-3 py-1.5 text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground md:text-sm"
-                    >
-                      Clips & Featurettes (
-                      {
-                        movieVideos.filter(
-                          (v) => v.type === "Clip" || v.type === "Featurette"
-                        ).length
-                      }
-                      )
-                    </TabsTrigger>
-                  )}
-                </TabsList>
-
-                {/* Single paginated content layout */}
-                <div className="mt-6 space-y-6">
-                  {renderVideoGrid(paginatedVideos)}
-
-                  {/* Pagination Controls */}
-                  {totalPages > 1 && (
-                    <Pagination className="pt-2">
-                      <PaginationContent>
-                        <PaginationItem>
-                          <PaginationPrevious
-                            href="#"
-                            onClick={(e) => {
-                              e.preventDefault()
-                              if (currentPage > 1)
-                                setCurrentPage(currentPage - 1)
-                            }}
-                            className={
-                              currentPage === 1
-                                ? "pointer-events-none opacity-50"
-                                : "cursor-pointer"
-                            }
-                          />
-                        </PaginationItem>
-
-                        {Array.from({ length: totalPages }).map((_, i) => {
-                          const pageNum = i + 1
-                          return (
-                            <PaginationItem key={pageNum}>
-                              <PaginationLink
-                                href="#"
-                                isActive={currentPage === pageNum}
-                                onClick={(e) => {
-                                  e.preventDefault()
-                                  setCurrentPage(pageNum)
-                                }}
-                                className="cursor-pointer"
-                              >
-                                {pageNum}
-                              </PaginationLink>
-                            </PaginationItem>
-                          )
-                        })}
-
-                        <PaginationItem>
-                          <PaginationNext
-                            href="#"
-                            onClick={(e) => {
-                              e.preventDefault()
-                              if (currentPage < totalPages)
-                                setCurrentPage(currentPage + 1)
-                            }}
-                            className={
-                              currentPage === totalPages
-                                ? "pointer-events-none opacity-50"
-                                : "cursor-pointer"
-                            }
-                          />
-                        </PaginationItem>
-                      </PaginationContent>
-                    </Pagination>
-                  )}
-                </div>
-              </Tabs>
-            </section>
-          </>
-        )}
+        <VideosGallery
+          videos={movieVideos}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          onPlayVideo={(key) => {
+            setActiveVideoKey(key)
+            setIsTrailerOpen(true)
+          }}
+        />
 
         <Separator className="my-10 border-border" />
         <MovieReviewsSection movieId={movieId} />
