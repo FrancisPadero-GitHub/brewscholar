@@ -31,9 +31,7 @@ import {
 
 // helpers
 import { IMAGE_BASE_URL } from "@/constants/image-size"
-import {
-  formatRuntime,
-} from "@/helpers/entertainment/movie-details/movie-details"
+import { formatRuntime } from "@/helpers/entertainment/movie-details/movie-details"
 
 // hooks
 import { useFetchTvDetails } from "@/hooks/entertainment/fetch/tv-series/useFetchTvDetails"
@@ -97,8 +95,6 @@ export default function TvSeriesDetails() {
   const { data: videosData } = useFetchTvVideos(tvId)
   const tvVideos = videosData?.results || []
 
-
-
   const bgVideo =
     tvVideos.find(
       (v) => v.site === "YouTube" && v.type === "Trailer" && v.official
@@ -138,7 +134,6 @@ export default function TvSeriesDetails() {
       window.removeEventListener("keydown", handleKeyDown)
     }
   }, [activeImgIndex, tvImages])
-
 
   const creators = tv?.created_by || []
   const directors = credits?.crew.filter((member) => member.job === "Director")
@@ -204,7 +199,6 @@ export default function TvSeriesDetails() {
 
       {/* ── MAIN CONTENT  */}
       <div className="mx-auto max-w-6xl px-6 pb-24">
-
         {/* ── Details Grid  */}
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
           {/* Left: Overview + Stats  */}
@@ -543,18 +537,18 @@ export default function TvSeriesDetails() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/95 p-4 backdrop-blur-xl md:p-10"
+              className="fixed inset-0 z-50 flex flex-col items-center justify-start overflow-y-auto bg-black/95 p-3 backdrop-blur-xl sm:p-4 md:justify-center md:p-10"
               onClick={() => setActiveImgIndex(null)}
             >
               {/* Close backdrop click but don't close when clicking inside container */}
               <div
-                className="relative flex w-full max-w-5xl flex-col items-center"
+                className="relative flex w-full max-w-5xl flex-col items-stretch gap-3 sm:items-center sm:gap-4"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Header */}
-                <div className="flex w-full items-center justify-between pb-4 text-white">
-                  <div>
-                    <h3 className="max-w-[200px] truncate text-lg font-bold md:max-w-md md:text-xl">
+                <div className="sticky top-0 z-10 flex w-full flex-col gap-3 bg-black/80 pb-3 text-white backdrop-blur-md sm:static sm:flex-row sm:items-start sm:justify-between sm:bg-transparent sm:pb-4">
+                  <div className="min-w-0">
+                    <h3 className="max-w-[65vw] truncate text-lg font-bold sm:max-w-md md:text-xl">
                       {tv.name}
                     </h3>
                     <p className="text-xs text-muted-foreground">
@@ -562,11 +556,11 @@ export default function TvSeriesDetails() {
                       {Math.min(tvImages.backdrops.length, 6)}
                     </p>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-end gap-2 self-end sm:gap-3 sm:self-auto">
                     <Button
                       size="icon"
                       variant="outline"
-                      className="h-9 w-9 rounded-full border-zinc-700 bg-zinc-900/60 text-white hover:bg-zinc-800"
+                      className="h-8 w-8 rounded-full border-zinc-700 bg-zinc-900/60 text-white hover:bg-zinc-800 sm:h-9 sm:w-9"
                       onClick={() => {
                         const img = tvImages.backdrops[activeImgIndex]
                         const url = `https://image.tmdb.org/t/p/original${img.file_path}`
@@ -593,7 +587,7 @@ export default function TvSeriesDetails() {
                     <Button
                       size="icon"
                       variant="outline"
-                      className="h-9 w-9 rounded-full border-zinc-700 bg-zinc-900/60 text-white hover:bg-zinc-800"
+                      className="h-8 w-8 rounded-full border-zinc-700 bg-zinc-900/60 text-white hover:bg-zinc-800 sm:h-9 sm:w-9"
                       onClick={() => setActiveImgIndex(null)}
                     >
                       <X className="h-4 w-4" />
@@ -606,14 +600,14 @@ export default function TvSeriesDetails() {
                   initial={{ scale: 0.95 }}
                   animate={{ scale: 1 }}
                   exit={{ scale: 0.95 }}
-                  className="border-zinc-850 relative aspect-video w-full overflow-hidden rounded-2xl border bg-zinc-950 shadow-2xl"
+                  className="border-zinc-850 relative aspect-video max-h-[52vh] w-full overflow-hidden rounded-2xl border bg-zinc-950 shadow-2xl sm:max-h-[60vh] md:max-h-[64vh]"
                 >
                   {/* Left / Right navigation buttons */}
                   <div className="absolute top-1/2 left-4 z-20 -translate-y-1/2">
                     <Button
                       size="icon"
                       variant="ghost"
-                      className="h-10 w-10 rounded-full bg-black/40 text-white hover:bg-black/50"
+                      className="h-9 w-9 rounded-full bg-black/40 text-white hover:bg-black/50 sm:h-10 sm:w-10"
                       onClick={goPrevImage}
                       aria-label="Previous image"
                     >
@@ -625,7 +619,7 @@ export default function TvSeriesDetails() {
                     <Button
                       size="icon"
                       variant="ghost"
-                      className="h-10 w-10 rounded-full bg-black/40 text-white hover:bg-black/50"
+                      className="h-9 w-9 rounded-full bg-black/40 text-white hover:bg-black/50 sm:h-10 sm:w-10"
                       onClick={goNextImage}
                       aria-label="Next image"
                     >
@@ -643,11 +637,11 @@ export default function TvSeriesDetails() {
                 </motion.div>
 
                 {/* Image Navigator */}
-                <div className="flex gap-2 pt-6">
+                <div className="flex flex-wrap justify-center gap-2 pt-4 sm:pt-6">
                   {tvImages.backdrops.slice(0, 6).map((_, idx) => (
                     <button
                       key={idx}
-                      className={`h-2 w-2 rounded-full transition-all duration-300 ${
+                      className={`h-2.5 w-2.5 rounded-full transition-all duration-300 ${
                         activeImgIndex === idx
                           ? "w-5 bg-primary"
                           : "bg-zinc-700 hover:bg-zinc-500"
