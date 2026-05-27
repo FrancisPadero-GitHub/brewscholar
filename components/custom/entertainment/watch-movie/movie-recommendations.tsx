@@ -84,14 +84,17 @@ function MovieRecommendationsCard({ movie }: { movie: MovieResult }) {
 }
 
 // Carousel with pagination
-export default function MovieRecommendationsSection({ movieId }: { movieId: string }) {
+export default function MovieRecommendationsSection({
+  movieId,
+}: {
+  movieId: string
+}) {
   const [page, setPage] = useState(1)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
-  const [canScrollRight, setCanScrollRight] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
   const holdTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const holdIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  
+
   const { data, isFetching } = useFetchMovieRecommendations(movieId, page)
 
   const clearHoldTimers = () => {
@@ -108,9 +111,8 @@ export default function MovieRecommendationsSection({ movieId }: { movieId: stri
   const updateScrollButtons = () => {
     const el = scrollRef.current
     if (!el) return
-    const { scrollLeft, scrollWidth, clientWidth } = el
+    const { scrollLeft } = el
     setCanScrollLeft(scrollLeft > 0)
-    setCanScrollRight(Math.ceil(scrollLeft + clientWidth) < scrollWidth - 5)
   }
 
   const scrollLeft = () => {
@@ -212,7 +214,9 @@ export default function MovieRecommendationsSection({ movieId }: { movieId: stri
               variant="outline"
               size="icon"
               className="h-7 w-7 border-border/60 hover:border-primary hover:text-primary"
-              onClick={() => setPage((p) => Math.min(totalPagesFiltered, p + 1))}
+              onClick={() =>
+                setPage((p) => Math.min(totalPagesFiltered, p + 1))
+              }
               disabled={page >= totalPagesFiltered || isFetching}
             >
               <ChevronRight className="h-4 w-4" />
@@ -277,31 +281,29 @@ export default function MovieRecommendationsSection({ movieId }: { movieId: stri
             </motion.div>
 
             {/* Scroll Right Button */}
-            {canScrollRight && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="default"
-                    size="icon"
-                    className="absolute top-1/2 right-5 z-10 h-8 w-8 cursor-pointer rounded-full border-2 border-primary bg-primary/70 hover:bg-primary sm:h-10 sm:w-10"
-                    onPointerDown={() => startContinuousScroll("right")}
-                    onPointerUp={clearHoldTimers}
-                    onPointerLeave={clearHoldTimers}
-                    onPointerCancel={clearHoldTimers}
-                  >
-                    <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="left">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-xs font-semibold">Shift</span>
-                    <Plus className="h-3 w-3" />
-                    <Mouse className="h-4 w-4" />
-                    <ArrowDown className="h-4 w-4" />
-                  </div>
-                </TooltipContent>
-              </Tooltip>
-            )}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="default"
+                  size="icon"
+                  className="absolute top-1/2 right-5 z-10 h-8 w-8 cursor-pointer rounded-full border-2 border-primary bg-primary/70 hover:bg-primary sm:h-10 sm:w-10"
+                  onPointerDown={() => startContinuousScroll("right")}
+                  onPointerUp={clearHoldTimers}
+                  onPointerLeave={clearHoldTimers}
+                  onPointerCancel={clearHoldTimers}
+                >
+                  <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="left">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs font-semibold">Shift</span>
+                  <Plus className="h-3 w-3" />
+                  <Mouse className="h-4 w-4" />
+                  <ArrowDown className="h-4 w-4" />
+                </div>
+              </TooltipContent>
+            </Tooltip>
           </>
         )}
       </div>

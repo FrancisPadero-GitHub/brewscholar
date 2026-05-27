@@ -265,31 +265,29 @@ export default function UpcomingMoviesSection() {
             </motion.div>
 
             {/* Scroll Right Button */}
-            {canScrollRight && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="default"
-                    size="icon"
-                    className="absolute top-1/2 right-5 z-10 h-8 w-8 cursor-pointer rounded-full border-2 border-primary bg-primary/70 hover:bg-primary sm:h-10 sm:w-10"
-                    onPointerDown={() => startContinuousScroll("right")}
-                    onPointerUp={clearHoldTimers}
-                    onPointerLeave={clearHoldTimers}
-                    onPointerCancel={clearHoldTimers}
-                  >
-                    <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="left">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-xs font-semibold">Shift</span>
-                    <Plus className="h-3 w-3" />
-                    <Mouse className="h-4 w-4" />
-                    <ArrowDown className="h-4 w-4" />
-                  </div>
-                </TooltipContent>
-              </Tooltip>
-            )}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="default"
+                  size="icon"
+                  className="absolute top-1/2 right-5 z-10 h-8 w-8 cursor-pointer rounded-full border-2 border-primary bg-primary/70 hover:bg-primary sm:h-10 sm:w-10"
+                  onPointerDown={() => startContinuousScroll("right")}
+                  onPointerUp={clearHoldTimers}
+                  onPointerLeave={clearHoldTimers}
+                  onPointerCancel={clearHoldTimers}
+                >
+                  <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="left">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs font-semibold">Shift</span>
+                  <Plus className="h-3 w-3" />
+                  <Mouse className="h-4 w-4" />
+                  <ArrowDown className="h-4 w-4" />
+                </div>
+              </TooltipContent>
+            </Tooltip>
           </>
         )}
       </div>

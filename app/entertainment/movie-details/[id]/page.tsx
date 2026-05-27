@@ -95,6 +95,35 @@ export default function MovieDetails() {
     movieImages?.logos.find((l) => l.iso_639_1 === "en") ||
     movieImages?.logos[0]
 
+  // Escape & Arrow keys listener for lightbox
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setActiveImgIndex(null)
+      } else if (e.key === "ArrowLeft") {
+        setActiveImgIndex((prev) => {
+          if (prev === null) return null
+          const max = Math.min(movieImages?.backdrops.length ?? 0, 6)
+          return (prev - 1 + max) % max
+        })
+      } else if (e.key === "ArrowRight") {
+        setActiveImgIndex((prev) => {
+          if (prev === null) return null
+          const max = Math.min(movieImages?.backdrops.length ?? 0, 6)
+          return (prev + 1) % max
+        })
+      }
+    }
+
+    if (activeImgIndex !== null) {
+      window.addEventListener("keydown", handleKeyDown)
+    }
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown)
+    }
+  }, [activeImgIndex, movieImages])
+
   const directors = credits?.crew.filter((member) => member.job === "Director")
   const writers = credits?.crew.filter(
     (member) => member.job === "Writer" || member.job === "Screenplay"
