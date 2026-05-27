@@ -1,6 +1,12 @@
 import { useState } from "react"
 import { motion, AnimatePresence } from "motion/react"
-import { Star, MessageSquare, ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from "lucide-react"
+import {
+  Star,
+  MessageSquare,
+  ChevronLeft,
+  ChevronRight,
+  ChevronDown,
+} from "lucide-react"
 
 // hooks
 import { useFetchMovieReviews } from "@/hooks/entertainment/fetch/movies/useFetchMovieReviews"
@@ -10,6 +16,14 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 // helper
 import { getRatingColor } from "@/helpers/entertainment/movie-details/movie-details"
@@ -37,7 +51,9 @@ const getAvatarBg = (name: string) => {
     "bg-orange-500/15 text-orange-400 border-orange-500/35",
     "bg-teal-500/15 text-teal-400 border-teal-500/35",
   ]
-  const charCodeSum = name.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0)
+  const charCodeSum = name
+    .split("")
+    .reduce((acc, char) => acc + char.charCodeAt(0), 0)
   return colors[charCodeSum % colors.length]
 }
 
@@ -57,41 +73,121 @@ const formatDate = (dateStr: string) => {
   }
 }
 
-// Sub-component for individual review text body expansion
-function ReviewContent({ content }: { content: string }) {
-  const [isExpanded, setIsExpanded] = useState(false)
-  const isLong = content.length > 360
+interface ReviewContentProps {
+  content: string
+  author: string
+  displayName: string
+  avatarUrl: string
+  initials: string
+  fallbackBg: string
+  username: string
+  createdAt: string
+  rating: number | null
+  ratingColor: string
+}
 
-  const displayedContent = isLong && !isExpanded ? `${content.substring(0, 360)}...` : content
+// Sub-component for individual review text body expansion with shadcn Dialog
+function ReviewContent({
+  content,
+  // author,
+  displayName,
+  avatarUrl,
+  initials,
+  fallbackBg,
+  username,
+  createdAt,
+  rating,
+  ratingColor,
+}: ReviewContentProps) {
+  const isLong = content.length > 180
+  const displayedContent = isLong ? `${content.substring(0, 180)}...` : content
 
   return (
     <div className="relative mt-3">
-      <div
-        className={`text-sm/relaxed text-muted-foreground transition-all duration-300 ${
-          isLong && !isExpanded ? "line-clamp-4 md:line-clamp-5" : ""
-        }`}
-      >
+      <div className="line-clamp-3 text-sm/relaxed text-muted-foreground">
         <p className="whitespace-pre-line">{displayedContent}</p>
       </div>
 
       {isLong && (
         <div className="mt-3 flex justify-end">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="h-7 gap-1 px-2.5 text-xs text-primary/95 hover:bg-primary/10 hover:text-primary"
-          >
-            {isExpanded ? (
-              <>
-                Show Less <ChevronUp className="h-3 w-3" />
-              </>
-            ) : (
-              <>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-7 gap-1 px-2.5 text-xs text-primary/95 hover:bg-primary/10 hover:text-primary"
+              >
                 Read More <ChevronDown className="h-3 w-3" />
-              </>
-            )}
-          </Button>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="rounded-2xl border border-border/80 bg-card p-6 shadow-2xl sm:max-w-xl md:max-w-2xl">
+              <DialogHeader className="flex flex-col gap-4">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  {/* Author Info */}
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border text-xs font-bold select-none ${
+                        avatarUrl ? "border-border/60 bg-muted" : fallbackBg
+                      }`}
+                    >
+                      {avatarUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={avatarUrl}
+                          alt={displayName}
+                          className="h-full w-full rounded-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none"
+                            e.currentTarget.parentElement?.classList.add(
+                              ...fallbackBg.split(" ")
+                            )
+                            const span = document.createElement("span")
+                            span.innerText = initials
+                            e.currentTarget.parentElement?.appendChild(span)
+                          }}
+                        />
+                      ) : (
+                        <span>{initials}</span>
+                      )}
+                    </div>
+
+                    <div className="space-y-0.5 text-left">
+                      <DialogTitle className="text-base font-bold text-foreground">
+                        {displayName}
+                      </DialogTitle>
+                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                        <span>@{username}</span>
+                        <span>•</span>
+                        <span>{formatDate(createdAt)}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Rating Badge */}
+                  {rating !== null && (
+                    <Badge
+                      variant="outline"
+                      className={`self-start border-primary/20 bg-primary/5 px-2.5 py-1 text-xs font-bold ${ratingColor} sm:self-center`}
+                    >
+                      <Star className="mr-1 h-3.5 w-3.5 fill-current" />
+                      {rating}
+                      <span className="ml-0.5 text-[10px] font-normal text-muted-foreground">
+                        / 10
+                      </span>
+                    </Badge>
+                  )}
+                </div>
+              </DialogHeader>
+
+              {/* Scrollable full content */}
+              <div className="scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent mt-2 max-h-[50vh] overflow-y-auto pr-2 text-left text-sm/relaxed whitespace-pre-line text-muted-foreground">
+                <DialogDescription className="sr-only">
+                  Full review by {displayName}
+                </DialogDescription>
+                {content}
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       )}
     </div>
@@ -127,14 +223,14 @@ function ReviewCard({ review }: { review: MovieReview }) {
         hidden: { opacity: 0, y: 15 },
         show: { opacity: 1, y: 0 },
       }}
-      className="group relative overflow-hidden rounded-2xl border border-border/50 bg-card p-5 transition-all duration-300 hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5"
+      className="group hover:bg-primary/0.01 relative overflow-hidden rounded-xl border border-border/50 bg-card p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10"
     >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         {/* Author details */}
         <div className="flex items-center gap-3">
           {/* Avatar */}
           <div
-            className={`relative flex h-10 w-10 shrink-0 select-none items-center justify-center rounded-full border text-xs font-bold ${
+            className={`relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border text-xs font-bold select-none ${
               avatarUrl ? "border-border/60 bg-muted" : fallbackBg
             }`}
           >
@@ -147,7 +243,9 @@ function ReviewCard({ review }: { review: MovieReview }) {
                 onError={(e) => {
                   // If image fails to load, clear it so fallback initials render
                   e.currentTarget.style.display = "none"
-                  e.currentTarget.parentElement?.classList.add(...fallbackBg.split(" "))
+                  e.currentTarget.parentElement?.classList.add(
+                    ...fallbackBg.split(" ")
+                  )
                   const span = document.createElement("span")
                   span.innerText = initials
                   e.currentTarget.parentElement?.appendChild(span)
@@ -186,7 +284,18 @@ function ReviewCard({ review }: { review: MovieReview }) {
       </div>
 
       {/* Review content */}
-      <ReviewContent content={content} />
+      <ReviewContent
+        content={content}
+        author={author}
+        displayName={displayName}
+        avatarUrl={avatarUrl}
+        initials={initials}
+        fallbackBg={fallbackBg}
+        username={author_details.username}
+        createdAt={created_at}
+        rating={rating}
+        ratingColor={ratingColor}
+      />
     </motion.div>
   )
 }
@@ -194,7 +303,7 @@ function ReviewCard({ review }: { review: MovieReview }) {
 // Main Reviews Component
 export default function MovieReviewsSection({ movieId }: { movieId: string }) {
   const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 7
+  const itemsPerPage = 6
 
   const globalStartIndex = (currentPage - 1) * itemsPerPage
   const tmdbPage = Math.floor(globalStartIndex / 20) + 1
@@ -230,7 +339,9 @@ export default function MovieReviewsSection({ movieId }: { movieId: string }) {
         </h2>
         <div className="rounded-2xl border border-dashed border-border/80 bg-zinc-950/20 p-8 text-center text-muted-foreground md:p-12">
           <MessageSquare className="mx-auto mb-3 h-8 w-8 text-muted-foreground/60" />
-          <p className="text-sm font-medium">No reviews found for this movie.</p>
+          <p className="text-sm font-medium">
+            No reviews found for this movie.
+          </p>
           <p className="mt-1 text-xs text-muted-foreground/60">
             Be the first to share your thoughts on this content!
           </p>
@@ -247,7 +358,7 @@ export default function MovieReviewsSection({ movieId }: { movieId: string }) {
           <MessageSquare className="h-4 w-4" />
           Reviews
           {totalResults > 0 && (
-            <Badge className="ml-1 bg-primary/10 text-primary border-primary/20 text-xs font-semibold">
+            <Badge className="ml-1 border-primary/20 bg-primary/10 text-xs font-semibold text-primary">
               {totalResults.toLocaleString()}
             </Badge>
           )}
@@ -265,7 +376,9 @@ export default function MovieReviewsSection({ movieId }: { movieId: string }) {
               onClick={() => {
                 setCurrentPage((p) => Math.max(1, p - 1))
                 // Smooth scroll to top of section
-                document.getElementById("reviews-section")?.scrollIntoView({ behavior: "smooth" })
+                document
+                  .getElementById("reviews-section")
+                  ?.scrollIntoView({ behavior: "smooth" })
               }}
               disabled={currentPage <= 1 || isFetching}
             >
@@ -278,7 +391,9 @@ export default function MovieReviewsSection({ movieId }: { movieId: string }) {
               onClick={() => {
                 setCurrentPage((p) => Math.min(totalDisplayPages, p + 1))
                 // Smooth scroll to top of section
-                document.getElementById("reviews-section")?.scrollIntoView({ behavior: "smooth" })
+                document
+                  .getElementById("reviews-section")
+                  ?.scrollIntoView({ behavior: "smooth" })
               }}
               disabled={currentPage >= totalDisplayPages || isFetching}
             >
@@ -290,10 +405,10 @@ export default function MovieReviewsSection({ movieId }: { movieId: string }) {
 
       <div id="reviews-section" className="relative scroll-mt-24">
         {showSkeleton ? (
-          <div className="space-y-4">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <Card key={i} className="border-border/50 bg-card p-5">
-                <CardContent className="space-y-4 p-0">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Card key={i} className="border-border/50 bg-card p-4">
+                <CardContent className="space-y-3 p-0">
                   <div className="flex items-center gap-3">
                     <Skeleton className="h-10 w-10 rounded-full" />
                     <div className="space-y-2">
@@ -303,7 +418,6 @@ export default function MovieReviewsSection({ movieId }: { movieId: string }) {
                   </div>
                   <div className="space-y-2 pt-2">
                     <Skeleton className="h-3 w-full rounded" />
-                    <Skeleton className="h-3 w-11/12 rounded" />
                     <Skeleton className="h-3 w-4/5 rounded" />
                   </div>
                 </CardContent>
@@ -325,7 +439,7 @@ export default function MovieReviewsSection({ movieId }: { movieId: string }) {
                   },
                 },
               }}
-              className="space-y-4"
+              className="grid grid-cols-1 gap-4 md:grid-cols-2"
             >
               {displayedReviews.map((review) => (
                 <ReviewCard key={review.id} review={review} />
@@ -337,7 +451,7 @@ export default function MovieReviewsSection({ movieId }: { movieId: string }) {
 
       {/* Bottom pagination controls */}
       {!showSkeleton && totalDisplayPages > 1 && (
-        <div className="flex justify-end items-center gap-2 pt-2">
+        <div className="flex items-center justify-end gap-2 pt-2">
           <span className="text-xs text-muted-foreground tabular-nums">
             Page {currentPage} / {totalDisplayPages}
           </span>
@@ -348,7 +462,9 @@ export default function MovieReviewsSection({ movieId }: { movieId: string }) {
             onClick={() => {
               setCurrentPage((p) => Math.max(1, p - 1))
               // Smooth scroll to top of section
-              document.getElementById("reviews-section")?.scrollIntoView({ behavior: "smooth" })
+              document
+                .getElementById("reviews-section")
+                ?.scrollIntoView({ behavior: "smooth" })
             }}
             disabled={currentPage <= 1 || isFetching}
           >
@@ -361,7 +477,9 @@ export default function MovieReviewsSection({ movieId }: { movieId: string }) {
             onClick={() => {
               setCurrentPage((p) => Math.min(totalDisplayPages, p + 1))
               // Smooth scroll to top of section
-              document.getElementById("reviews-section")?.scrollIntoView({ behavior: "smooth" })
+              document
+                .getElementById("reviews-section")
+                ?.scrollIntoView({ behavior: "smooth" })
             }}
             disabled={currentPage >= totalDisplayPages || isFetching}
           >
