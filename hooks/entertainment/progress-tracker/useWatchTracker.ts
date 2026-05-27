@@ -47,7 +47,11 @@ export function useWatchTracker(
 
     const handleMessage = (event: MessageEvent) => {
       // Allow only known origins
-      const allowedOrigins = ["https://vidlink.pro", "https://www.vidking.net"]
+      const allowedOrigins = [
+        "https://vidlink.pro",
+        "https://www.vidking.net",
+        "https://player.videasy.net",
+      ]
       if (!allowedOrigins.includes(event.origin)) return
 
       let payload = event.data

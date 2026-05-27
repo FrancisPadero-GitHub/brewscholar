@@ -33,6 +33,7 @@ import { useFetchMovieDetails } from "@/hooks/entertainment/fetch/movies/useFetc
 
 // components
 import VidKingPlayer from "@/components/custom/entertainment/player/VidKingNet"
+import VidEasy from "@/components/custom/entertainment/player/VidEasy"
 import VidSrcMe from "@/components/custom/entertainment/player/VidSrcMe"
 import MovieInfoPanel from "@/components/custom/entertainment/watch-movie/movie-info-panel"
 import PopularMovieSection from "@/components/custom/entertainment/watch-movie/popular-movies"
@@ -112,19 +113,21 @@ const Watch = () => {
   }
 
   const playerComponents: Record<string, JSX.Element> = {
-    "Player 1": <VidLinkPro {...playerBaseProps} startTime={startTime} />,
-    "Player 2": <VidSrcMe {...playerBaseProps} />,
-    "Player 3": <VidKingPlayer {...playerBaseProps} startTime={startTime} />,
-    "Player 4": <SuperEmbed {...playerBaseProps} />,
-    "Player 5": <TwoEmbed {...playerBaseProps} />,
+    "Server 1": <VidLinkPro {...playerBaseProps} startTime={startTime} />,
+    "Server 2": <VidEasy {...playerBaseProps} startTime={startTime} />,
+    "Server 3": <VidKingPlayer {...playerBaseProps} startTime={startTime} />,
+    "Server 4": <VidSrcMe {...playerBaseProps} />,
+    "Server 5": <TwoEmbed {...playerBaseProps} />,
+    "Server 6": <SuperEmbed {...playerBaseProps} />,
   }
 
   const playerTooltips: Record<string, string> = {
-    "Player 1": "Reliable streaming with minimal ads",
-    "Player 2": "Contains many ads and pop-ups",
-    "Player 3": "Contains many ads  and pop-ups",
-    "Player 4": "Alternative multi-player embed",
-    "Player 5": "2embed alternative",
+    "Server 1": "Reliable streaming with minimal ads",
+    "Server 2": "Reliable fallback player",
+    "Server 3": "Contains many ads  and pop-ups",
+    "Server 4": "Contains many ads and pop-ups",
+    "Server 5": "2embed alternative",
+    "Server 6": "Alternative multi-player embed",
   }
 
   const [isMobile, setIsMobile] = useState(false)
@@ -206,7 +209,7 @@ const Watch = () => {
                           variant="outline"
                           size="sm"
                           onClick={() => {
-                            if (player === "Player 3" && isMobile) {
+                            if (player === "Server 3" && isMobile) {
                               setShowPlayer3Warning(true)
                             } else {
                               setActivePlayer(player)
@@ -263,7 +266,7 @@ const Watch = () => {
                   Ad <span className="text-primary">Warning</span>
                 </AlertDialogTitle>
                 <p className="mt-0.5 text-[11px] text-muted-foreground">
-                  Player 3 · Third-party server
+                  Server 3 · Third-party server
                 </p>
               </AlertDialogHeader>
             </div>
@@ -271,7 +274,7 @@ const Watch = () => {
 
           <div className="space-y-3 px-5 pt-4 pb-2">
             <AlertDialogDescription className="text-[13px] leading-relaxed text-muted-foreground">
-              <span className="font-semibold text-foreground">Player 3</span>{" "}
+              <span className="font-semibold text-foreground">Server 3</span>{" "}
               may show intrusive pop-ups and redirect you to external apps or
               sites - especially on mobile.
             </AlertDialogDescription>
@@ -283,39 +286,39 @@ const Watch = () => {
               <div className="flex gap-2">
                 <button
                   onClick={() => {
-                    setActivePlayer("Player 1")
+                    setActivePlayer("Server 1")
                     setShowPlayer3Warning(false)
                   }}
                   className="flex-1 rounded-xl border border-border/60 bg-muted/40 py-2.5 text-xs font-bold text-foreground transition-all duration-200 hover:border-primary/50 hover:bg-primary/10 hover:text-primary active:scale-95"
                 >
-                  ▶ Player 1
+                  ▶ Server 1
                 </button>
                 <button
                   onClick={() => {
-                    setActivePlayer("Player 2")
+                    setActivePlayer("Server 2")
                     setShowPlayer3Warning(false)
                   }}
                   className="flex-1 rounded-xl border border-border/60 bg-muted/40 py-2.5 text-xs font-bold text-foreground transition-all duration-200 hover:border-primary/50 hover:bg-primary/10 hover:text-primary active:scale-95"
                 >
-                  ▶ Player 2
+                  ▶ Server 2
                 </button>
                 <button
                   onClick={() => {
-                    setActivePlayer("Player 4")
+                    setActivePlayer("Server 4")
                     setShowPlayer3Warning(false)
                   }}
                   className="flex-1 rounded-xl border border-border/60 bg-muted/40 py-2.5 text-xs font-bold text-foreground transition-all duration-200 hover:border-primary/50 hover:bg-primary/10 hover:text-primary active:scale-95"
                 >
-                  ▶ Player 4
+                  ▶ Server 4
                 </button>
                 <button
                   onClick={() => {
-                    setActivePlayer("Player 5")
+                    setActivePlayer("Server 5")
                     setShowPlayer3Warning(false)
                   }}
                   className="flex-1 rounded-xl border border-border/60 bg-muted/40 py-2.5 text-xs font-bold text-foreground transition-all duration-200 hover:border-primary/50 hover:bg-primary/10 hover:text-primary active:scale-95"
                 >
-                  ▶ Player 5
+                  ▶ Server 5
                 </button>
               </div>
             </div>
@@ -334,7 +337,7 @@ const Watch = () => {
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
-                setActivePlayer("Player 3")
+                setActivePlayer("Server 3")
                 setShowPlayer3Warning(false)
               }}
               className="flex-1 rounded-xl bg-primary text-xs font-bold text-foreground shadow-lg shadow-primary/20 hover:bg-primary/90"

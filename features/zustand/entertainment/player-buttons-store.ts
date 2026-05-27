@@ -1,18 +1,20 @@
 import { create } from "zustand"
 
 export type ActivePlayer =
-  | "Player 1"
-  | "Player 2"
-  | "Player 3"
-  | "Player 4"
-  | "Player 5"
+  | "Server 1"
+  | "Server 2"
+  | "Server 3"
+  | "Server 4"
+  | "Server 5"
+  | "Server 6"
 
 export const ACTIVE_PLAYER: ActivePlayer[] = [
-  "Player 1",
-  "Player 2",
-  "Player 3",
-  "Player 4",
-  "Player 5",
+  "Server 1",
+  "Server 2",
+  "Server 3",
+  "Server 4",
+  "Server 5",
+  "Server 6",
 ]
 
 type PlayerStore = {
@@ -21,6 +23,6 @@ type PlayerStore = {
 }
 
 export const usePlayerStore = create<PlayerStore>((set) => ({
-  activePlayer: "Player 1",
+  activePlayer: "Server 1",
   setActivePlayer: (player: ActivePlayer) => set({ activePlayer: player }),
 }))

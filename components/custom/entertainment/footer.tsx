@@ -14,6 +14,7 @@ export default function Footer() {
 
   const apis = [
     {
+      server: "Server 1",
       name: "TMDb API",
       type: "Metadata Catalog",
       url: "https://www.themoviedb.org",
@@ -21,39 +22,51 @@ export default function Footer() {
         "Provides full metadata catalog, posters, ratings, and details for movies & TV series.",
     },
     {
-      name: "VidLink Pro (Player 1)",
+      server: "Server 1",
+      name: "VidLink Pro",
       type: "Streaming Player API",
       url: "https://vidlink.pro",
       description:
         "Primary high-performance HTML5 embed player with automatic playback state restoration.",
     },
     {
-      name: "VidSrc Me (Player 2)",
+      server: "Server 2",
+      name: "VidEasy",
       type: "Streaming Player API",
-      url: "https://vidsrc.me",
-      description:
-        "Legacy stable streaming resource serving extensive high-definition content streams.",
+      url: "https://player.videasy.net",
+      description: "Simple fallback embed player for movies and TV episodes.",
     },
     {
-      name: "VidKing Net (Player 3)",
+      server: "Server 3",
+      name: "VidKing Net",
       type: "Streaming Player API",
       url: "https://vidking.net",
       description:
         "Backup streaming API provider optimized for rapid loading of video content.",
     },
     {
-      name: "SuperEmbed (Player 4)",
+      server: "Server 4",
+      name: "VidSrc Me",
       type: "Streaming Player API",
-      url: "https://superembed.cc",
+      url: "https://vidsrc.me",
       description:
-        "Multi-server player embed offering adaptive bitrate streaming buffers.",
+        "Legacy stable streaming resource serving extensive high-definition content streams.",
     },
     {
-      name: "2Embed (Player 5)",
+      server: "Server 5",
+      name: "2Embed",
       type: "Streaming Player API",
       url: "https://2embed.cc",
       description:
         "Popular cloud-based alternative player offering cross-origin video sources.",
+    },
+    {
+      server: "Server 6",
+      name: "SuperEmbed",
+      type: "Streaming Player API",
+      url: "https://superembed.cc",
+      description:
+        "Multi-server player embed offering adaptive bitrate streaming buffers.",
     },
   ]
 
