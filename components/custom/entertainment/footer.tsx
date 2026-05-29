@@ -23,18 +23,18 @@ export default function Footer() {
     },
     {
       server: "Server 1",
+      name: "VidEasy",
+      type: "Streaming Player API",
+      url: "https://player.videasy.net",
+      description: "Simple fallback embed player for movies and TV episodes.",
+    },
+    {
+      server: "Server 2",
       name: "VidLink Pro",
       type: "Streaming Player API",
       url: "https://vidlink.pro",
       description:
         "Primary high-performance HTML5 embed player with automatic playback state restoration.",
-    },
-    {
-      server: "Server 2",
-      name: "VidEasy",
-      type: "Streaming Player API",
-      url: "https://player.videasy.net",
-      description: "Simple fallback embed player for movies and TV episodes.",
     },
     {
       server: "Server 3",

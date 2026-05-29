@@ -115,8 +115,8 @@ const Watch = () => {
   }
 
   const playerComponents: Record<string, JSX.Element> = {
-    "Server 1": <VidLinkPro {...playerBaseProps} startTime={startTime} />,
-    "Server 2": <VidEasy {...playerBaseProps} startTime={startTime} />,
+    "Server 1": <VidEasy {...playerBaseProps} startTime={startTime} />,
+    "Server 2": <VidLinkPro {...playerBaseProps} startTime={startTime} />,
     "Server 3": <VidKingPlayer {...playerBaseProps} startTime={startTime} />,
     "Server 4": <VidSrcMe {...playerBaseProps} />,
     "Server 5": <TwoEmbed {...playerBaseProps} />,
@@ -124,8 +124,8 @@ const Watch = () => {
   }
 
   const playerTooltips: Record<string, string> = {
-    "Server 1": "Reliable streaming with minimal ads",
-    "Server 2": "Reliable fallback player",
+    "Server 1": "Reliable fallback player",
+    "Server 2": "Reliable streaming with minimal ads",
     "Server 3": "Contains many ads  and pop-ups",
     "Server 4": "Contains many ads and pop-ups",
     "Server 5": "2embed alternative",
