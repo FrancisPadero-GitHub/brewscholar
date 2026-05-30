@@ -16,5 +16,20 @@
   // ignores unknown at rules in global.css
   "css.lint.unknownAtRules": "ignore",
   "editor.formatOnSave": true,
-  "workbench.colorTheme": "Monokai"
+  "workbench.colorTheme": "Monokai",
+  "files.watcherExclude": {
+    "**/.next/**": true,
+    "**/dist/**": true,
+    "**/node_modules/**": true
+  },
+  "files.exclude": {
+    "**/.next/**": true,
+    "**/dist/**": true,
+    "**/node_modules/**": true
+  },
+  "search.exclude": {
+    "**/.next/**": true,
+    "**/dist/**": true,
+    "**/node_modules/**": true
+  }
 }
