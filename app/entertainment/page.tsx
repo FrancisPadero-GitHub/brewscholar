@@ -146,6 +146,7 @@ export default function MovieHub() {
   const [heroIndex, setHeroIndex] = useState(0)
   // search bar
   const searchInputRef = useRef<HTMLInputElement>(null)
+  const searchResultsRef = useRef<HTMLDivElement>(null)
 
   // clear search
   const clearFilters = useCallback(() => {
@@ -153,6 +154,15 @@ export default function MovieHub() {
     if (searchInputRef.current) {
       searchInputRef.current.value = ""
     }
+  }, [])
+
+  const scrollToSearchResults = useCallback(() => {
+    window.requestAnimationFrame(() => {
+      searchResultsRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      })
+    })
   }, [])
 
   // Entertainment Mode Store
@@ -619,6 +629,7 @@ export default function MovieHub() {
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       setSearchQuery(searchInputRef.current?.value ?? "")
+                      scrollToSearchResults()
                     }
                   }}
                   className="rounded-full border-zinc-700 bg-zinc-900/50 pr-20 pl-9 text-sm text-foreground placeholder:text-zinc-600 focus-visible:border-primary focus-visible:ring-primary/30"
@@ -703,13 +714,15 @@ export default function MovieHub() {
           {!searchQuery && <ContinueWatching />}
 
           {/* Search Results */}
-          <SearchResults
-            searchResult={searchResult}
-            searchQuery={searchQuery}
-            isFetching={searchIsFetching}
-            isError={searchIsError}
-            error={searchError}
-          />
+          <div ref={searchResultsRef} className="scroll-mt-28">
+            <SearchResults
+              searchResult={searchResult}
+              searchQuery={searchQuery}
+              isFetching={searchIsFetching}
+              isError={searchIsError}
+              error={searchError}
+            />
+          </div>
 
           {/* Section header */}
           <div className="mb-6 flex items-center justify-between">

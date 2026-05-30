@@ -6,7 +6,9 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronDown,
+  ExternalLink,
 } from "lucide-react"
+import Link from "next/link"
 
 // hooks
 import { useFetchTvReviews } from "@/hooks/entertainment/fetch/tv-series/useFetchTvReviews"
@@ -331,6 +333,8 @@ export default function TvReviewsSection({ seriesId }: { seriesId: string }) {
   const showSkeleton = isFetching && displayedReviews.length === 0
 
   if (!showSkeleton && displayedReviews.length === 0 && reviews.length === 0) {
+    const tmdbReviewUrl = `https://www.themoviedb.org/tv/${seriesId}/reviews`
+
     return (
       <section className="space-y-4">
         <h2 className="flex items-center gap-2 text-xs font-semibold tracking-widest text-primary uppercase">
@@ -343,8 +347,17 @@ export default function TvReviewsSection({ seriesId }: { seriesId: string }) {
             No reviews found for this series.
           </p>
           <p className="mt-1 text-xs text-muted-foreground/60">
-            Be the first to share your thoughts on this content!
+            Leave the first review on TMDb. You can only rate this title there.
           </p>
+          <Link
+            href={tmdbReviewUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-xs font-semibold text-primary transition-colors hover:border-primary/40 hover:bg-primary/15"
+          >
+            Review on TMDb
+            <ExternalLink className="h-3.5 w-3.5" />
+          </Link>
         </div>
       </section>
     )
