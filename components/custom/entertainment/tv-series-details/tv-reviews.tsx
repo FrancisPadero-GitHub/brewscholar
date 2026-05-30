@@ -182,7 +182,7 @@ function ReviewContent({
               </DialogHeader>
 
               {/* Scrollable full content */}
-              <div className="scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent mt-2 max-h-[50vh] overflow-y-auto pr-2 text-left text-sm/relaxed whitespace-pre-line text-muted-foreground">
+              <div className="mt-2 max-h-[50vh] scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent overflow-y-auto pr-2 text-left text-sm/relaxed whitespace-pre-line text-muted-foreground">
                 <DialogDescription className="sr-only">
                   Full review by {displayName}
                 </DialogDescription>

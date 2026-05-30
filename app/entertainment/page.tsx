@@ -82,7 +82,7 @@ function MovieHeroLogo({ id, title }: { id: string; title: string }) {
     )
   }
   return (
-    <div className="relative h-20 w-80 sm:h-28 sm:w-[450px] overflow-hidden">
+    <div className="relative h-20 w-80 overflow-hidden sm:h-28 sm:w-[450px]">
       <Image
         src={`https://image.tmdb.org/t/p/w500${logo.file_path}`}
         alt={title}
@@ -106,7 +106,7 @@ function TvHeroLogo({ id, title }: { id: string; title: string }) {
     )
   }
   return (
-    <div className="relative h-20 w-80 sm:h-28 sm:w-[450px] overflow-hidden">
+    <div className="relative h-20 w-80 overflow-hidden sm:h-28 sm:w-[450px]">
       <Image
         src={`https://image.tmdb.org/t/p/w500${logo.file_path}`}
         alt={title}
