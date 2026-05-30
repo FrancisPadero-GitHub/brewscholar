@@ -31,6 +31,7 @@ interface MovieHeroProps {
   movieVideos: VideoItem[]
   bgVideo?: VideoItem
   logo?: ImageItem
+  isLogoLoading?: boolean
   onWatchTrailer: (key: string) => void
 }
 
@@ -38,6 +39,7 @@ export function MovieHero({
   movie,
   bgVideo,
   logo,
+  isLogoLoading,
   onWatchTrailer,
 }: MovieHeroProps) {
   const releaseYear = movie.release_date.split("-")[0] || "TBA"
@@ -79,6 +81,12 @@ export function MovieHero({
               Back
             </Button>
           </Link>
+
+          <Link href="/entertainment">
+            <h1 className="text-2xl font-black tracking-tight text-white drop-shadow-md sm:text-4xl">
+              Movie<span className="text-primary">Hub</span>
+            </h1>
+          </Link>
         </div>
       </div>
 
@@ -94,7 +102,7 @@ export function MovieHero({
                 fill
                 sizes="(max-width: 768px) 176px, 224px"
                 className="object-cover"
-                priority
+                loading="eager"
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center bg-muted">
@@ -118,7 +126,9 @@ export function MovieHero({
               ))}
             </div>
 
-            {logo ? (
+            {isLogoLoading ? (
+              <div className="h-16 w-64 animate-pulse rounded-lg bg-zinc-800 md:h-24 md:w-80" />
+            ) : logo ? (
               <div className="relative h-16 w-64 overflow-hidden md:h-24 md:w-80">
                 <Image
                   src={`${IMAGE_BASE_URL}${logo.file_path}`}
@@ -131,7 +141,7 @@ export function MovieHero({
               </div>
             ) : (
               <h1 className="text-3xl font-black tracking-tight text-foreground md:text-5xl">
-                {movie.title}
+                {movie.title.toUpperCase()}
               </h1>
             )}
 

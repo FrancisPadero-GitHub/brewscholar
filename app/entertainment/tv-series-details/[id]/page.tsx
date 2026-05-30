@@ -89,7 +89,7 @@ export default function TvSeriesDetails() {
   const { data: creditsData } = useFetchTvCredits(tvId)
   const credits = creditsData as TvCreditsApiResponse | undefined
 
-  const { data: imagesData } = useFetchTvImages(tvId)
+  const { data: imagesData, isLoading: isImagesLoading } = useFetchTvImages(tvId)
   const tvImages = imagesData as TvImagesApiResponse | undefined
 
   const { data: videosData } = useFetchTvVideos(tvId)
@@ -191,6 +191,7 @@ export default function TvSeriesDetails() {
         tvVideos={tvVideos}
         bgVideo={bgVideo}
         logo={logo}
+        isLogoLoading={isImagesLoading}
         onWatchTrailer={(key) => {
           setActiveVideoKey(key)
           setIsTrailerOpen(true)

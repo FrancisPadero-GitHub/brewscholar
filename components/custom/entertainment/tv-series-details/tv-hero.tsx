@@ -32,6 +32,7 @@ interface TvHeroProps {
   tvVideos: VideoItem[]
   bgVideo?: VideoItem
   logo?: ImageItem
+  isLogoLoading?: boolean
   onWatchTrailer: (key: string) => void
 }
 
@@ -39,9 +40,12 @@ export function TvHero({
   tv,
   bgVideo,
   logo,
+  isLogoLoading,
   onWatchTrailer,
 }: TvHeroProps) {
-  const releaseYear = tv.first_air_date ? tv.first_air_date.split("-")[0] : "TBA"
+  const releaseYear = tv.first_air_date
+    ? tv.first_air_date.split("-")[0]
+    : "TBA"
   const ratingColor = getRatingColor(tv.vote_average)
   const runtime = tv.episode_run_time.length > 0 ? tv.episode_run_time[0] : 0
 
@@ -81,6 +85,12 @@ export function TvHero({
               Back
             </Button>
           </Link>
+
+          <Link href="/entertainment">
+            <h1 className="text-2xl font-black tracking-tight text-white drop-shadow-md sm:text-4xl">
+              Movie<span className="text-primary">Hub</span>
+            </h1>
+          </Link>
         </div>
       </div>
 
@@ -96,7 +106,7 @@ export function TvHero({
                 fill
                 sizes="(max-width: 768px) 176px, 224px"
                 className="object-cover"
-                priority
+                loading="eager"
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center bg-muted">
@@ -120,7 +130,9 @@ export function TvHero({
               ))}
             </div>
 
-            {logo ? (
+            {isLogoLoading ? (
+              <div className="h-16 w-64 animate-pulse rounded-lg bg-zinc-800 md:h-24 md:w-80" />
+            ) : logo ? (
               <div className="relative h-16 w-64 overflow-hidden md:h-24 md:w-80">
                 <Image
                   src={`${IMAGE_BASE_URL}${logo.file_path}`}
@@ -133,7 +145,7 @@ export function TvHero({
               </div>
             ) : (
               <h1 className="text-3xl font-black tracking-tight text-foreground md:text-5xl">
-                {tv.name}
+                {tv.name.toUpperCase()}
               </h1>
             )}
 
@@ -215,7 +227,7 @@ export function TvHero({
                 <Button
                   size="sm"
                   onClick={() => onWatchTrailer(bgVideo.key)}
-                  className="mt-1 gap-2 rounded-full border border-zinc-700 bg-black/40 text-white font-semibold shadow-md backdrop-blur-md hover:bg-white hover:text-black transition-all cursor-pointer animate-pulse"
+                  className="mt-1 animate-pulse cursor-pointer gap-2 rounded-full border border-zinc-700 bg-black/40 font-semibold text-white shadow-md backdrop-blur-md transition-all hover:bg-white hover:text-black"
                 >
                   <Film className="h-3.5 w-3.5 text-primary" />
                   Watch Trailer
@@ -234,7 +246,7 @@ export function TvHero({
                 <Link href={buildWatchTvPath(tv.id, tv.name)}>
                   <Button
                     size="sm"
-                    className="mt-1 gap-2 rounded-full border border-primary/50 bg-primary font-bold text-primary-foreground shadow-lg shadow-primary/30 transition-all duration-300 hover:bg-primary/90 hover:shadow-primary/40 cursor-pointer"
+                    className="mt-1 cursor-pointer gap-2 rounded-full border border-primary/50 bg-primary font-bold text-primary-foreground shadow-lg shadow-primary/30 transition-all duration-300 hover:bg-primary/90 hover:shadow-primary/40"
                   >
                     <Play className="h-4 w-4 fill-current" />
                     Play Now

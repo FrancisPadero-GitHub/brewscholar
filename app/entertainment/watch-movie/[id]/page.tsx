@@ -163,7 +163,7 @@ const Watch = () => {
       {/* ── Main Content ── */}
       <div className="relative z-10 mx-auto max-w-6xl space-y-4 px-6 pt-6 pb-16 sm:space-y-6 sm:pb-20">
         {/* ── Top nav row */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between">
           <Link href={buildMovieDetailsPath(movieId, movie?.title)}>
             <Button
               variant="outline"

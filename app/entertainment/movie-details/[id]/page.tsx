@@ -92,7 +92,7 @@ export default function MovieDetails() {
   const { data: creditsData } = useFetchMovieCredits(movieId)
   const credits = creditsData as MovieCreditsApiResponse | undefined
 
-  const { data: imagesData } = useFetchMovieImages(movieId)
+  const { data: imagesData, isLoading: isImagesLoading } = useFetchMovieImages(movieId)
   const movieImages = imagesData as MovieImagesApiResponse | undefined
 
   const { data: videosData } = useFetchMovieVideos(movieId)
@@ -195,6 +195,7 @@ export default function MovieDetails() {
         movieVideos={movieVideos}
         bgVideo={bgVideo}
         logo={logo}
+        isLogoLoading={isImagesLoading}
         onWatchTrailer={(key) => {
           setActiveVideoKey(key)
           setIsTrailerOpen(true)

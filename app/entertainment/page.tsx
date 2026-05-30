@@ -72,11 +72,18 @@ import {
 import { useEntertainmentMode } from "@/features/zustand/entertainment/entertaiment-mode"
 
 function MovieHeroLogo({ id, title }: { id: string; title: string }) {
-  const { data } = useFetchMovieImages(id)
+  const { data, isLoading } = useFetchMovieImages(id)
   const logo = data?.logos.find((l) => l.iso_639_1 === "en") || data?.logos[0]
+
+  if (isLoading) {
+    return (
+      <div className="h-20 w-80 animate-pulse rounded-lg bg-zinc-800 sm:h-28 sm:w-[450px]" />
+    )
+  }
+
   if (!logo) {
     return (
-      <h1 className="text-4xl leading-none font-black tracking-tight text-white sm:text-5xl lg:text-6xl">
+      <h1 className="text-4xl leading-none font-black tracking-tight text-white sm:text-5xl lg:text-6xl drop-shadow-md">
         {title.toUpperCase()}
       </h1>
     )
@@ -96,11 +103,18 @@ function MovieHeroLogo({ id, title }: { id: string; title: string }) {
 }
 
 function TvHeroLogo({ id, title }: { id: string; title: string }) {
-  const { data } = useFetchTvImages(id)
+  const { data, isLoading } = useFetchTvImages(id)
   const logo = data?.logos.find((l) => l.iso_639_1 === "en") || data?.logos[0]
+
+  if (isLoading) {
+    return (
+      <div className="h-20 w-80 animate-pulse rounded-lg bg-zinc-800 sm:h-28 sm:w-[450px]" />
+    )
+  }
+
   if (!logo) {
     return (
-      <h1 className="text-4xl leading-none font-black tracking-tight text-white sm:text-5xl lg:text-6xl">
+      <h1 className="text-4xl leading-none font-black tracking-tight text-white sm:text-5xl lg:text-6xl drop-shadow-md">
         {title.toUpperCase()}
       </h1>
     )
