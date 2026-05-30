@@ -33,6 +33,7 @@ import { BACKDROP_BASE_URL } from "@/constants/image-size"
 import { useFetchTvDetails } from "@/hooks/entertainment/fetch/tv-series/useFetchTvDetails"
 
 // components
+import { TvHero } from "@/components/custom/entertainment/tv-series-details/tv-hero"
 import VidKingPlayer from "@/components/custom/entertainment/player/VidKingNet"
 import VidEasy from "@/components/custom/entertainment/player/VidEasy"
 import VidSrcMe from "@/components/custom/entertainment/player/VidSrcMe"
@@ -196,27 +197,16 @@ const WatchTv = () => {
 
   return (
     <main className="relative min-h-screen bg-background text-foreground">
-      {/* ── Backdrop image ── */}
-      {mediaBackdrop && (
-        <div className="pointer-events-none absolute top-0 left-0 z-0 h-[50vh] w-full overflow-hidden">
-          <Image
-            src={`${BACKDROP_BASE_URL}${mediaBackdrop}`}
-            alt={mediaTitle || "Backdrop"}
-            fill
-            sizes="100vw"
-            className="object-cover object-top"
-            priority
-          />
-          <div className="absolute inset-0 bg-linear-to-t from-background via-background/60 to-background/10" />
-          <div className="absolute inset-0 bg-linear-to-r from-background via-transparent to-transparent" />
-        </div>
-      )}
-
-      {/* ── Main Content ── */}
-      <div className="relative z-10 mx-auto max-w-6xl space-y-4 px-6 pt-6 pb-16 sm:space-y-6 sm:pb-20">
-        {/* ── Top nav row */}
-        <div className="flex items-center gap-3">
-          <Link href={buildTvDetailsPath(tvId, tvShow?.name)}>
+      {/* ── TvHero Backdrop and Nav (minimal mode) ── */}
+      {tvShow ? (
+        <TvHero
+          tv={tvShow}
+          minimal
+          backUrl={buildTvDetailsPath(tvId, tvShow.name)}
+        />
+      ) : (
+        <div className="relative z-20 mx-auto flex max-w-6xl items-center justify-between px-6 pt-7">
+          <Link href={buildTvDetailsPath(tvId)}>
             <Button
               variant="outline"
               size="sm"
@@ -226,12 +216,17 @@ const WatchTv = () => {
               Back
             </Button>
           </Link>
-          <Link href="/entertainment" className="ml-auto">
-            <h1 className="text-2xl font-black tracking-tight text-foreground sm:text-4xl">
+
+          <Link href="/entertainment">
+            <h1 className="text-2xl font-black tracking-tight text-white drop-shadow-md sm:text-4xl">
               Movie<span className="text-primary">Hub</span>
             </h1>
           </Link>
         </div>
+      )}
+
+      {/* ── Main Content ── */}
+      <div className="relative z-10 mx-auto max-w-6xl space-y-4 px-6 pt-6 pb-16 sm:space-y-6 sm:pb-20">
 
         {/* conditional rendering to only show the player and info if we have a valid tvId - otherwise show a loading spinner or error message. 
         This prevents rendering the players with an invalid ID, which can cause confusing errors and a bad user experience. */}

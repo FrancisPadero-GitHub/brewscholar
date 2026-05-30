@@ -28,11 +28,13 @@ import type { ImageItem } from "@/types/entertainment/movies/movie-images"
 
 interface MovieHeroProps {
   movie: MovieDetailsApiResponse
-  movieVideos: VideoItem[]
+  movieVideos?: VideoItem[]
   bgVideo?: VideoItem
   logo?: ImageItem
   isLogoLoading?: boolean
-  onWatchTrailer: (key: string) => void
+  minimal?: boolean
+  backUrl?: string
+  onWatchTrailer?: (key: string) => void
 }
 
 export function MovieHero({
@@ -40,10 +42,61 @@ export function MovieHero({
   bgVideo,
   logo,
   isLogoLoading,
+  minimal = false,
+  backUrl = "/entertainment",
   onWatchTrailer,
 }: MovieHeroProps) {
-  const releaseYear = movie.release_date.split("-")[0] || "TBA"
+  const releaseYear = movie.release_date ? movie.release_date.split("-")[0] : "TBA"
   const ratingColor = getRatingColor(movie.vote_average)
+
+  if (minimal) {
+    return (
+      <>
+        {/* ── HERO BACKDROP (Minimal Mode) ── */}
+        <div className="pointer-events-none absolute top-0 left-0 z-0 h-[50vh] w-full overflow-hidden bg-zinc-950">
+          {/* Backdrop image */}
+          <div className="absolute inset-0 opacity-50">
+            {movie.backdrop_path ? (
+              <Image
+                src={`${BACKDROP_BASE_URL}${movie.backdrop_path}`}
+                alt={movie.title}
+                fill
+                sizes="100vw"
+                className="object-cover object-top"
+                priority
+              />
+            ) : (
+              <div className="h-full w-full bg-muted" />
+            )}
+          </div>
+
+          {/* Gradient overlays */}
+          <div className="absolute inset-0 bg-linear-to-t from-background via-background/60 to-background/10" />
+          <div className="absolute inset-0 bg-linear-to-r from-background via-transparent to-transparent" />
+        </div>
+
+        {/* Back button and logo floating in hero */}
+        <div className="relative z-20 mx-auto flex max-w-6xl items-center justify-between px-6 pt-7">
+          <Link href={backUrl}>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2 border-zinc-700 bg-black/40 text-white backdrop-blur-md hover:bg-primary hover:text-primary-foreground"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back
+            </Button>
+          </Link>
+
+          <Link href="/entertainment">
+            <h1 className="text-2xl font-black tracking-tight text-white drop-shadow-md sm:text-4xl">
+              Movie<span className="text-primary">Hub</span>
+            </h1>
+          </Link>
+        </div>
+      </>
+    )
+  }
 
   return (
     <>
@@ -71,7 +124,7 @@ export function MovieHero({
 
         {/* Back button floating in hero */}
         <div className="relative z-20 mx-auto flex max-w-6xl items-center justify-between px-6 pt-7">
-          <Link href="/entertainment">
+          <Link href={backUrl}>
             <Button
               variant="outline"
               size="sm"
@@ -219,7 +272,7 @@ export function MovieHero({
               )}
 
               {/* Watch Trailer */}
-              {bgVideo && (
+              {bgVideo && onWatchTrailer && (
                 <Button
                   size="sm"
                   onClick={() => onWatchTrailer(bgVideo.key)}
@@ -237,22 +290,22 @@ export function MovieHero({
                   duration: 2,
                   repeat: Infinity,
                   ease: "easeInOut",
-                }}
-              >
-                <Link href={buildWatchMoviePath(movie.id, movie.title)}>
-                  <Button
-                    size="sm"
-                    className="mt-1 cursor-pointer gap-2 rounded-full border border-primary/50 bg-primary font-bold text-primary-foreground shadow-lg shadow-primary/30 transition-all duration-300 hover:bg-primary/90 hover:shadow-primary/40"
-                  >
-                    <Play className="h-4 w-4 fill-current" />
-                    Play Now
-                  </Button>
-                </Link>
-              </motion.div>
+                  }}
+                >
+                  <Link href={buildWatchMoviePath(movie.id, movie.title)}>
+                    <Button
+                      size="sm"
+                      className="mt-1 cursor-pointer gap-2 rounded-full border border-primary/50 bg-primary font-bold text-primary-foreground shadow-lg shadow-primary/30 transition-all duration-300 hover:bg-primary/90 hover:shadow-primary/40"
+                    >
+                      <Play className="h-4 w-4 fill-current" />
+                      Play Now
+                    </Button>
+                  </Link>
+                </motion.div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </>
-  )
+      </>
+    )
 }
