@@ -83,7 +83,7 @@ function MovieHeroLogo({ id, title }: { id: string; title: string }) {
 
   if (!logo) {
     return (
-      <h1 className="text-4xl leading-none font-black tracking-tight text-white sm:text-5xl lg:text-6xl drop-shadow-md">
+      <h1 className="text-4xl leading-none font-black tracking-tight text-white drop-shadow-md sm:text-5xl lg:text-6xl">
         {title.toUpperCase()}
       </h1>
     )
@@ -114,7 +114,7 @@ function TvHeroLogo({ id, title }: { id: string; title: string }) {
 
   if (!logo) {
     return (
-      <h1 className="text-4xl leading-none font-black tracking-tight text-white sm:text-5xl lg:text-6xl drop-shadow-md">
+      <h1 className="text-4xl leading-none font-black tracking-tight text-white drop-shadow-md sm:text-5xl lg:text-6xl">
         {title.toUpperCase()}
       </h1>
     )
@@ -440,7 +440,7 @@ export default function MovieHub() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* ══════════════════════ HERO BANNER ══════════════════════ */}
+      {/* HERO BANNER */}
       <section className="relative h-[465px] w-full overflow-hidden bg-zinc-950 sm:h-[500px]">
         {/* Backdrop image */}
         {featuredMovie?.backdrop_path && (
@@ -466,6 +466,28 @@ export default function MovieHub() {
           <div className="absolute inset-0 flex items-end">
             <div className="mx-auto flex w-full max-w-7xl flex-col items-start justify-between px-6 pb-10 sm:flex-row sm:items-end">
               <div className="w-full max-w-2xl space-y-4">
+                {/* Logo */}
+                <div>
+                  <Link
+                    href="/entertainment"
+                    className="flex items-center gap-2 transition-opacity hover:opacity-95"
+                  >
+                    <h1 className="text-2xl font-black tracking-tight text-white drop-shadow-md sm:text-4xl">
+                      Movie<span className="text-primary">Hub</span>
+                    </h1>
+                    <div className="relative h-7 w-7 sm:h-9 sm:w-9">
+                      <Image
+                        src="/brewscholar-yellow.png"
+                        alt="BrewScholar Logo"
+                        fill
+                        className="object-contain"
+                        sizes="(max-width: 640px) 28px, 36px"
+                        priority
+                      />
+                    </div>
+                  </Link>
+                </div>
+
                 {/* Mode pill */}
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/20 px-3 py-1 text-xs font-bold tracking-wide text-primary uppercase backdrop-blur-sm">
                   {isMovie ? (
@@ -588,7 +610,7 @@ export default function MovieHub() {
         )}
       </section>
 
-      {/* ══════════════════════ STICKY FILTER BAR ══════════════════════ */}
+      {/* STICKY FILTER BAR */}
       {isFetching ? (
         <FilterBarSkeleton />
       ) : (
@@ -721,7 +743,7 @@ export default function MovieHub() {
         </div>
       )}
 
-      {/* ══════════════════════ MAIN CONTENT ══════════════════════ */}
+      {/* MAIN CONTENT */}
       <div className="mx-auto max-w-7xl px-6 pt-6 pb-16">
         <main>
           {/* Continue Watching */}

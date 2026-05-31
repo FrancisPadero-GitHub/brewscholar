@@ -46,7 +46,9 @@ export function MovieHero({
   backUrl = "/entertainment",
   onWatchTrailer,
 }: MovieHeroProps) {
-  const releaseYear = movie.release_date ? movie.release_date.split("-")[0] : "TBA"
+  const releaseYear = movie.release_date
+    ? movie.release_date.split("-")[0]
+    : "TBA"
   const ratingColor = getRatingColor(movie.vote_average)
 
   if (minimal) {
@@ -92,6 +94,16 @@ export function MovieHero({
             <h1 className="text-2xl font-black tracking-tight text-white drop-shadow-md sm:text-4xl">
               Movie<span className="text-primary">Hub</span>
             </h1>
+            <div className="relative h-7 w-7 sm:h-9 sm:w-9">
+              <Image
+                src="/brewscholar-yellow.png"
+                alt="BrewScholar Logo"
+                fill
+                className="object-contain"
+                sizes="(max-width: 640px) 28px, 36px"
+                priority
+              />
+            </div>
           </Link>
         </div>
       </>
@@ -290,22 +302,22 @@ export function MovieHero({
                   duration: 2,
                   repeat: Infinity,
                   ease: "easeInOut",
-                  }}
-                >
-                  <Link href={buildWatchMoviePath(movie.id, movie.title)}>
-                    <Button
-                      size="sm"
-                      className="mt-1 cursor-pointer gap-2 rounded-full border border-primary/50 bg-primary font-bold text-primary-foreground shadow-lg shadow-primary/30 transition-all duration-300 hover:bg-primary/90 hover:shadow-primary/40"
-                    >
-                      <Play className="h-4 w-4 fill-current" />
-                      Play Now
-                    </Button>
-                  </Link>
-                </motion.div>
-              </div>
+                }}
+              >
+                <Link href={buildWatchMoviePath(movie.id, movie.title)}>
+                  <Button
+                    size="sm"
+                    className="mt-1 cursor-pointer gap-2 rounded-full border border-primary/50 bg-primary font-bold text-primary-foreground shadow-lg shadow-primary/30 transition-all duration-300 hover:bg-primary/90 hover:shadow-primary/40"
+                  >
+                    <Play className="h-4 w-4 fill-current" />
+                    Play Now
+                  </Button>
+                </Link>
+              </motion.div>
             </div>
           </div>
         </div>
-      </>
-    )
+      </div>
+    </>
+  )
 }

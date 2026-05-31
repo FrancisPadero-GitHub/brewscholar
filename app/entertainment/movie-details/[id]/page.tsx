@@ -92,7 +92,8 @@ export default function MovieDetails() {
   const { data: creditsData } = useFetchMovieCredits(movieId)
   const credits = creditsData as MovieCreditsApiResponse | undefined
 
-  const { data: imagesData, isLoading: isImagesLoading } = useFetchMovieImages(movieId)
+  const { data: imagesData, isLoading: isImagesLoading } =
+    useFetchMovieImages(movieId)
   const movieImages = imagesData as MovieImagesApiResponse | undefined
 
   const { data: videosData } = useFetchMovieVideos(movieId)
@@ -261,7 +262,7 @@ export default function MovieDetails() {
                   <Users className="h-4 w-4" />
                   Top Cast
                 </h2>
-                <div className="scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent flex gap-4 overflow-x-auto pb-4">
+                <div className="flex scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent gap-4 overflow-x-auto pb-4">
                   {credits.cast.slice(0, 5).map((actor) => (
                     <div
                       key={actor.id}
