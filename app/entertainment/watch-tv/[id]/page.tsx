@@ -217,10 +217,20 @@ const WatchTv = () => {
             </Button>
           </Link>
 
-          <Link href="/entertainment">
-            <h1 className="text-2xl font-black tracking-tight text-white drop-shadow-md sm:text-4xl">
+          <Link href="/entertainment" className="flex items-center gap-2 group">
+            <div className="relative h-7 w-7 sm:h-9 sm:w-9 shrink-0 transition-transform duration-300 group-hover:scale-110">
+              <Image
+                src="/brewscholar-yellow.png"
+                alt="BrewScholar Logo"
+                fill
+                className="object-contain"
+                sizes="(max-width: 640px) 28px, 36px"
+                priority
+              />
+            </div>
+            <span className="text-2xl font-black tracking-tight text-white drop-shadow-md sm:text-4xl">
               Movie<span className="text-primary">Hub</span>
-            </h1>
+            </span>
           </Link>
         </div>
       )}

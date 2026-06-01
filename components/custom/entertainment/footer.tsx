@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { ExternalLink, ShieldCheck, Cpu } from "lucide-react"
 import {
   HoverCard,
@@ -78,9 +79,18 @@ export default function Footer() {
           <div className="space-y-3 text-center md:space-y-2 md:text-left">
             <Link
               href="/entertainment"
-              className="flex items-center justify-center gap-2 md:justify-start"
+              className="flex items-center justify-center gap-2 md:justify-start group"
             >
-              <span className="text-xl font-black tracking-tight text-white">
+              <div className="relative h-6 w-6 shrink-0 transition-transform duration-300 group-hover:scale-110">
+                <Image
+                  src="/brewscholar-yellow.png"
+                  alt="BrewScholar Logo"
+                  fill
+                  className="object-contain"
+                  sizes="24px"
+                />
+              </div>
+              <span className="text-xl font-black tracking-tight text-white transition-colors duration-300">
                 Movie<span className="text-primary">Hub</span>
               </span>
             </Link>

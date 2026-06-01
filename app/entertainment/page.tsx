@@ -470,12 +470,9 @@ export default function MovieHub() {
                 <div>
                   <Link
                     href="/entertainment"
-                    className="flex items-center gap-2 transition-opacity hover:opacity-95"
+                    className="flex items-center gap-2 group transition-opacity hover:opacity-95"
                   >
-                    <h1 className="text-2xl font-black tracking-tight text-white drop-shadow-md sm:text-4xl">
-                      Movie<span className="text-primary">Hub</span>
-                    </h1>
-                    <div className="relative h-7 w-7 sm:h-9 sm:w-9">
+                    <div className="relative h-7 w-7 sm:h-9 sm:w-9 shrink-0 transition-transform duration-300 group-hover:scale-110">
                       <Image
                         src="/brewscholar-yellow.png"
                         alt="BrewScholar Logo"
@@ -485,6 +482,9 @@ export default function MovieHub() {
                         priority
                       />
                     </div>
+                    <span className="text-2xl font-black tracking-tight text-white drop-shadow-md sm:text-4xl">
+                      Movie<span className="text-primary">Hub</span>
+                    </span>
                   </Link>
                 </div>
 
