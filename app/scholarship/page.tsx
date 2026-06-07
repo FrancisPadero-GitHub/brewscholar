@@ -1,12 +1,17 @@
-"use client"
-
-import { useRouter } from "next/navigation"
-import { ArrowLeft } from "lucide-react"
+import type { Metadata } from "next"
 import Image from "next/image"
+import { BackButton } from "@/components/custom/back-button"
+
+export const metadata: Metadata = {
+  title: "Scholarship",
+  description: "Find and apply for educational opportunities and brew up your brightest future with BrewScholar.",
+  openGraph: {
+    title: "Scholarship | BrewScholar",
+    description: "Find and apply for educational opportunities and brew up your brightest future with BrewScholar.",
+  },
+}
 
 export default function ScholarshipPage() {
-  const router = useRouter()
-
   return (
     <div className="min-h-screen bg-background text-foreground">
       <style>{`
@@ -66,18 +71,12 @@ export default function ScholarshipPage() {
       <div className="px-6 pb-20">
         <div className="uc-card">
           <div className="uc-back">
-            <button
-              onClick={() => router.back()}
-              aria-label="Go back"
-              className="inline-flex items-center justify-center rounded-full bg-white/10 p-2 hover:bg-white/20"
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </button>
+            <BackButton />
           </div>
 
           <div className="uc-title">Under Construction</div>
           <div className="uc-sub">
-            We&apos;re working on this section — check back soon.
+            We&apos;re working on this section - check back soon.
           </div>
           <div className="bounce text-sm text-white/90">
             Building something great ✨
@@ -87,3 +86,4 @@ export default function ScholarshipPage() {
     </div>
   )
 }
+

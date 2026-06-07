@@ -31,5 +31,6 @@
     "**/.next/**": true,
     "**/dist/**": true,
     "**/node_modules/**": true
-  }
+  },
+  "explorer.compactFolders": false
 }

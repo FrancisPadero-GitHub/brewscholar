@@ -5,12 +5,11 @@ import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
-import { motion, AnimatePresence } from "motion/react"
+import { motion,
+  //  AnimatePresence
+   } from "motion/react"
 
-const navLinks = [
-  { label: "Ecosystem", href: "#ecosystem" },
-  { label: "Tech Stack", href: "#tech-stack" },
-]
+// const navLinks = [{ label: "Ecosystem", href: "#ecosystem" }]
 
 export function HomeNavbar() {
   const [scrolled, setScrolled] = useState(false)
@@ -51,7 +50,7 @@ export function HomeNavbar() {
         </Link>
 
         {/* Desktop Nav */}
-        <div className="hidden items-center gap-1 md:flex">
+        {/* <div className="hidden items-center gap-1 md:flex">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -61,18 +60,15 @@ export function HomeNavbar() {
               {link.label}
             </Link>
           ))}
-        </div>
+        </div> */}
 
         {/* Desktop CTA */}
         <div className="hidden items-center gap-3 md:flex">
-
           <Button
             asChild
             className="cursor-pointer bg-primary font-semibold text-primary-foreground shadow-md transition-all duration-200 hover:bg-primary/90 hover:shadow-lg"
           >
-            <Link href="#ecosystem">
-              Explore Ecosystem
-            </Link>
+            <Link href="#ecosystem">Explore Ecosystem</Link>
           </Button>
         </div>
 
@@ -82,12 +78,16 @@ export function HomeNavbar() {
           className="cursor-pointer rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground md:hidden"
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
         >
-          {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          {mobileOpen ? (
+            <X className="h-5 w-5" />
+          ) : (
+            <Menu className="h-5 w-5" />
+          )}
         </button>
       </div>
 
       {/* Mobile Menu */}
-      <AnimatePresence>
+      {/* <AnimatePresence>
         {mobileOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
@@ -108,21 +108,18 @@ export function HomeNavbar() {
                 </Link>
               ))}
               <div className="mt-2 flex flex-col gap-2 border-t border-border/50 pt-3">
-
                 <Button
                   asChild
                   className="w-full cursor-pointer bg-primary font-semibold text-primary-foreground"
                   onClick={() => setMobileOpen(false)}
                 >
-                  <Link href="#ecosystem">
-                    Explore Ecosystem
-                  </Link>
+                  <Link href="#ecosystem">Explore Ecosystem</Link>
                 </Button>
               </div>
             </div>
           </motion.div>
         )}
-      </AnimatePresence>
+      </AnimatePresence> */}
     </motion.nav>
   )
 }

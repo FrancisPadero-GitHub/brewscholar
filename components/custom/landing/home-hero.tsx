@@ -10,8 +10,8 @@ export function HomeHero() {
     <section className="relative flex min-h-[90vh] items-center justify-center overflow-hidden bg-background pt-20">
       {/* Abstract background elements */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-[20%] -left-[10%] h-[70vh] w-[70vw] rounded-[100%] bg-primary/5 blur-[120px] dark:bg-primary/10" />
-        <div className="absolute top-[40%] -right-[10%] h-[60vh] w-[60vw] rounded-[100%] bg-primary/5 blur-[100px] dark:bg-primary/5" />
+        <div className="absolute top-[20%] left-[10%] h-[70vh] w-[70vw] rounded-[100%] bg-primary/5 blur-[120px] dark:bg-primary/10" />
+        <div className="absolute top-[40%] right-[10%] h-[60vh] w-[60vw] rounded-[100%] bg-primary/5 blur-[100px] dark:bg-primary/5" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-6 py-20 text-center">
@@ -30,11 +30,11 @@ export function HomeHero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
-          className="mx-auto mb-6 max-w-4xl text-balance font-sans text-5xl font-black leading-[1.1] tracking-tight text-foreground sm:text-6xl md:text-7xl lg:text-8xl"
+          className="mx-auto mb-6 max-w-4xl font-sans text-5xl leading-[1.1] font-black tracking-tight text-balance text-foreground sm:text-6xl md:text-7xl lg:text-8xl"
           style={{ letterSpacing: "-0.02em" }}
         >
           Pour over opportunities. <br className="hidden md:block" />
-          <span className="bg-gradient-to-r from-primary/80 to-primary bg-clip-text text-transparent">
+          <span className="bg-linear-to-r from-primary/80 to-primary bg-clip-text text-transparent">
             Brew up your future.
           </span>
         </motion.h1>
@@ -43,10 +43,10 @@ export function HomeHero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-          className="mx-auto mb-10 max-w-2xl text-balance font-serif text-lg leading-relaxed text-muted-foreground sm:text-xl"
+          className="mx-auto mb-10 max-w-2xl font-serif text-lg leading-relaxed text-balance text-muted-foreground sm:text-xl"
         >
           Discover the BrewScholar ecosystem. From limitless entertainment to
-          secure file hosting and educational opportunities—all in one place.
+          secure file hosting and educational opportunities-all in one place.
         </motion.p>
 
         <motion.div

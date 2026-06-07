@@ -1,8 +1,7 @@
-import { HomeNavbar } from "@/features/home/home-navbar"
-import { HomeHero } from "@/features/home/home-hero"
-import { HomeEcosystem } from "@/features/home/home-ecosystem"
-import { HomeTechStack } from "@/features/home/home-tech-stack"
-import { HomeFooter } from "@/features/home/home-footer"
+import { HomeNavbar } from "@/components/custom/landing/home-navbar"
+import { HomeHero } from "@/components/custom/landing/home-hero"
+import { HomeEcosystem } from "@/components/custom/landing/home-ecosystem"
+import { HomeFooter } from "@/components/custom/landing/home-footer"
 
 export default function LandingPage() {
   return (
@@ -10,7 +9,6 @@ export default function LandingPage() {
       <HomeNavbar />
       <HomeHero />
       <HomeEcosystem />
-      <HomeTechStack />
       <HomeFooter />
     </div>
   )

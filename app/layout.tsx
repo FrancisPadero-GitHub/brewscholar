@@ -29,9 +29,38 @@ const fontMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "BrewScholar",
-  description:
-    "Pour over opportunities and brew up your brightest future with BrewScholar",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://www.brewscholar.app"),
+  title: {
+    default: "BrewScholar",
+    template: "%s | BrewScholar",
+  },
+  description: "Pour over opportunities and brew up your brightest future with BrewScholar",
+  keywords: ["scholarships", "education", "brewscholar", "opportunities", "students"],
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "BrewScholar",
+    description: "Pour over opportunities and brew up your brightest future with BrewScholar",
+    url: "/",
+    siteName: "BrewScholar",
+    locale: "en_US",
+    type: "website",
+    images: [
+      {
+        url: "/brewscholar-yellow.png",
+        width: 1200,
+        height: 630,
+        alt: "BrewScholar - Pour over opportunities and brew up your brightest future",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "BrewScholar",
+    description: "Pour over opportunities and brew up your brightest future with BrewScholar",
+    images: ["/brewscholar-yellow.png"],
+  },
 }
 
 export default function RootLayout({
