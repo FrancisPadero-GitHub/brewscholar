@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function ScholarshipPage() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <main className="min-h-screen bg-background text-foreground">
       <style>{`
         .uc-card{
           position:relative;
@@ -83,7 +83,7 @@ export default function ScholarshipPage() {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   )
 }
 

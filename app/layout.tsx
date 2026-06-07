@@ -36,9 +36,6 @@ export const metadata: Metadata = {
   },
   description: "Pour over opportunities and brew up your brightest future with BrewScholar",
   keywords: ["scholarships", "education", "brewscholar", "opportunities", "students"],
-  alternates: {
-    canonical: "/",
-  },
   openGraph: {
     title: "BrewScholar",
     description: "Pour over opportunities and brew up your brightest future with BrewScholar",
