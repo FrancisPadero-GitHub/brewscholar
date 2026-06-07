@@ -1,4 +1,4 @@
-import { Film, GraduationCap, FolderOpen } from "lucide-react"
+import { GraduationCap, FolderOpen, Film } from "lucide-react"
 
 export const features = [
   {
@@ -6,7 +6,7 @@ export const features = [
     title: "Movie Hub",
     description: "Browse and discover your favorite movies and shows",
     icon: Film,
-    href: "/entertainment",
+    href: "https://moviehub.brewscholar.app", // actual subdomain
   },
   {
     id: 2,
