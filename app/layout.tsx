@@ -29,16 +29,26 @@ const fontMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://www.brewscholar.app"),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL || "https://www.brewscholar.app"
+  ),
   title: {
     default: "BrewScholar",
     template: "%s | BrewScholar",
   },
-  description: "Pour over opportunities and brew up your brightest future with BrewScholar",
-  keywords: ["scholarships", "education", "brewscholar", "opportunities", "students"],
+  description:
+    "Pour over opportunities and brew up your brightest future with BrewScholar",
+  keywords: [
+    "scholarships",
+    "moviehubs",
+    "brewscholar",
+    "opportunities",
+    "students",
+  ],
   openGraph: {
     title: "BrewScholar",
-    description: "Pour over opportunities and brew up your brightest future with BrewScholar",
+    description:
+      "Pour over opportunities and brew up your brightest future with BrewScholar",
     url: "/",
     siteName: "BrewScholar",
     locale: "en_US",
@@ -55,7 +65,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "BrewScholar",
-    description: "Pour over opportunities and brew up your brightest future with BrewScholar",
+    description:
+      "Pour over opportunities and brew up your brightest future with BrewScholar",
     images: ["/brewscholar-yellow.png"],
   },
 }
