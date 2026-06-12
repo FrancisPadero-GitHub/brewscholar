@@ -5,7 +5,6 @@ import { Inter, Source_Serif_4, JetBrains_Mono } from "next/font/google"
 import "./globals.css"
 
 // components
-import { QueryProvider } from "@/components/query-provider"
 import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
 
@@ -39,11 +38,29 @@ export const metadata: Metadata = {
   description:
     "Pour over opportunities and brew up your brightest future with BrewScholar",
   keywords: [
-    "scholarships",
-    "moviehubs",
-    "brewscholar",
-    "opportunities",
-    "students",
+    "brew scholar",
+    "movie tracker",
+    "film reviews",
+    "tmdb movie player",
+    "imdb movie player",
+    "movie watchlist app",
+    "cinema database",
+    "movie recommendations",
+    "best movies app",
+    "watch movies online",
+    "free movie streaming",
+    "hd movie player",
+    "online cinema",
+    "cinephile app",
+    "movie discovery",
+    "film database",
+    "track movies watched",
+    "movie collection",
+    "watchlist manager",
+    " cinema tracker",
+    "stream movies free",
+    "hd movie streaming",
+    "cinema hub",
   ],
   openGraph: {
     title: "BrewScholar",
@@ -83,11 +100,9 @@ export default function RootLayout({
       >
         <Analytics />
         <SpeedInsights />
-        <QueryProvider>
-          <ThemeProvider>
-            <TooltipProvider>{children}</TooltipProvider>
-          </ThemeProvider>
-        </QueryProvider>
+        <ThemeProvider>
+          <TooltipProvider>{children}</TooltipProvider>
+        </ThemeProvider>
       </body>
     </html>
   )
