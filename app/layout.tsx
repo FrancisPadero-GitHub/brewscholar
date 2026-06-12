@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_APP_URL || "https://www.brewscholar.app"
   ),
   title: {
-    default: "BrewScholar",
+    default: "BrewScholar | Pour over opportunities for your future",
     template: "%s | BrewScholar",
   },
   description:
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
     "cinema hub",
   ],
   openGraph: {
-    title: "BrewScholar",
+    title: "BrewScholar | Pour over opportunities for your future",
     description:
       "Pour over opportunities and brew up your brightest future with BrewScholar",
     url: "/",
@@ -81,7 +81,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "BrewScholar",
+    title: "BrewScholar | Pour over opportunities for your future",
     description:
       "Pour over opportunities and brew up your brightest future with BrewScholar",
     images: ["/og-image.png"],
