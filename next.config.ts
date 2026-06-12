@@ -5,9 +5,9 @@ const nextConfig: NextConfig = {
   devIndicators: {
     position: "bottom-left",
   },
-  images: {
-    unoptimized: true, // Disable Next.js's built-in image optimization to avoid hitting the 5k limit prop
-  },
+  // images: {
+  //   unoptimized: false, // Disable Next.js's built-in image optimization to avoid hitting the 5k limit prop
+  // },
 }
 
 export default nextConfig
