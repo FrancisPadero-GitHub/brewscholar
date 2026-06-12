@@ -58,16 +58,26 @@ export default function Page() {
 You must inject Schema.org JSON-LD scripts into pages to help search engines understand the content better.
 
 **DO:**
-- Add a `<script>` tag for `application/ld+json` in your page files. For MovieHub, use schemas like `WebSite`, `Movie`, or `CollectionPage`.
+- Add a `<script>` tag for `application/ld+json` in your page files. For MovieHub, use schemas like `WebSite`, `Movie`, or `CollectionPage`. For the main landing page, combine `WebSite` and `Organization` schemas using the `@graph` property.
 
 ```tsx
 export default function LandingPage() {
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: "MovieHub by BrewScholar",
-    url: "https://moviehub.brewscholar.app",
-    description: "Your ultimate destination for limitless entertainment.",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        name: "BrewScholar",
+        url: "https://www.brewscholar.app",
+        description: "Your ultimate destination for limitless entertainment and educational tools.",
+      },
+      {
+        "@type": "Organization",
+        name: "BrewScholar",
+        url: "https://www.brewscholar.app",
+        logo: "https://www.brewscholar.app/brewscholar-yellow.png",
+      }
+    ]
   }
 
   return (

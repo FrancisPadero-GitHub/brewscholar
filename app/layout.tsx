@@ -72,7 +72,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/brewscholar-yellow.png",
+        url: "/og-image.png",
         width: 1200,
         height: 630,
         alt: "BrewScholar - Pour over opportunities and brew up your brightest future",
@@ -84,7 +84,7 @@ export const metadata: Metadata = {
     title: "BrewScholar",
     description:
       "Pour over opportunities and brew up your brightest future with BrewScholar",
-    images: ["/brewscholar-yellow.png"],
+    images: ["/og-image.png"],
   },
 }
 

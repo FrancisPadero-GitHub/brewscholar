@@ -6,10 +6,23 @@ import { HomeFooter } from "@/components/custom/landing/home-footer"
 export default function LandingPage() {
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: "BrewScholar",
-    url: "https://www.brewscholar.app",
-    description: "Pour over opportunities and brew up your brightest future with BrewScholar.",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        name: "BrewScholar",
+        url: "https://www.brewscholar.app",
+        description: "Pour over opportunities and brew up your brightest future with BrewScholar.",
+      },
+      {
+        "@type": "Organization",
+        name: "BrewScholar",
+        url: "https://www.brewscholar.app",
+        logo: "https://www.brewscholar.app/og-image.png",
+        sameAs: [
+          "https://github.com/FrancisPadero-GitHub/brewscholar"
+        ]
+      }
+    ]
   }
 
   return (
