@@ -53,10 +53,10 @@ export default function MaintenancePage() {
 
         {/* Interactive card showing status */}
         <div className="mb-8 w-full rounded-xl border border-border/80 bg-card p-6 text-left shadow-md shadow-black/5 backdrop-blur-sm">
-          <h3 className="mb-3 flex items-center gap-1.5 text-sm font-semibold">
+          <h2 className="mb-3 flex items-center gap-1.5 text-sm font-semibold">
             <Sparkles className="h-4 w-4 text-primary" />
             What&apos;s changing?
-          </h3>
+          </h2>
           <ul className="space-y-2.5 text-xs text-muted-foreground">
             <li className="flex items-start gap-2">
               <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />

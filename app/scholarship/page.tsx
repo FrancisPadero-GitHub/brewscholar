@@ -74,7 +74,7 @@ export default function ScholarshipPage() {
             <BackButton />
           </div>
 
-          <div className="uc-title">Under Construction</div>
+          <h1 className="uc-title">Under Construction</h1>
           <div className="uc-sub">
             We&apos;re working on this section - check back soon.
           </div>

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function FilesPage() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <main className="min-h-screen bg-background text-foreground">
       <style>{`
         .uc-card{
           position:relative;
@@ -74,7 +74,7 @@ export default function FilesPage() {
             <BackButton />
           </div>
 
-          <div className="uc-title">Coming Soon</div>
+          <h1 className="uc-title">Coming Soon</h1>
           <div className="uc-sub">
             This area is being prepared - stay tuned.
           </div>
@@ -83,7 +83,7 @@ export default function FilesPage() {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   )
 }
 
